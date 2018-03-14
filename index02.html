@@ -1,0 +1,1727 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>בדרך להחלמה</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+    <!-- source libraries for offline debugging -->
+    <!--<link href="src/jquery.mobile-1.4.5.css" rel="stylesheet" />
+    <script src="src/jquery-1.11.1.min.js"></script>
+    <script src="src/jquery.mobile-1.4.5.js"></script>-->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <script src="AjaxCalls.js"></script>
+
+
+    <script>
+
+
+        //get week function
+        Date.prototype.getWeek = function () {
+            var d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
+            d.setUTCDate(d.getUTCDate() - d.getUTCDay());
+            var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+            return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+        };
+
+
+        //global variables for ride management
+        rides = null;
+        idChoose = null;
+        myRides = null;
+
+
+        //call the ajax function to import the rides list
+        function getRidesList() {
+            var request = {
+                test: "test"
+            }
+            GetRides(request, GetRidesSuccessCB, GetRidesErrorCB);
+        }
+
+
+        //success call back function for get rides
+        function GetRidesSuccessCB(resutls) {
+
+            var resutls = $.parseJSON(resutls.d)
+
+            //get milliseconds from server date structure
+            for (var i = 0; i < resutls.length; i++) {
+                resutls[i].DateTime = parseInt(resutls[i].DateTime.replace('/Date(', ''));
+            }
+
+            rides = resutls;
+
+            //printRides(resutls, 4);
+        }
+
+        //error call back function for get rides
+        function GetRidesErrorCB(e) {
+            alert("I caught the exception : failed in GetRidesErrorCB \n The exception message is : " + e.responseText);
+        }
+
+
+        //success call back function for get my rides
+        function GetMyRidesSuccessCB(resutls) {
+
+            var resutls = $.parseJSON(resutls.d);
+
+            //convert server date structure to milliseconds
+            for (var i = 0; i < resutls.length; i++) {
+                resutls[i].DateTime = parseInt(resutls[i].DateTime.replace('/Date(', ''));
+            }
+
+            myRides = resutls;
+
+            //printMyRides(myRides);
+        }
+
+        //error call back function for get my rides
+        function GetMyRidesErrorCB(e) {
+            alert("I caught the exception : failed in GetRidesErrorCB \n The exception message is : " + e.responseText);
+        }
+
+        //print my rides
+        function printMyRides(myRides) {
+
+            //sort result by datetime
+            myRides.sort(function (a, b) {
+                return a.DateTime.toString().localeCompare(b.DateTime.toString());
+            });
+
+            str = "";
+            for (var i = 0; i < myRides.length; i++) {
+
+                if (filterMyRides(myRides[i])) {
+                    str += myRideListItem(myRides, i);
+                }
+            }
+
+            //var counterStr = '<p style="margin:0px;">מספר הנסיעות: ' + myRides.length + '</p>';
+
+            $("#myRidesPH").html(str);
+            $("#myRidesPH").listview("refresh");
+            //$("#myRidesCounterPH").html(counterStr);
+        }
+
+        //print my ride
+        function myRideListItem(myRides, i) {
+
+            var myDate = new Date(myRides[i].DateTime);
+            var day = numToDayHebrew(myDate.getDay());
+
+            var str = '<li data-theme="a">';
+
+            if ($('#doneTAB').prop("class").indexOf("ui-btn-active") != -1) {
+                str += '<a id="popINFO' + i + '" href="#infoPastRide"';
+            }
+            else {
+                str += '<a id="popDEL' + i + '" href="#deleteMePage"';
+            }
+
+            str += ' class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-info ui-btn-icon-left ui-btn-b" '
+                + '  onClick="delInfo(' + myRides[i].Id + ')">'
+                + '<p>יום ' + day
+                + '  &nbsp; ' + myDate.getDate() + "/" + (myDate.getMonth() + 1)
+                + ' &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ' + myRides[i].StartPoint + '  &#129136;  '
+                + myRides[i].EndPoint + '</p>'
+                + '<p>'
+                + myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1")
+                + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+                + myRides[i].Person;
+
+            if (myRides[i].Melave.length > 0) {
+                str += " +" + (myRides[i].Melave.length)
+            }
+
+            str += '</p>' + "</a>" + "</li> ";
+
+
+            return str;
+        }
+
+
+
+        //filter past/plan rides from myRides list
+        function filterMyRides(myRide) {
+
+            var pastRide = true;
+
+            var rideDateMillisec = myRide.DateTime;
+            var nowMillisec = Date.now();
+
+            //doneTAB is checked, meaning we are in the past rides section
+            if (rideDateMillisec <= nowMillisec && $('#doneTAB').prop("class").indexOf("ui-btn-active") != -1) {
+
+            }
+            //planTAB is checked, meaning we are in the planned rides section
+            else if (rideDateMillisec > nowMillisec && $('#planTAB').prop("class").indexOf("ui-btn-active") != -1) {
+
+            }
+            else {
+                pastRide = false;
+            }
+            return pastRide;
+        }
+
+        //filter past rides from sigm me page
+        function isPastRide(ride) {
+            var pastRide = true;
+
+            var rideDateMillisec = ride.DateTime;
+            var nowMillisec = Date.now();
+
+            if (rideDateMillisec >= nowMillisec) {
+
+            }
+            else {
+                pastRide = false;
+            }
+            return pastRide;
+        }
+
+        //publicize the current ride id checked in my rides (for later delete or edit)
+        function delInfo(rideID) {
+            if (rideID != undefined) {
+                idDeleteChoose = rideID;
+            }
+
+            request = {
+                id: idDeleteChoose
+            }
+        }
+        //delete ride with the request from the function above
+        function deleteMyRide() {
+
+            deleteRide(request, deleteRideSuccessCB, deleteRideErrorCB)
+
+        }
+
+
+        //success call back function for delete ride
+        function deleteRideSuccessCB() {
+
+            var request = {
+                id: "0528077973",
+            }
+            //for refreshing my rides after the delete
+            GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB);
+
+            getRidesList();
+
+            setTimeout(function () {
+                $.mobile.changePage("#myRides", { transition: "fade", changeHash: true });
+            }, 100);
+        }
+
+        //error call back function for delete ride
+        function deleteRideErrorCB(e) {
+            alert("I caught the exception : failed in GetRidesErrorCB \n The exception message is : " + e.responseText);
+        }
+
+
+        //function for filtering the rides by the drop down lists
+        function filterRides(rides) {
+
+            var filteredRides = [];
+
+            for (var i = 0; i < rides.length; i++) {
+
+                var rideDate = new Date(rides[i].DateTime);
+
+                //for filtering past rides
+                if (!isPastRide(rides[i])) {
+
+                }
+                else if ($('#shiftDDL').val() != "משמרת" && $('#shiftDDL').val() != rides[i].Shift) {
+
+                }
+                else if ($('#dayDDL').val() != "יום" && $('#dayDDL').val() != numToDayHebrew(rideDate.getDay())) {
+
+                }
+                else if ($('#dateDDL').val() != "תאריך" && $('#dateDDL').val() != rideDate.toLocaleDateString()) {
+
+                }
+                else if ($('#areaDDL').val() != "איזור" && $('#areaDDL').val() != rides[i].Area) {
+
+                }
+                else if ($('#startDDL').val() != "מוצא" && $('#startDDL').val() != rides[i].StartPoint) {
+
+                }
+                else if ($('#endDDL').val() != "יעד" && $('#endDDL').val() != rides[i].EndPoint) {
+
+                }
+                else {
+                    filteredRides.push(rides[i]);
+                }
+            }
+
+            return filteredRides;
+        }
+
+        //check for multiple rides in the same day for the listview item header
+        function doRideHeader(resutls, i) {
+
+            var startPointStr = "&nbsp;&nbsp;";
+            var ridesInDayCounter = 1;
+            for (var s = 0; s < resutls.length; s++) {
+                if ((new Date(resutls[i].DateTime)).toLocaleDateString() == (new Date(resutls[s].DateTime)).toLocaleDateString()) {
+
+                    if (startPointStr.indexOf(resutls[s].StartPoint) == -1) {
+                        startPointStr += resutls[s].StartPoint + '(1) , ';
+                    }
+                    else {
+                        startPointStr = startPointStr.replace(resutls[s].StartPoint + '(' + (ridesInDayCounter) + ')', resutls[s].StartPoint + '(' + (++ridesInDayCounter) + ')');
+                    }
+                }
+                else {
+                    ridesInDayCounter = 1;
+                }
+            }
+            //-2 delete the ', ' last string
+            startPointStr = startPointStr.substring(0, startPointStr.length - 2);
+
+            //add ... if the string to long for the listview item
+            if (startPointStr.length > 40) {
+                startPointStr = startPointStr.substring(0, 35) + '...';
+            }
+
+            return startPointStr;
+        }
+
+        //decide if week spacer: <hr>, is required
+        function weekSpace(resutls, i) {
+            str = "";
+            if (i < resutls.length - 1 && i != 0) {
+
+                var dateThis = new Date(resutls[i].DateTime);
+                var dateBefore = new Date(resutls[i - 1].DateTime);
+
+                if (dateThis.getWeek() > dateBefore.getWeek()) {
+                    str += '<hr style="border-style:dashed;">';
+                }
+            }
+            return str;
+        }
+
+        //create starting string for listview item
+        function ListItemStart(myDate, startPointStr) {
+
+            var day = numToDayHebrew(myDate.getDay());
+
+            str = '<li data-role="collapsible" data-theme="b"><hr style="margin:0;">'
+                + ' <h2 style="text-align:right">יום   ' + day + '  &nbsp;  '
+                + myDate.getDate() + "/" + (myDate.getMonth() + 1)
+                + '  ' + startPointStr + '</h2>';
+
+            return str;
+        }
+
+        //create the ride content inside the listview item
+        function ListItemRide(resutls, i) {
+
+            str = '<a style="float:left;border:none;margin: 8% 3%;" id="pop' + i + '" href="#signMePage"'
+                + 'class="ui-btn ui-icon-edit ui-btn-icon-notext ui-corner-all"'
+                + '  onClick="info(' + resutls[i].Id + ')">' + "</a>"
+
+                + '<p style="padding: 4% 0;float: left;margin-left: 20%;text-align: right;">' + resutls[i].StartPoint + ' &#129136; ' //&#11164; &#129144;
+                + '' + resutls[i].EndPoint
+
+                + '<br/>' + resutls[i].Person;
+
+            if (resutls[i].Melave.length > 0) {
+                str += " +" + (resutls[i].Melave.length)
+            }
+            str += '</p>';
+
+            str = RideEquipment(str, i);
+
+            str += '<hr style="margin:0;">';
+
+            return str;
+        }
+
+        function RideEquipment(str, i) {
+            if (i % 3 == 0) {
+                str += '<p style="float:left;padding: 5% 1%;width:10%;margin-left: 3%;">'
+                    + '<i class="fa fa-wheelchair" style="font-size:24px;"></i>'
+                    + '</p>';
+            }
+
+            if (i % 2 == 0) {
+                str += '<p style="float:left;padding: 5% 1%;width:10%;margin-left: 3%;">'
+                    + '<img src="https://image.flaticon.com/icons/svg/157/157671.svg">'
+                    + '</p>';
+            }
+            return str;
+        }
+
+
+        //sort by startPoints and then by datetime desecnding
+        function sortFunc(a, b) {
+            var aStartP = a.StartPoint;
+            var bStartP = b.StartPoint;
+
+            var aDate = a.DateTime;
+            var bDate = b.DateTime;
+
+            if (aDate == bDate) {
+                return (aStartP < bStartP) ? -1 : (aStartP > bStartP) ? 1 : 0;
+            }
+            else {
+                return (aDate < bDate) ? -1 : 1;
+            }
+        }
+
+
+        //print the rides
+        function printRides(resutls, numOfWantedSeats) {
+            $("#ridesPH").empty();
+            var str = "";
+            ridesCounter = 0;
+
+            //filter rides
+            var resutls = filterRides(resutls);
+
+            resutls.sort(sortFunc);
+
+            for (var i = 0; i < resutls.length; i++) {
+
+                //heading for rides in the same day
+                var startPointStr = doRideHeader(resutls, i);
+
+
+                var myDate = new Date(resutls[i].DateTime);
+
+                if (i == 0) {
+                    lastDate = resutls[i].DateTime;
+                }
+                else {
+                    lastDate = resutls[i - 1].DateTime;
+                }
+
+                var checkDate = new Date(lastDate);
+
+
+                if (checkDate.toLocaleDateString() != myDate.toLocaleDateString() || i == 0) {
+                    if (i != 0) {
+                        str += "</li>";
+
+                        //space between rides in different weeks  <hr>
+                        str += weekSpace(resutls, i);
+
+                    }
+
+                    //create the begining of the list item control
+                    str += ListItemStart(myDate, startPointStr);
+
+                }
+
+                //create the content of one ride
+                str += ListItemRide(resutls, i);
+
+                ridesCounter++;
+
+                //filter by seats
+                //if (numOfWantedSeats < (resutls[i].Melave.length) + 1) {
+                //    continue;
+                //}
+
+            }
+
+            if (ridesCounter == 0) {
+                var counterStr = '<p>לא נמצאו נסיעות  <a id="clearFilter" href="#" style="background-color:#202020" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-button-inline ui-widget ui-button-a ui-link ui-btn ui-btn-b ui-btn-icon-left ui-btn-inline ui-shadow ui-corner-all ui-icon-refresh" role="button">נקה</a></p>';
+            }
+            else {
+
+            }
+
+            $("#ridesPH").html(str);
+            $("#ridesPH").listview("refresh");
+            $("#ridesPH li").collapsible();
+            //$("#counterPH").html(counterStr);
+
+        }
+
+        //generate myRide string for listview item
+        function getRideStr(rideOBJ) {
+
+            var myDate = new Date(rideOBJ.DateTime);
+
+            var day = numToDayHebrew(myDate.getDay());
+
+            var str = '<p>יום ' + day
+                + ', ' + myDate.getDate() + "/" + (myDate.getMonth() + 1) + "/" + myDate.getFullYear()
+                + ', ' + myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1") + '</p>'
+                + '<p>מ' + rideOBJ.StartPoint + ' '
+                + 'ל' + rideOBJ.EndPoint + ', '
+                + '<br/>' + rideOBJ.Person + '</p>';
+            if (rideOBJ.Melave.length > 0) {
+                str += '<p>מלווים: ';
+
+                for (var i = 0; i < rideOBJ.Melave.length; i++) {
+                    str += rideOBJ.Melave[i] + "<br/>";
+                }
+
+                str += '</p>';
+            }
+
+            return str;
+        }
+
+        //get the ride info string for the sign me "popup"
+        function info(inputID) {
+
+            idChoose = inputID;
+
+            for (var i = 0; i < rides.length; i++) {
+                if (rides[i].Id == idChoose) {
+                    var str = getRideStr(rides[i]);
+                }
+            }
+
+            $("#phPop").html(str);
+
+        }
+
+        function signDriverSuccessCB(resutls) {
+
+
+            getRidesList();
+
+            var request = {
+                id: "0528077973",
+            }
+            //for refreshing my rides after signing to new ride
+            GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB);
+
+            //set plan tab as active
+            $('#planTAB').click();
+
+            setTimeout(function () { }, 100);
+        }
+
+        //error call back function for get rides
+        function signDriverErrorCB(e) {
+            alert("I caught the exception : failed in signDriverErrorCB \n The exception message is : " + e.responseText);
+        }
+
+        //function for converting num of day to hebrew day
+        function numToDayHebrew(i) {
+            var day = "";
+            switch (i) {
+                case 0:
+                    day = "א";
+                    break;
+                case 1:
+                    day = "ב";
+                    break;
+                case 2:
+                    day = "ג";
+                    break;
+                case 3:
+                    day = "ד";
+                    break;
+                case 4:
+                    day = "ה";
+                    break;
+                case 5:
+                    day = "ו";
+                    break;
+                case 6:
+                    day = "ש";
+            }
+            return day;
+        }
+
+        //fill the date ddl dynamicly (30 days forward)
+        $(document).on('pagebeforeshow', '#signMe', function () {
+            var str = "<option>תאריך</option>";
+            for (var i = 0; i < 30; i++) {
+
+                var nowDate = new Date();
+                var myDate = new Date(nowDate.setDate(nowDate.getDate() + i));
+
+                str += "<option>" + myDate.toLocaleDateString() + "</option>"; //myDate.getDate() + "/" + (myDate.getMonth() + 1) + "/" + myDate.getFullYear()
+            }
+
+            $('#dateDDL').html(str);
+            $("#dateDDL").selectmenu("refresh");
+
+        });
+
+
+        //handle the filter events
+        $(document).on('pagebeforeshow', '#signMe', function () {
+            $('#signMe fieldset select').change(function () {
+                printRides(rides, 4);
+            });
+        });
+
+        //check for suited rides with the ride that chosen
+        function checkRides(resutls, id) {
+            suitedArr = [];
+            var HaveSuitedRides = false;
+
+            for (var i = 0; i < resutls.length; i++) {
+
+                var rideDate = new Date(resutls[i].DateTime);
+                var chooseRideDate = new Date(ride.DateTime);
+
+                if (rideDate.toDateString() != chooseRideDate.toDateString()) {
+                    continue;
+                }
+                if (resutls[i].Id == idChoose) {
+                    continue;
+                }
+                if (ride.Shift != resutls[i].Shift) {
+                    continue;
+                }
+                if (ride.Area != resutls[i].Area) {
+                    continue;
+                }
+                if (ride.StartPoint != resutls[i].StartPoint) {
+                    continue;
+                }
+                if (ride.EndPoint != resutls[i].EndPoint) {
+                    continue;
+                }
+                if (availibleSeats < (resutls[i].Melave.length + 1)) {
+                    continue;
+                }
+
+                HaveSuitedRides = true;
+                suitedArr.push(resutls[i]);
+            }
+
+            return HaveSuitedRides;
+
+        }
+
+
+        //on sign me to ride click ok
+        $(document).on('pagebeforeshow', '#signMePage', function () {
+
+            $("#okBTN").on("click", function () {
+
+                var request = {
+                    id: idChoose
+                };
+
+                signDriver(request, signDriverSuccessCB, signDriverErrorCB);
+
+                //get the ride that the volenteer sign to, by id
+                for (var i = 0; i < rides.length; i++) {
+                    if (rides[i].Id == idChoose) {
+                        ride = rides[i];
+                        continue;
+                    }
+                }
+
+                //go search for suited ride
+                suggestSuitedRides(ride);
+            });
+        });
+
+        //suggest suited rides
+        function suggestSuitedRides(ride) {
+
+            maxSeats = 4;
+
+            if (ride.Melave.length > 0) {
+                totalPassengers = (ride.Melave.length + 1);
+            }
+            else {
+                totalPassengers = 1;
+            }
+
+            availibleSeats = maxSeats - totalPassengers;
+
+            getRidesList();
+
+            var haveRides = false;
+
+            if (checkRides(rides, idChoose)) {
+                haveRides = true;
+            }
+
+            var str = createSuggestPage(haveRides, ride);
+
+            $("#phSuggest").html(str);
+        }
+
+        //create suggest page
+        function createSuggestPage(haveRides, ride) {
+            var str = "";
+            if (haveRides) {
+                str += '<p><b>נוסעים נוספים יכולים להצטרף לנסיעה</b></p>';
+            }
+
+            var myDate = new Date(ride.DateTime);
+            var day = numToDayHebrew(myDate.getDay());
+
+            str += '<p>ביום ' + day
+                + ', ' + myDate.getDate() + "/" + (myDate.getMonth() + 1) + "/" + myDate.getFullYear()
+                + ', בשעה ' + myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1") + '</p>'
+                + '<p>מ' + ride.StartPoint + ' ' + 'ל' + ride.EndPoint + '.</p>';
+
+            if (haveRides) {
+                str += "<p> מושבים פנויים ברכבך: " + maxSeats
+                    + '<a data-icon="edit" id="updateSeatsBTN" href="#" style="background-color:#202020" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-button-inline ui-widget ui-button-a ui-link ui-btn ui-btn-b ui-icon-edit ui-btn-icon-left ui-btn-inline ui-shadow ui-corner-all" role="button">עדכן</a>'
+                    + '</p><p>האם אתה מעוניין לצרף לנסיעה את ' + suitedArr[0].Person;
+
+                if (suitedArr.length == 0) {
+
+                }
+                else {
+                    str += createMelaveStr();
+                }
+                str += "</p>";
+
+                $("#updateSeatsBTN").show();
+                $("#suggestCancelBTN").show();
+                $("#suggestOkBTN").text("נשמע טוב");
+            }
+            else {
+                $("#updateSeatsBTN").hide();
+                $("#suggestCancelBTN").hide();
+                $("#suggestOkBTN").text("קבענו");
+            }
+            return str;
+        }
+
+        //create melave string for suggest page
+        function createMelaveStr() {
+            var str = "";
+            if (suitedArr[0].Melave.length == 0) {
+                str += "?";
+            }
+            else if (suitedArr[0].Melave.length == 1) {
+                str += " ו" + suitedArr[0].Melave[0] + "?";
+            }
+            else {
+                for (var i = 0; i < suitedArr[0].Melave.length; i++) {
+
+
+                    if (i == suitedArr[0].Melave.length - 1) {
+                        str += " ו" + suitedArr[0].Melave[i] + "?";
+                    }
+                    else {
+                        str += ", " + suitedArr[0].Melave[i] + " ";
+                    }
+                }
+            }
+            return str;
+        }
+
+        //after signing to ride and we suggest a suited ride, volenteer click ok
+        $(document).on('pagebeforeshow', '#suggest', function () {
+            $("#suggestOkBTN").on("click", function () {
+
+                if (suitedArr.length > 0) {
+                    idChoose = parseInt(suitedArr[0].Id);
+
+                }
+                var request = {
+                    id: idChoose
+                };
+
+                signDriver(request, signDriverSuccessCB, signDriverErrorCB);
+
+                setTimeout(function () {
+                    $.mobile.changePage("#myRides", { transition: "fade", changeHash: true });
+                }
+                    , 100);
+            });
+        });
+
+        //clear filter button
+        $(document).on('pagebeforeshow', '#signMe', function () {
+            $(document).on('click', '#clearFilter', function () {
+
+                $("#dayDDL").prop('selectedIndex', 0);
+                $("#dayDDL").selectmenu("refresh");
+                $("#endDDL").prop('selectedIndex', 0);
+                $("#endDDL").selectmenu("refresh");
+                $("#startDDL").prop('selectedIndex', 0);
+                $("#startDDL").selectmenu("refresh");
+                $("#areaDDL").prop('selectedIndex', 0);
+                $("#areaDDL").selectmenu("refresh");
+                $("#shiftDDL").prop('selectedIndex', 0);
+                $("#shiftDDL").selectmenu("refresh");
+                $("#dateDDL").prop('selectedIndex', 0);
+                $("#dateDDL").selectmenu("refresh");
+
+                printRides(rides, 4);
+            });
+        });
+
+
+        //tabs control
+        //////////////
+
+        //click on morningTAB or afternoonTAB
+        $(document).on('pagebeforeshow', '#signMe', function () {
+            $(document).on('click', '#morningTAB', function () {
+                $("#shiftDDL").prop('selectedIndex', 1);
+                $("#shiftDDL").selectmenu("refresh");
+                printRides(rides, 4);
+            });
+
+            $(document).on('click', '#afternoonTAB', function () {
+                $("#shiftDDL").prop('selectedIndex', 2);
+                $("#shiftDDL").selectmenu("refresh");
+                printRides(rides, 4);
+            });
+        });
+
+        //click on doneTAB or planTAB
+        $(document).on('pagebeforeshow', '#myRides', function () {
+
+            if ($('#doneTAB').prop("class").indexOf("ui-btn-active") == -1 && $('#planTAB').prop("class").indexOf("ui-btn-active") == -1) {
+                $('#planTAB').addClass("ui-btn-active");
+                $('#planTAB').click();
+                printMyRides(myRides);
+            }
+            else {
+                printMyRides(myRides);
+            }
+
+            $(document).on('click', '#doneTAB,#planTAB', function () {
+                printMyRides(myRides);
+            });
+        });
+
+        //activate doneTAB after closing infoPastRide
+        $(document).on('pagebeforeshow', '#infoPastRide', function () {
+            $("#closeInfoBTN").on('click', function () {
+                $('#doneTAB').addClass('ui-btn-active');
+                printMyRides(myRides);
+            });
+        });
+
+        //activate planTAB after closing deleteMePage
+        $(document).on('pagebeforeshow', '#deleteMePage', function () {
+            $("#deletecancelBTN, #deleteokBTN").on('click', function () {
+                $('#planTAB').addClass('ui-btn-active');
+                printMyRides(myRides);
+            });
+        });
+
+        //create menu - side panel
+        $(document).one('pagebeforecreate', function () {
+            var panel = '<div data-role="panel" id="mypanel"  data-position="right" data-display="reveal" data-theme="b" class="ui-panel ui-panel-position-right ui-panel-display-reveal ui-body-b ui-panel-animate">'
+                + '<div class="ui-panel-inner">'
+                + '<ul data-role="listview">'
+                + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="signMeTab" href="#signMe" data-theme="b">שבץ אותי</a></li>'
+                + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="myRidesTab" href="#myRides" data-theme="b">הנסיעות שלי </a> </li>'
+                + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-delete">'
+                + '<a href="#" data-rel="close">סגירת התפריט</a>'
+                + '</li>'
+                + '</ul>'
+                + '</div>'
+                + '</div>';
+            $.mobile.pageContainer.prepend(panel);
+            $("#mypanel").panel().enhanceWithin();
+        });
+
+
+        //keyup/click/focusout events, refreshing the rides when jquery list filter is on action
+        $(document).on('pagebeforeshow', '#signMe', function () {
+            $(document).on('keyup', '#signMe input[data-type="search"]', function () {
+
+                printRides(rides, 4);
+
+            });
+
+            $('#signMe .ui-filterable').click(function () {
+
+                printRides(rides, 4);
+
+            });
+
+            $('#signMe .ui-filterable').focusout(function () {
+
+                printRides(rides, 4);
+
+            });
+        });
+
+
+        //mangae active state of tabs in signMe page
+        $(document).on('pagebeforeshow', '#signMe', function () {
+            if ($('#shiftDDL').val() == 'בוקר') {
+                $('#morningTAB').addClass('ui-btn-active');
+            }
+            else if ($('#shiftDDL').val() == 'אחהצ') {
+                $('#afternoonTAB').addClass('ui-btn-active');
+            }
+            printRides(rides, 4);
+        });
+
+
+        $(document).on('pagebeforeshow', '#kavim1', function () {
+            $('#area').on('change', function () {
+                var i = 0;
+                if ($('#area').val() == "צפון") {
+                    i = 1;
+                }
+                else if ($('#area').val() == "מרכז") {
+                    i = 2;
+                }
+                else {
+                    i = 3;
+                }
+
+                $('#start' + i).show();
+                $('#end' + i).show();
+
+
+                for (var s = 1; s < 4; s++) {
+
+                    if (s != i) {
+                        $('#start' + s).hide();
+                        $('#end' + s).hide();
+                    }
+                }
+            });
+        });
+
+        var json = {
+            'צפון': { 0: 'גלמה', 1: 'ריחן', 2: 'שער אפרים', 3: 'אייל', 4: 'רמבם', 5: 'שיבא', 6: 'אסותא' },
+            'מרכז': { 0: 'אייל', 1: 'אליהו', 2: 'נעלין', 3: 'בית לחם', 4: 'הפרחים', 5: 'תרקומיה', 6: 'וולפסון', 7: 'שיבא', 8: 'איכילוב', 9: 'שניידר' },
+            'דרום': { 0: 'ארז', 1: 'שיבא', 2: 'איכילוב', 3: 'שניידר', 4: 'וולפסון' }
+        }
+
+        var json2 = {
+            'מחסומים': { 0: 'כל מחסום', 1: 'גלמה (צפון)', 2: 'ריחן (צפון)', 3: 'אייל (מרכז)', 4: 'אליהו (מרכז)', 5: 'נעלין (מרכז)', 6: 'בית לחם (מרכז)', 7: 'תרקומיה (מרכז)', 8: 'שער אפרים (מרכז)', 9: 'ארז (דרום)' },
+            'בתי חולים': { 0: 'כל בי"ח', 1: 'רמבם', 2: 'אסותא', 3: 'שיבא', 4: 'איכילוב', 5: 'שניידר', 6: 'וולפסון', 7: 'הדסה' }
+        }
+
+        $(document).on('pagebeforeshow', '#kavim2', function () {
+            $('#startD').empty();
+            $('#endD').empty();
+            $('#startD2').empty();
+            $('#endD2').empty();
+
+            var str = "";
+            var str2 = "";
+
+            for (var i = 0; i < Object.keys(json2['מחסומים']).length; i++) {
+
+                str += "<option>" + json2['מחסומים'][i] + "</option>";
+            }
+
+            for (var i = 0; i < Object.keys(json2['בתי חולים']).length; i++) {
+
+                str2 += "<option>" + json2['בתי חולים'][i] + "</option>";
+            }
+
+            $('#startD').html(str);
+            $('#endD').html(str2);
+            $('#startD2').html(str2);
+            $('#endD2').html(str);
+
+
+        });
+
+        $(document).on('pagebeforeshow', '#kavim2', function () {
+            $('#addMaslul').on('click', function () {
+
+                var hetz = ' &#129136; ';
+                if ($('#kavim2CB').is(':checked')) {
+                    hetz = ' &#129138;&#129136; ';
+                }
+
+                var str = '<li style="height:25px"><p style="font-size:18px;direction:rtl;text-align:right;margin:0">'
+                    + '<a style="float:left;border:none;margin:0" href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all itemDelete">No text</a>'
+                    + $('#startD').val() + hetz + $('#endD').val()
+                    + '</li>';
+
+                $('#maslulLV').append(str);
+                $('#maslulLV').listview('refresh');
+            });
+
+            $('#addMaslul2').on('click', function () {
+
+                var hetz = ' &#129136; ';
+                if ($('#kavim2CB2').is(':checked')) {
+                    hetz = ' &#129138;&#129136; ';
+                }
+
+                var str = '<li style="height:25px"><p style="font-size:18px;direction:rtl;text-align:right;margin:0">'
+                    + '<a style="float:left;border:none;margin:0" href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all itemDelete">No text</a>'
+                    + $('#startD2').val() + hetz + $('#endD2').val() + '</p>'
+                    + '</li>';
+
+                $('#maslulLV').append(str);
+                $('#maslulLV').listview('refresh');
+            });
+
+            $('#maslulLV').on('click', '.itemDelete', function () {
+                $(this).parent().parent().remove();
+            });
+        });
+
+
+        $(document).on('pagebeforeshow', '#loginPreference', function () {
+
+            $("#nextPageBTN").on('click', function () {
+
+                if (checkPlanRides(myRides)) {
+                    $.mobile.changePage("#myRides", { transition: "fade", changeHash: true });
+                }
+                else {
+                    $.mobile.changePage("#signMe", { transition: "fade", changeHash: true });
+                }
+            });
+        });
+
+        function checkPlanRides(myRides) {
+            if (myRides == null || myRides.length == 0) {
+                return false;
+            }
+            else {
+                for (var i = 0; i < myRides.length; i++) {
+                    if (myRides[i].DateTime > Date.now()) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+
+        $(document).on('pagebeforeshow', '#loginLogo', function () {
+
+            //for testing first time process
+            //localStorage.firstTime = undefined;
+
+            if (isAndroid()) {
+
+                var cellphone = readPhoneNumber();
+                checkUserPN(cellphone);
+            }
+            else {
+                manualLogin();
+            }
+
+        });
+
+
+        function checkUserPN(cellphone) {
+            var request = {
+                id: cellphone
+            }
+            checkUser(request, checkUserSuccessCB, checkUserErrorCB);
+        }
+
+
+        $(document).on('pagebeforeshow', '#loginFailed', function () {
+
+            manualLogin();
+
+            $('#userPnBTN').on('click', function () {
+
+                var cellphone = $('#userPnTB').val();
+
+                localStorage.cellphone = cellphone;
+
+                var request = {
+                    id: cellphone
+                }
+                checkUser(request, checkUserSuccessCB, checkUserErrorCB);
+            });
+
+        });
+
+
+        function manualLogin() {
+
+            if (localStorage.firstTime == undefined) {
+                localStorage.firstTime == "no";
+                //first time login
+                //wait for pn insert
+            }
+            else {
+                //else times login
+                var cellphone = localStorage.cellphone;
+                checkUserPN(cellphone);
+            }
+
+        }
+
+
+        function readPhoneNumber() {
+
+            var cellphone = "0528077973";
+
+            //read only once in android and then save it?
+            //or, read it from android every time?
+            //localStorage.cellphone = cellphone;
+
+            return cellphone;
+        }
+
+
+        function isAndroid() {
+
+            return false;
+
+            //return true;
+        }
+
+
+        function checkUserSuccessCB(resutls) {
+
+            var resutls = $.parseJSON(resutls.d);
+
+            //for testing unassaigned user
+            //userInfo = null;
+
+            //for testing assaigned user
+            userInfo = resutls;
+
+            if (userInfo == null || userInfo == undefined) {
+                setTimeout(function () {
+                    $.mobile.changePage("#rtrInfo", { transition: "fade", changeHash: true });
+                }, 1500);
+            }
+            else {
+                //get all rides
+                getRidesList();
+
+                //getMyRides
+                var request = {
+                    id: "0528077973",
+                }
+                GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB);
+
+                setTimeout(function () {
+                    $.mobile.changePage("#loginPreference", { transition: "fade", changeHash: true });
+                }, 1500);
+            }
+
+
+        }
+
+
+        function checkUserErrorCB(e) {
+            setTimeout(function () {
+                $.mobile.changePage("#loginFailed", { transition: "fade", changeHash: true });
+            }, 1500);
+        }
+
+
+
+    </script>
+
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet">
+
+    <style>
+        option, select, span, #maslulLV {
+            direction: rtl;
+        }
+
+        .ui-listview > .ui-li-static, .ui-listview > .ui-li-divider, .ui-listview > li > a.ui-btn {
+            text-align: right;
+            font-size: 20px;
+        }
+
+        #ridesPH li a, #myRidesPH li a {
+            margin-top: 5px;
+        }
+
+        .ui-li-desc, p, h1, h2, h3 {
+            text-align: center;
+            direction: rtl;
+        }
+
+        fieldset {
+            text-align: center;
+        }
+
+        #ridesCounter {
+            /*right: 78%;
+            top: 12px;
+            border-radius: 16px;
+            background-color: #660000;*/
+            /*background-color: #fa3e3e;
+            border-radius: 21px;
+            color: white;
+            padding: 1px 3px;
+            font-size: 10px;
+            position: absolute;
+            top: 7px;
+            right: 100px;*/
+        }
+
+        #ridesPH a, #myRidesPH p {
+            text-align: right;
+        }
+
+        #shiftTABS, #myRidesTABS {
+            position: relative;
+            top: 50px;
+        }
+
+        .ui-filterable {
+            position: relative;
+            bottom: 50px;
+        }
+
+        input[data-type="search"] {
+            text-align: right;
+        }
+
+        hr {
+            width: 100%;
+        }
+
+        #deleteMePage, #signMePage, #suggest {
+            text-align: center;
+            padding: 50% 0px;
+        }
+
+
+        #material {
+            bottom: 0;
+            position: fixed !important;
+            top: auto !important;
+            background: none;
+            border: none;
+        }
+
+        .fab {
+            top: -15px;
+            right: -15px;
+            width: 50px;
+            height: 50px;
+            border: none;
+        }
+
+        #area-button, #area2-button {
+            width: 50px;
+            margin: 0 auto;
+        }
+
+        #startD-button, #startD2-button {
+            float: right;
+            padding: 10px 2px;
+        }
+
+        #endD-button, #endD2-button {
+            float: right;
+            padding: 10px 2px;
+        }
+
+        #startD-button, #endD2-button, #startD, #endD2 {
+            width: 130px;
+        }
+
+        #hetz {
+            float: right;
+            margin-top: 4%;
+            margin-left: 1%;
+            margin-right: 1%;
+        }
+
+        .start {
+            float: right;
+            margin-right: 10%;
+        }
+
+        .end {
+            float: left;
+            margin-left: 10%;
+        }
+
+        #kavim2 .ui-checkbox {
+            max-width: 94px;
+            position: relative;
+        }
+
+
+            #kavim2 .ui-checkbox label {
+                padding: 10px 2px;
+                margin-right: 10px;
+            }
+
+        #kavim2CB2 {
+            padding: 10px 2px;
+        }
+
+        #addMaslul, #addMaslul2 {
+            max-width: 35px;
+            float: left;
+            margin: 0px 2px;
+            padding: 10px 2px;
+        }
+
+        #loginLogo {
+            text-align: center;
+            margin-top: 50%;
+        }
+
+        #loginPreference {
+            margin-top: 50%;
+            text-align: center;
+        }
+
+            #loginPreference a {
+            }
+
+        #nextPageBTN {
+            margin-bottom: 20%;
+        }
+
+        #rtrInfo, #loginFailed {
+            text-align: center;
+            margin-top: 5%;
+        }
+
+            #rtrInfo p {
+                margin: 5%;
+                margin-bottom: 0;
+            }
+
+            #rtrInfo a {
+                text-decoration: none;
+            }
+
+            #loginFailed .ui-input-text {
+                width: 50%;
+                margin: 0 auto;
+            }
+
+            #loginFailed .ui-btn {
+                width: 20%;
+                margin: 0 auto;
+                margin-top: 7%;
+            }
+
+            #loginFailed p {
+                margin: 10%;
+            }
+    </style>
+
+</head>
+<body>
+
+    <div data-role="page" id="loginLogo">
+        <img src="Images/logo.png" />
+        <p style="margin-top: 30%;">מהדורה מספר 1, מתאריך 04/2018</p>
+    </div>
+
+    <div data-role="page" id="loginFailed">
+        <img src="Images/logo.png" />
+        <p style="margin-top: 30%;">ההתחברות נכשלה</p>
+        <p>אנא הכנס את מספר הטלפון שלך כדי שנוכל לזהות את חשבונך</p>
+        <input id="userPnTB" type="text" placeholder="052555...." />
+        <a id="userPnBTN" data-role="button">התחבר</a>
+    </div>
+
+    <div data-role="page" id="loginPreference">
+        <h6>התחברת בהצלחה</h6>
+        <a id="changePrefBTN" data-role="button" data-inline="true">שינוי ההעדפות שלי</a>
+        <br />
+        <a id="nextPageBTN" data-role="button" data-inline="true">המשך</a>
+    </div>
+
+
+    <div id="rtrInfo" data-role="page">
+        <img src="Images/logo.png" />
+        <p>
+            הסכסוך הישראלי-פלסטיני הוא עמוק ובעל הסטוריה עקובה מדם. "בדרך להחלמה" מנסה לגשר על התהום הפעורה בין האנשים משני צדי הגבול עם חזון של תקווה, אחווה אנושית וחמלה.
+            <br /><br />
+            העמותה פועלת ללא כוונות רווח, מתוך התנדבות מלאה של חבריה המאמינים שהדרך לשלום ולאמון בין ישראלים לפלסטינים חייבת לעבור דרך מפגש אישי בין בני אדם, אנשים השמים את אנושיותם לפני כל אמונה דתית או פוליטית.
+            <br /><br />
+            כל ילד שאנו מסייעים לו, כל משפחה שאנו יוצרים איתה קשר אנושי וחם, הם זרעים לתקווה ולפיוס.
+        </p>
+        <br />
+        <a href="http://www.roadtorecovery.org.il/?lang=he">לאתר העמותה</a>
+        <br /><br />
+        <!-- Paypal donate btn -->
+        <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            <div class="paypal-donations"><input type="hidden" name="cmd" value="_donations"><input type="hidden" name="business" value="roadtorecovery10@gmail.com"><input type="hidden" name="item_name" value="Our operation is funded by donations only. Any amount you might be willing to contribute will be greatly appreciated!"><input type="hidden" name="currency_code" value="USD"><input type="image" src="http://www.roadtorecovery.org.il/wp-content/uploads/2017/06/Donate_car.jpg" name="submit" alt="PayPal - The safer, easier way to pay online."><img alt="" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1"></div>
+        </form>
+    </div>
+
+
+    <div data-role="page" id="signMe">
+
+
+        <div data-role="header">
+            <h1>שבץ אותי</h1>
+            <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+            </a>
+
+        </div>
+
+        <div data-role="content">
+
+            <div>
+                <fieldset hidden="hidden" data-role="controlgroup" data-type="horizontal" data-icon="false" class="ui-grid-a" data-theme="a">
+
+                    <select id="shiftDDL" data-iconpos="left">
+                        <option>משמרת</option>
+                        <option>בוקר</option>
+                        <option>אחהצ</option>
+                    </select>
+
+                    <select id="dateDDL" data-iconpos="left"></select>
+
+                    <select id="dayDDL" data-iconpos="left">
+                        <option>יום</option>
+                        <option>א</option>
+                        <option>ב</option>
+                        <option>ג</option>
+                        <option>ד</option>
+                        <option>ה</option>
+                        <option>ו</option>
+                        <option>ש</option>
+                    </select>
+
+                </fieldset>
+
+                <fieldset hidden="hidden" data-role="controlgroup" data-type="horizontal" data-theme="a">
+
+                    <select id="endDDL" data-iconpos="left">
+                        <option>יעד</option>
+                        <option>ארז</option>
+                        <option>רמבם</option>
+                        <option>ג'למה</option>
+                        <option>אייל</option>
+                        <option>שיבא</option>
+                        <option>ירושלים</option>
+                    </select>
+
+                    <select id="startDDL" data-iconpos="left">
+                        <option>מוצא</option>
+                        <option>ארז</option>
+                        <option>רמבם</option>
+                        <option>ג'למה</option>
+                        <option>אייל</option>
+                        <option>שיבא</option>
+                        <option>ירושלים</option>
+                    </select>
+
+                    <select id="areaDDL" data-iconpos="left">
+                        <option>איזור</option>
+                        <option>דרום</option>
+                        <option>מרכז</option>
+                        <option>צפון</option>
+                    </select>
+
+                </fieldset>
+            </div>
+
+
+
+            <!--<div id="counterPH" data-role="fieldcontain">
+
+            </div>-->
+
+            <div data-role="navbar" id="shiftTABS">
+                <ul>
+                    <li><a id="afternoonTAB">צהריים</a></li>
+                    <li><a id="morningTAB">בוקר</a></li>
+                </ul>
+            </div>
+
+            <ul id="ridesPH" data- data-role="listview" data-filter-placeholder="" data-inset="true" data-filter="true" data-theme="a"></ul>
+
+        </div>
+
+    </div>
+
+
+    <div data-role="page" id="myRides">
+
+        <div data-role="header">
+
+            <h1>הנסיעות שלי</h1>
+            <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+            </a>
+        </div>
+
+        <div data-role="content">
+
+            <!--<div id="myRidesCounterPH" data-role="fieldcontain">    </div>-->
+
+
+            <div data-role="navbar" id="myRidesTABS">
+                <ul>
+                    <li><a id="doneTAB">עבר</a></li>
+                    <li><a id="planTAB" class="ui-btn-active">מתוכננות</a></li>
+                </ul>
+            </div>
+
+            <ul id="myRidesPH" data-role="listview" data-filter-placeholder="" data-filter="true" data-inset="true" data-icon="false" data-theme="a"></ul>
+
+        </div>
+        <div data-role="footer" id="material">
+            <a href="#signMe" style="border-radius:50px;background-color: #FFBF00;" class="ui-shadow ui-btn ui-corner-all ui-btn-inline ui-icon-plus ui-btn-icon-notext ui-btn-b ui-mini fab"></a>
+        </div>
+    </div>
+
+
+    <div data-role="page" id="deleteMePage">
+        <div role="main" class="ui-corner-bottom ui-content">
+            <div id="phPopDelete"></div>
+            <a data-icon="check" id="deleteokBTN" style="background-color:#004d00" data-rel="back" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">סגור</a>
+            <a data-icon="delete" onclick="deleteMyRide()" id="deletecancelBTN" style="background-color:#660000" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">בטל את הנסיעה</a>
+        </div>
+    </div>
+
+
+    <div data-role="page" id="infoPastRide">
+        <div role="main" class="ui-corner-bottom ui-content">
+            <div id="phPopInfo"><h1>פרטים נוספים</h1><br /></div>
+            <a data-icon="delete" onclick="" id="closeInfoBTN" href="#" style="background-color:#660000" data-role="button" data-rel="back" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">סגור</a>
+        </div>
+    </div>
+
+
+    <div data-role="page" id="signMePage">
+        <div role="main" class="ui-corner-bottom ui-content">
+            <div id="phPop"></div>
+            <a data-icon="check" id="okBTN" href="#suggest" style="background-color:#004d00" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">שבץ אותי</a>
+            <a data-icon="delete" id="cancelBTN" href="#" style="background-color:#660000" data-role="button" data-inline="true" data-rel="back" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">בטל</a>
+        </div>
+    </div>
+
+
+    <div data-role="page" id="suggest" style="text-align:center">
+
+        <h1 data-theme="b">נרשמת בהצלחה!</h1>
+        <div id="phSuggest"></div>
+        <a data-icon="check" id="suggestOkBTN" style="background-color:#004d00" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">נשמע טוב</a>
+        <a data-icon="delete" id="suggestCancelBTN" href="#myRides" style="background-color:#660000" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">לא מעוניין</a>
+    </div>
+
+
+    <div id="kavim1" data-role="page">
+        <div data-role="header">
+
+            <h1>ההעדפות שלי</h1>
+            <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+            </a>
+        </div>
+        <div data-role="content">
+            <select id="area" data-iconpos="left" style="width:100px;">
+                <option>אזור</option>
+                <option>צפון</option>
+                <option>מרכז</option>
+                <option>דרום</option>
+            </select>
+            <div id="start1" hidden="hidden" class="start">
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2a">
+                        <label for="checkbox-h-2a">ג'למה</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2b">
+                        <label for="checkbox-h-2b">ריחן</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2c">
+                        <label for="checkbox-h-2c">שער אפרים</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2d">
+                        <label for="checkbox-h-2d">אייל</label>
+                    </fieldset>
+                </form>
+            </div>
+            <div id="end1" hidden="hidden" class="end">
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2e">
+                        <label for="checkbox-h-2e">רמבם</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2f">
+                        <label for="checkbox-h-2f">שיבא</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2g">
+                        <label for="checkbox-h-2g">אסותא</label>
+                    </fieldset>
+                </form>
+            </div>
+
+            <div id="start2" hidden="hidden" class="start">
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2h">
+                        <label for="checkbox-h-2h">אייל</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2i">
+                        <label for="checkbox-h-2i">אליהו</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2j">
+                        <label for="checkbox-h-2j">הפרחים</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2k">
+                        <label for="checkbox-h-2k">נעלין</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2l">
+                        <label for="checkbox-h-2l">תרקומיה</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2m">
+                        <label for="checkbox-h-2m">בית לחם</label>
+                    </fieldset>
+                </form>
+            </div>
+            <div id="end2" hidden="hidden" class="end">
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2n">
+                        <label for="checkbox-h-2n">שיבא</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2o">
+                        <label for="checkbox-h-2o">וולפסון</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2p">
+                        <label for="checkbox-h-2p">איכילוב</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2q">
+                        <label for="checkbox-h-2q">שניידר</label>
+                    </fieldset>
+                </form>
+            </div>
+
+            <div id="start3" hidden="hidden" class="start">
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2r">
+                        <label for="checkbox-h-2r">ארז</label>
+                    </fieldset>
+                </form>
+                <!--<form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2b">
+                        <label for="checkbox-h-2b">קלנדיה</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2c">
+                        <label for="checkbox-h-2c">חיזמה</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2d">
+                        <label for="checkbox-h-2d">ירושלים</label>
+                    </fieldset>
+                </form>-->
+            </div>
+            <div id="end3" hidden="hidden" class="end">
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2s">
+                        <label for="checkbox-h-2s">מרכז</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2t">
+                        <label for="checkbox-h-2t">ירושלים</label>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="kavim2" data-role="page">
+        <div data-role="header">
+
+            <h1>ההעדפות שלי</h1>
+            <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+            </a>
+        </div>
+        <div data-role="content">
+            <div>
+                <p>הסעות ממחסום לבתי חולים</p>
+                <select id="startD" data-icon="false"></select>
+                <label id="hetz">&#129136;</label>
+                <select id="endD" data-icon="false"></select>
+
+                <fieldset data-role="controlgroup" data-type="horizontal" class="ui-grid-a" data-theme="a" style="float: right;margin: 0px 2px;">
+
+                    <input type="checkbox" id="kavim2CB">
+                    <label for="kavim2CB">&#129136;&#129138;</label>
+
+                </fieldset>
+                <a data-role="button" id="addMaslul" data-theme="b">הוסף</a>
+            </div>
+            <br /> <br /><br />
+            <div>
+                <p>הסעות מבית חולים למחסומים</p>
+                <select id="startD2" data-icon="false"></select>
+                <label id="hetz">&#129136;</label>
+                <select id="endD2" data-icon="false"></select>
+
+                <fieldset data-role="controlgroup" data-type="horizontal" class="ui-grid-a" data-theme="a" style="float: right;margin: 0px 2px;">
+
+                    <input type="checkbox" id="kavim2CB2">
+                    <label for="kavim2CB2">&#129136;&#129138;</label>
+
+                </fieldset>
+                <a data-role="button" id="addMaslul2" data-theme="b">הוסף</a>
+            </div>
+
+            <br /><br /><br />
+            <p>המסלולים שלי</p>
+            <ul id="maslulLV" data-role="listview" data-inset="true" data-icon="false" data-theme="a"></ul>
+        </div>
+    </div>
+
+</body>
+</html>

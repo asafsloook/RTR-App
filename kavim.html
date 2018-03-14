@@ -1,0 +1,622 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>בדרך להחלמה</title>
+
+    <meta name="viewport" content="width=360, initial-scale=1">
+
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+    <!-- source libraries for offline debugging -->
+    <!--<link href="src/jquery.mobile-1.4.5.css" rel="stylesheet" />
+    <script src="src/jquery-1.11.1.min.js"></script>
+    <script src="src/jquery.mobile-1.4.5.js"></script>-->
+
+
+    <script src="AjaxCalls.js"></script>
+
+
+    <script>
+
+        //create menu - side panel
+        $(document).one('pagebeforecreate', function () {
+            var panel = '<div data-role="panel" id="mypanel"  data-position="right" data-display="reveal" data-theme="b" class="ui-panel ui-panel-position-right ui-panel-display-reveal ui-body-b ui-panel-animate">'
+                + '<div class="ui-panel-inner">'
+                + '<ul data-role="listview">'
+                + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="kavim1TAB" href="#kavim1" data-theme="b">kavim1 </a> </li>'
+                + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="kavim2TAB" href="#kavim2" data-theme="b">kavim2 </a> </li>'
+                + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-delete">'
+                + '<a href="#" data-rel="close">סגירת התפריט</a>'
+                + '</li>'
+                + '</ul>'
+                + '</div>'
+                + '</div>';
+            $.mobile.pageContainer.prepend(panel);
+            $("#mypanel").panel().enhanceWithin();
+        });
+
+
+        $(document).ready(function () {
+            $('#area').on('change', function () {
+                var i = 0;
+                if ($('#area').val() == "צפון") {
+                    i = 1;
+                }
+                else if ($('#area').val() == "מרכז") {
+                    i = 2;
+                }
+                else {
+                    i = 3;
+                }
+
+                $('#start' + i).show();
+                $('#end' + i).show();
+
+
+                for (var s = 1; s < 4; s++) {
+
+                    if (s != i) {
+                        $('#start' + s).hide();
+                        $('#end' + s).hide();
+                    }
+                }
+            });
+        });
+
+        var json = {
+            'צפון': { 0: 'גלמה', 1: 'ריחן', 2: 'שער אפרים', 3: 'אייל', 4: 'רמבם', 5: 'שיבא', 6: 'אסותא' },
+            'מרכז': { 0: 'אייל', 1: 'אליהו', 2: 'נעלין', 3: 'בית לחם', 4: 'הפרחים', 5: 'תרקומיה', 6: 'וולפסון', 7: 'שיבא', 8: 'איכילוב', 9: 'שניידר' },
+            'דרום': { 0: 'ארז', 1: 'שיבא', 2: 'איכילוב', 3: 'שניידר', 4: 'וולפסון' }
+        }
+
+        var json2 = {
+            'מחסומים': { 0: 'בחר', 1: 'כל מחסום', 2: 'ריחן (צפון)', 3: 'גלמה (צפון)', 4: 'אליהו (מרכז)', 5: 'נעלין (מרכז)', 6: 'בית לחם (מרכז)', 7: 'תרקומיה (מרכז)', 8: 'אייל (מרכז)', 9: 'שער אפרים (מרכז)', 10: 'ארז (דרום)' },
+            'בתי חולים': { 0: 'בחר', 1: 'כל בי"ח', 2: 'רמבם', 3: 'שיבא', 4: 'איכילוב', 5: 'שניידר', 6: 'וולפסון', 7: 'הדסה', 8: 'אסותא' }
+        }
+
+        $(document).ready(function () {
+            print();
+        });
+
+        function print() {
+            $('#startD').empty();
+            $('#endD').empty();
+            $('#startD2').empty();
+            $('#endD2').empty();
+
+            var str = "";
+            var str2 = "";
+
+            for (var i = 0; i < Object.keys(json2['מחסומים']).length; i++) {
+
+                str += "<option>" + json2['מחסומים'][i] + "</option>";
+            }
+
+            for (var i = 0; i < Object.keys(json2['בתי חולים']).length; i++) {
+
+                str2 += "<option>" + json2['בתי חולים'][i] + "</option>";
+            }
+
+            $('#startD').html(str);
+            $('#endD').html(str2);
+            $('#startD2').html(str2);
+            $('#endD2').html(str);
+        }
+
+        routes = [];
+
+
+        $(document).ready(function () {
+            $('#addMaslul').on('click', function () {
+
+                if ($('#startD').val() == 'בחר' || $('#endD').val() == 'בחר') {
+                    alert("עליך להזין מוצא ויעד על מנת להוסיף מסלול חדש");
+                    return;
+                }
+
+                var hetz = '<i class="arrow left"></i>';
+                if ($('#kavim2CB').is(':checked')) {
+                    hetz = '<i class="arrow right"></i><i class="arrow left"></i>';
+                }
+
+                var str = '<li style="height:25px"><p style="font-size:17px;direction:rtl;text-align:right;margin:0">'
+                    + $('#startD').val() + hetz + $('#endD').val()
+                    + '<a style="float:left;border:none;margin:0" href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all itemDelete"></a>'
+
+                    + '</li>';
+
+                var newRoute = $('#startD').val() + hetz + $('#endD').val();
+                if (checkIfExist(newRoute)) {
+                    alert("לא ניתן להוסיף מסלול יותר מפעם אחת");
+                }
+                else {
+                    routes.push(newRoute);
+                    $('#maslulLV').append(str);
+                    $('#maslulLV').listview('refresh');
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            $('#addMaslul2').on('click', function () {
+
+                if ($('#startD2').val() == 'בחר' || $('#endD2').val() == 'בחר') {
+                    alert("עליך להזין מוצא ויעד על מנת להוסיף מסלול חדש");
+                    return;
+                }
+
+                var hetz = '<i class="arrow left"></i>';
+                if ($('#kavim2CB2').is(':checked')) {
+                    hetz = '<i class="arrow right"></i><i class="arrow left"></i>';
+                }
+
+                var str = '<li style="height:25px"><p style="font-size:17px;direction:rtl;text-align:right;margin:0">'
+                    + $('#startD2').val() + hetz + $('#endD2').val()
+                    + '<a style="float:left;border:none;margin:0" href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all itemDelete"></a>'
+
+                    + '</li>';
+
+                newRoute = $('#startD2').val() + hetz + $('#endD2').val();
+                if (checkIfExist(newRoute)) {
+                    alert("לא ניתן להוסיף מסלול יותר מפעם אחת");
+                }
+                else {
+                    routes.push(newRoute);
+                    $('#maslulLV').append(str);
+                    $('#maslulLV').listview('refresh');
+                }
+            });
+        });
+
+        function checkIfExist(newRoute) {
+            for (var i = 0; i < routes.length; i++) {
+                if (newRoute === routes[i]) {
+                    return true;
+                }
+            }
+        }
+
+        $(document).ready(function () {
+            $('#maslulLV').on('click', '.itemDelete', function () {
+
+                var a = $(this).parent()[0].innerHTML;
+
+                var b = a.substring(0, a.indexOf("<a "));
+
+                var tempRoutes = [];
+
+                for (var i = 0; i < routes.length; i++) {
+                    if (b == routes[i]) {
+
+                    }
+                    else {
+                        tempRoutes.push(routes[i]);
+                    }
+                }
+
+                routes = tempRoutes;
+                $(this).parent().parent().remove();
+            });
+        });
+
+
+
+            //checkbox with actual check
+            //px to %
+
+    </script>
+
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet">
+
+    <style>
+        option, select, span, #maslulLV, label {
+            direction: rtl;
+        }
+
+        .ui-listview > .ui-li-static, .ui-listview > .ui-li-divider, .ui-listview > li > a.ui-btn {
+            text-align: right;
+            font-size: 20px;
+        }
+
+        #ridesPH li a, #myRidesPH li a {
+            margin-top: 5px;
+        }
+
+        .ui-li-desc, p, h1, h2, h3 {
+            text-align: center;
+            direction: rtl;
+        }
+
+        #tabs {
+            min-height: 640px;
+        }
+
+        fieldset {
+            text-align: center;
+        }
+
+        #ridesCounter {
+            /*right: 78%;
+            top: 12px;
+            border-radius: 16px;
+            background-color: #660000;*/
+            /*background-color: #fa3e3e;
+            border-radius: 21px;
+            color: white;
+            padding: 1px 3px;
+            font-size: 10px;
+            position: absolute;
+            top: 7px;
+            right: 100px;*/
+        }
+
+        #ridesPH a, #myRidesPH p {
+            text-align: right;
+        }
+
+        #shiftTABS, #myRidesTABS {
+            position: relative;
+            top: 50px;
+        }
+
+        .ui-filterable {
+            position: relative;
+            bottom: 50px;
+        }
+
+        input[data-type="search"] {
+            text-align: right;
+        }
+
+        hr {
+            width: 100%;
+        }
+
+        #deleteMePage, #signMePage, #suggest {
+            text-align: center;
+            padding: 50% 0px;
+        }
+
+
+        #material {
+            bottom: 0;
+            position: fixed !important;
+            top: auto !important;
+            background: none;
+            border: none;
+        }
+
+        .fab {
+            top: -15px;
+            right: -15px;
+            width: 50px;
+            height: 50px;
+            border: none;
+        }
+
+        #area-button, #area2-button {
+            width: 20%;
+            margin: 0 auto;
+        }
+
+        #startD-button, #startD2-button, #endD-button, #endD2-button {
+            float: right;
+            padding: 3% 2%;
+            width: 23%;
+            text-align: center;
+            padding-right: 1%;
+        }
+
+            #startD-button:after, #startD2-button:after, #endD-button:after, #endD2-button:after {
+                left: 5%;
+            }
+
+        #hetz {
+            float: right;
+            margin-top: 4%;
+            margin-left: 2%;
+            margin-right: 1%;
+        }
+
+        .start {
+            float: right;
+            margin-right: 10%;
+        }
+
+        .end {
+            float: left;
+            margin-left: 10%;
+        }
+
+        #kavim2 .ui-checkbox {
+            position: relative;
+            float: right;
+            margin: 0 2%;
+            width: 21%;
+        }
+
+
+            #kavim2 .ui-checkbox label {
+                padding: 15% 1%;
+                margin-right: 4%;
+                text-align: right;
+                padding-right: 7%;
+            }
+
+        #kavim1 .ui-checkbox label {
+            width: 75px;
+            text-align: center;
+        }
+
+        .ui-checkbox #kavim2CB2 {
+            float: right;
+        }
+
+        #addMaslul, #addMaslul2 {
+            max-width: 22%;
+            float: left;
+            margin: 0;
+            padding: 3% 2%;
+        }
+
+        .ui-page-theme-a .ui-btn.ui-btn-active {
+            background-color: #40a551;
+            border-color: #40a551;
+            color: #fff;
+            text-shadow: 0 1px 0 #2a7c38;
+        }
+
+        #kavim1 .ui-select {
+            margin-bottom: 25px;
+        }
+
+        i {
+            border: solid black;
+            border-width: 0 3px 3px 0;
+            display: inline-block;
+            padding: 3px;
+        }
+
+        .right {
+            transform: rotate(-45deg);
+            -webkit-transform: rotate(-45deg);
+            margin-right: 2%
+        }
+
+        .left {
+            transform: rotate(135deg);
+            -webkit-transform: rotate(135deg);
+            margin-left: 2%;
+        }
+
+        .up {
+            transform: rotate(-135deg);
+            -webkit-transform: rotate(-135deg);
+        }
+
+        .down {
+            transform: rotate(45deg);
+            -webkit-transform: rotate(45deg);
+        }
+    </style>
+
+
+
+</head>
+<body>
+
+    <div id="kavim1" data-role="page">
+        <div data-role="header">
+
+            <h1>ההעדפות שלי</h1>
+            <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+            </a>
+        </div>
+        <div data-role="content">
+            <select id="area" data-iconpos="left" style="width:100px;">
+                <option>אזור</option>
+                <option>צפון</option>
+                <option>מרכז</option>
+                <option>דרום</option>
+            </select>
+            <div id="start1" hidden="hidden" class="start">
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2a">
+                        <label for="checkbox-h-2a">ג'למה</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2b">
+                        <label for="checkbox-h-2b">ריחן</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2c">
+                        <label for="checkbox-h-2c">שער אפרים</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2d">
+                        <label for="checkbox-h-2d">אייל</label>
+                    </fieldset>
+                </form>
+            </div>
+            <div id="end1" hidden="hidden" class="end" style="margin-top: 20px;">
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2e">
+                        <label for="checkbox-h-2e">רמבם</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2f">
+                        <label for="checkbox-h-2f">שיבא</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2g">
+                        <label for="checkbox-h-2g">אסותא</label>
+                    </fieldset>
+                </form>
+            </div>
+
+            <div id="start2" hidden="hidden" class="start">
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2h">
+                        <label for="checkbox-h-2h">אייל</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2i">
+                        <label for="checkbox-h-2i">אליהו</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2j">
+                        <label for="checkbox-h-2j">הפרחים</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2k">
+                        <label for="checkbox-h-2k">נעלין</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2l">
+                        <label for="checkbox-h-2l">תרקומיה</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2m">
+                        <label for="checkbox-h-2m">בית לחם</label>
+                    </fieldset>
+                </form>
+            </div>
+            <div id="end2" hidden="hidden" class="end" style="margin-top: 40px;">
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2n">
+                        <label for="checkbox-h-2n">שיבא</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2o">
+                        <label for="checkbox-h-2o">וולפסון</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2p">
+                        <label for="checkbox-h-2p">איכילוב</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2q">
+                        <label for="checkbox-h-2q">שניידר</label>
+                    </fieldset>
+                </form>
+            </div>
+
+            <div id="start3" hidden="hidden" class="start">
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2r">
+                        <label for="checkbox-h-2r">ארז</label>
+                    </fieldset>
+                </form>
+                <!--<form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2b">
+                        <label for="checkbox-h-2b">קלנדיה</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2c">
+                        <label for="checkbox-h-2c">חיזמה</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2d">
+                        <label for="checkbox-h-2d">ירושלים</label>
+                    </fieldset>
+                </form>-->
+            </div>
+            <div id="end3" hidden="hidden" class="end">
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2s">
+                        <label for="checkbox-h-2s">מרכז</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2t">
+                        <label for="checkbox-h-2t">ירושלים</label>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="kavim2" data-role="page">
+        <div data-role="header">
+
+            <h1>ההעדפות שלי</h1>
+            <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+            </a>
+        </div>
+        <div data-role="content" style=" padding-top: 0;">
+            <div>
+                <p>הסעות ממחסום לבתי חולים</p>
+                <select id="startD" data-icon="false"></select>
+                <label id="hetz"><i class="arrow left"></i></label>
+                <select id="endD" data-icon="false"></select>
+
+
+                <label>
+                    <input type="checkbox" id="kavim2CB"><i class="arrow right"></i><i class="arrow left"></i>
+                </label>
+
+                <a data-role="button" id="addMaslul" data-theme="b">הוסף</a>
+            </div>
+            <br /> <br /><br />
+            <div>
+                <p style="margin-top:2%">הסעות מבית חולים למחסומים</p>
+                <select id="startD2" data-icon="false"></select>
+                <label id="hetz"><i class="arrow left"></i></label>
+                <select id="endD2" data-icon="false"></select>
+
+                <label>
+                    <input type="checkbox" id="kavim2CB2"><i class="arrow right"></i><i class="arrow left"></i>
+                </label>
+
+                <a data-role="button" id="addMaslul2" data-theme="b">הוסף</a>
+            </div>
+
+            <br /><br />
+            <p>המסלולים שלי <img src="https://cdn2.iconfinder.com/data/icons/road-and-navigation/180/02-512.png" height="40" /></p>
+            <ul id="maslulLV" data-role="listview" data-inset="true" data-icon="false" data-theme="a"></ul>
+        </div>
+    </div>
+</body>
+</html>
