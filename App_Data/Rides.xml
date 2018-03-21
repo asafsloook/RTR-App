@@ -12,11 +12,11 @@
   <ride id="10" DateTime="04/04/2018 06:00" Shift="בוקר" Area="דרום" StartAt="ארז" EndAt="מרכז" Person="מוחמד ג'אוול" Melave1="יסמין ג'אוול" Melave2="אחמד ג'אוול"></ride>
   <ride id="11" DateTime="04/04/2018 06:00" Shift="בוקר" Area="דרום" StartAt="ארז" EndAt="מרכז" Person="מוחמד ג'אוול" Melave1="יסמין ג'אוול" Melave2="אחמד ג'אוול"></ride>
   <ride id="12" DateTime="04/04/2018 06:00" Shift="בוקר" Area="דרום" StartAt="ארז" EndAt="מרכז" Person="מוחמד ג'אוול" Melave1="יסמין ג'אוול" Melave2="אחמד ג'אוול"></ride>
-  <ride id="13" DateTime="05/04/2018 06:00" Shift="בוקר" Area="דרום" StartAt="ארז" EndAt="ירושלים" Person="יסמין עלי" driverID="0528077973"></ride>
-  <ride id="14" DateTime="05/04/2018 06:00" Shift="בוקר" Area="דרום" StartAt="ארז" EndAt="ירושלים" Person="מוחמד ג'אוול" Melave1="יסמין ג'אוול" Melave2="עלי ג'אוול" driverID="0528077973"></ride>
+  <ride id="13" DateTime="05/04/2018 06:00" Shift="בוקר" Area="דרום" StartAt="ארז" EndAt="ירושלים" Person="יסמין עלי"></ride>
+  <ride id="14" DateTime="05/04/2018 06:00" Shift="בוקר" Area="דרום" StartAt="ארז" EndAt="ירושלים" Person="מוחמד ג'אוול" Melave1="יסמין ג'אוול" Melave2="עלי ג'אוול"></ride>
   <ride id="15" DateTime="06/04/2018 06:00" Shift="אחהצ" Area="דרום" StartAt="ירושלים" EndAt="ארז" Person="מוחמד ג'אוול" Melave1="יסמין ג'אוול" Melave2="אחמד ג'אוול"></ride>
   <ride id="16" DateTime="11/04/2018 06:00" Shift="בוקר" Area="דרום" StartAt="ארז" EndAt="מרכז" Person="מוחמד ג'אוול" Melave1="יסמין ג'אוול" Melave2="אחמד ג'אוול"></ride>
-  <ride id="17" DateTime="12/04/2018 16:00" Shift="אחהצ" Area="מרכז" StartAt="שיבא" EndAt="אייל" Person="מוחמד ג'אוול" Melave1="יסמין ג'אוול" Melave2="אחמד ג'אוול"></ride>
+  <ride id="17" DateTime="12/04/2018 16:00" Shift="אחהצ" Area="מרכז" StartAt="שיבא" EndAt="אייל" Person="מוחמד ג'אוול" Melave1="יסמין ג'אוול" Melave2="אחמד ג'אוול" driverID="0528077973"></ride>
   <ride id="18" DateTime="13/04/2018 06:00" Shift="בוקר" Area="דרום" StartAt="ארז" EndAt="ירושלים" Person="יסמין עלי"></ride>
   <ride id="19" DateTime="14/04/2018 16:00" Shift="אחהצ" Area="דרום" StartAt="ירושלים" EndAt="ארז" Person="מוחמד ג'אוול" Melave1="יסמין ג'אוול" Melave2="עלי ג'אוול"></ride>
   <ride id="20" DateTime="25/03/2018 16:00" Shift="אחהצ" Area="דרום" StartAt="ירושלים" EndAt="ארז" Person="מוחמד ג'אוול" Melave1="יסמין ג'אוול" Melave2="עלי ג'אוול"></ride>

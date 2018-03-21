@@ -193,10 +193,10 @@ public class ajaxWebService : System.Web.Services.WebService
     {
         
         //testing user not exist
-        //var test = false;
+        var test = false;
 
         //testing user exist
-        var test = true;
+        //var test = true;
 
 
         //if the volneteer exist
@@ -210,9 +210,8 @@ public class ajaxWebService : System.Web.Services.WebService
         //if the volneteer not exist
         else
         {
-            return null;
+            return "none";
         }
     }
-
     
 }

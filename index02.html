@@ -47,18 +47,33 @@
 
 
         //success call back function for get rides
-        function GetRidesSuccessCB(resutls) {
+        function GetRidesSuccessCB(results) {
 
-            var resutls = $.parseJSON(resutls.d)
+            var results = $.parseJSON(results.d)
 
-            //get milliseconds from server date structure
-            for (var i = 0; i < resutls.length; i++) {
-                resutls[i].DateTime = parseInt(resutls[i].DateTime.replace('/Date(', ''));
+            //from server structure to client structure (fields)
+            for (var i = 0; i < results.length; i++) {
+
+                results[i].Id = results[i].RidePatNum;
+                results[i].DateTime = parseInt(results[i].Date.replace('/Date(', ''));
+                results[i].StartPoint = results[i].StartPlace.Name;
+                results[i].EndPoint = results[i].Target.Name;
+
+                if (results[i].Shift == "אחר צהריים") {
+                    results[i].Shift = "אחהצ";
+                }
+
+                results[i].Person = results[i].Pat.DisplayName;
+
+                results[i].Melave = [];
+                for (var j = 0; j < results[i].Pat.EscortedList.length; j++) {
+                    results[i].Melave.push(results[i].Pat.EscortedList[j].DisplayName);
+                }
             }
 
-            rides = resutls;
+            rides = results;
 
-            //printRides(resutls, 4);
+            //printRides(results, 4);
         }
 
         //error call back function for get rides
@@ -68,16 +83,16 @@
 
 
         //success call back function for get my rides
-        function GetMyRidesSuccessCB(resutls) {
+        function GetMyRidesSuccessCB(results) {
 
-            var resutls = $.parseJSON(resutls.d);
+            var results = $.parseJSON(results.d);
 
             //convert server date structure to milliseconds
-            for (var i = 0; i < resutls.length; i++) {
-                resutls[i].DateTime = parseInt(resutls[i].DateTime.replace('/Date(', ''));
+            for (var i = 0; i < results.length; i++) {
+                results[i].DateTime = parseInt(results[i].DateTime.replace('/Date(', ''));
             }
 
-            myRides = resutls;
+            myRides = results;
 
             //printMyRides(myRides);
         }
@@ -89,6 +104,7 @@
 
         //print my rides
         function printMyRides(myRides) {
+            $("#myRidesPH").empty();
 
             //sort result by datetime
             myRides.sort(function (a, b) {
@@ -129,7 +145,7 @@
                 + '  onClick="delInfo(' + myRides[i].Id + ')">'
                 + '<p>יום ' + day
                 + '  &nbsp; ' + myDate.getDate() + "/" + (myDate.getMonth() + 1)
-                + ' &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ' + myRides[i].StartPoint + '  &#129136;  '
+                + ' &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ' + myRides[i].StartPoint + '  <i class="fa fa-arrow-left"></i>  '
                 + myRides[i].EndPoint + '</p>'
                 + '<p>'
                 + myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1")
@@ -147,7 +163,6 @@
         }
 
 
-
         //filter past/plan rides from myRides list
         function filterMyRides(myRide) {
 
@@ -161,12 +176,8 @@
 
             }
             //planTAB is checked, meaning we are in the planned rides section
-            else if (rideDateMillisec > nowMillisec && $('#planTAB').prop("class").indexOf("ui-btn-active") != -1) {
-
-            }
-            else {
-                pastRide = false;
-            }
+            else if (rideDateMillisec > nowMillisec && $('#planTAB').prop("class").indexOf("ui-btn-active") != -1) { }
+            else { pastRide = false; }
             return pastRide;
         }
 
@@ -208,7 +219,7 @@
         function deleteRideSuccessCB() {
 
             var request = {
-                id: "0528077973",
+                id: userInfo.Id,
             }
             //for refreshing my rides after the delete
             GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB);
@@ -266,18 +277,18 @@
         }
 
         //check for multiple rides in the same day for the listview item header
-        function doRideHeader(resutls, i) {
+        function doRideHeader(results, i) {
 
             var startPointStr = "&nbsp;&nbsp;";
             var ridesInDayCounter = 1;
-            for (var s = 0; s < resutls.length; s++) {
-                if ((new Date(resutls[i].DateTime)).toLocaleDateString() == (new Date(resutls[s].DateTime)).toLocaleDateString()) {
+            for (var s = 0; s < results.length; s++) {
+                if ((new Date(results[i].DateTime)).toLocaleDateString() == (new Date(results[s].DateTime)).toLocaleDateString()) {
 
-                    if (startPointStr.indexOf(resutls[s].StartPoint) == -1) {
-                        startPointStr += resutls[s].StartPoint + '(1) , ';
+                    if (startPointStr.indexOf(results[s].StartPoint) == -1) {
+                        startPointStr += results[s].StartPoint + '(1) , ';
                     }
                     else {
-                        startPointStr = startPointStr.replace(resutls[s].StartPoint + '(' + (ridesInDayCounter) + ')', resutls[s].StartPoint + '(' + (++ridesInDayCounter) + ')');
+                        startPointStr = startPointStr.replace(results[s].StartPoint + '(' + (ridesInDayCounter) + ')', results[s].StartPoint + '(' + (++ridesInDayCounter) + ')');
                     }
                 }
                 else {
@@ -296,12 +307,12 @@
         }
 
         //decide if week spacer: <hr>, is required
-        function weekSpace(resutls, i) {
+        function weekSpace(results, i) {
             str = "";
-            if (i < resutls.length - 1 && i != 0) {
+            if (i < results.length - 1 && i != 0) {
 
-                var dateThis = new Date(resutls[i].DateTime);
-                var dateBefore = new Date(resutls[i - 1].DateTime);
+                var dateThis = new Date(results[i].DateTime);
+                var dateBefore = new Date(results[i - 1].DateTime);
 
                 if (dateThis.getWeek() > dateBefore.getWeek()) {
                     str += '<hr style="border-style:dashed;">';
@@ -324,19 +335,19 @@
         }
 
         //create the ride content inside the listview item
-        function ListItemRide(resutls, i) {
+        function ListItemRide(results, i) {
 
             str = '<a style="float:left;border:none;margin: 8% 3%;" id="pop' + i + '" href="#signMePage"'
                 + 'class="ui-btn ui-icon-edit ui-btn-icon-notext ui-corner-all"'
-                + '  onClick="info(' + resutls[i].Id + ')">' + "</a>"
+                + '  onClick="info(' + results[i].Id + ')">' + "</a>"
 
-                + '<p style="padding: 4% 0;float: left;margin-left: 20%;text-align: right;">' + resutls[i].StartPoint + ' &#129136; ' //&#11164; &#129144;
-                + '' + resutls[i].EndPoint
+                + '<p style="padding: 4% 0;float: left;margin-left: 20%;text-align: right;">' + results[i].StartPoint + ' <i class="fa fa-arrow-left"></i> ' //&#11164; &#129144;
+                + '' + results[i].EndPoint
 
-                + '<br/>' + resutls[i].Person;
+                + '<br/>' + results[i].Person;
 
-            if (resutls[i].Melave.length > 0) {
-                str += " +" + (resutls[i].Melave.length)
+            if (results[i].Melave.length > 0) {
+                str += " +" + (results[i].Melave.length)
             }
             str += '</p>';
 
@@ -381,29 +392,29 @@
 
 
         //print the rides
-        function printRides(resutls, numOfWantedSeats) {
+        function printRides(results, numOfWantedSeats) {
             $("#ridesPH").empty();
             var str = "";
             ridesCounter = 0;
 
             //filter rides
-            var resutls = filterRides(resutls);
+            var results = filterRides(results);
 
-            resutls.sort(sortFunc);
+            results.sort(sortFunc);
 
-            for (var i = 0; i < resutls.length; i++) {
+            for (var i = 0; i < results.length; i++) {
 
                 //heading for rides in the same day
-                var startPointStr = doRideHeader(resutls, i);
+                var startPointStr = doRideHeader(results, i);
 
 
-                var myDate = new Date(resutls[i].DateTime);
+                var myDate = new Date(results[i].DateTime);
 
                 if (i == 0) {
-                    lastDate = resutls[i].DateTime;
+                    lastDate = results[i].DateTime;
                 }
                 else {
-                    lastDate = resutls[i - 1].DateTime;
+                    lastDate = results[i - 1].DateTime;
                 }
 
                 var checkDate = new Date(lastDate);
@@ -414,7 +425,7 @@
                         str += "</li>";
 
                         //space between rides in different weeks  <hr>
-                        str += weekSpace(resutls, i);
+                        str += weekSpace(results, i);
 
                     }
 
@@ -424,12 +435,12 @@
                 }
 
                 //create the content of one ride
-                str += ListItemRide(resutls, i);
+                str += ListItemRide(results, i);
 
                 ridesCounter++;
 
                 //filter by seats
-                //if (numOfWantedSeats < (resutls[i].Melave.length) + 1) {
+                //if (numOfWantedSeats < (results[i].Melave.length) + 1) {
                 //    continue;
                 //}
 
@@ -490,13 +501,13 @@
 
         }
 
-        function signDriverSuccessCB(resutls) {
+        function signDriverSuccessCB(results) {
 
 
             getRidesList();
 
             var request = {
-                id: "0528077973",
+                id: userInfo.Id,
             }
             //for refreshing my rides after signing to new ride
             GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB);
@@ -565,39 +576,39 @@
         });
 
         //check for suited rides with the ride that chosen
-        function checkRides(resutls, id) {
+        function checkRides(results, id) {
             suitedArr = [];
             var HaveSuitedRides = false;
 
-            for (var i = 0; i < resutls.length; i++) {
+            for (var i = 0; i < results.length; i++) {
 
-                var rideDate = new Date(resutls[i].DateTime);
+                var rideDate = new Date(results[i].DateTime);
                 var chooseRideDate = new Date(ride.DateTime);
 
                 if (rideDate.toDateString() != chooseRideDate.toDateString()) {
                     continue;
                 }
-                if (resutls[i].Id == idChoose) {
+                if (results[i].Id == idChoose) {
                     continue;
                 }
-                if (ride.Shift != resutls[i].Shift) {
+                if (ride.Shift != results[i].Shift) {
                     continue;
                 }
-                if (ride.Area != resutls[i].Area) {
+                if (ride.Area != results[i].Area) {
                     continue;
                 }
-                if (ride.StartPoint != resutls[i].StartPoint) {
+                if (ride.StartPoint != results[i].StartPoint) {
                     continue;
                 }
-                if (ride.EndPoint != resutls[i].EndPoint) {
+                if (ride.EndPoint != results[i].EndPoint) {
                     continue;
                 }
-                if (availibleSeats < (resutls[i].Melave.length + 1)) {
+                if (availibleSeats < (results[i].Melave.length + 1)) {
                     continue;
                 }
 
                 HaveSuitedRides = true;
-                suitedArr.push(resutls[i]);
+                suitedArr.push(results[i]);
             }
 
             return HaveSuitedRides;
@@ -609,12 +620,6 @@
         $(document).on('pagebeforeshow', '#signMePage', function () {
 
             $("#okBTN").on("click", function () {
-
-                var request = {
-                    id: idChoose
-                };
-
-                signDriver(request, signDriverSuccessCB, signDriverErrorCB);
 
                 //get the ride that the volenteer sign to, by id
                 for (var i = 0; i < rides.length; i++) {
@@ -643,12 +648,19 @@
 
             availibleSeats = maxSeats - totalPassengers;
 
-            getRidesList();
-
             var haveRides = false;
 
             if (checkRides(rides, idChoose)) {
                 haveRides = true;
+            }
+            else {
+                var request = {
+                    ridePatId: idChoose,
+                    ridePatId2: -1,
+                    driverId: userInfo.Id
+                };
+
+                signDriver(request, signDriverSuccessCB, signDriverErrorCB);
             }
 
             var str = createSuggestPage(haveRides, ride);
@@ -725,14 +737,14 @@
             $("#suggestOkBTN").on("click", function () {
 
                 if (suitedArr.length > 0) {
-                    idChoose = parseInt(suitedArr[0].Id);
-
+                    idChoose2 = parseInt(suitedArr[0].Id);
+                    var request = {
+                        ridePatId: idChoose,
+                        ridePatId2: idChoose2,
+                        driverId: userInfo.Id
+                    };
+                    signDriver(request, signDriverSuccessCB, signDriverErrorCB);
                 }
-                var request = {
-                    id: idChoose
-                };
-
-                signDriver(request, signDriverSuccessCB, signDriverErrorCB);
 
                 setTimeout(function () {
                     $.mobile.changePage("#myRides", { transition: "fade", changeHash: true });
@@ -784,12 +796,11 @@
         //click on doneTAB or planTAB
         $(document).on('pagebeforeshow', '#myRides', function () {
 
-            if ($('#doneTAB').prop("class").indexOf("ui-btn-active") == -1 && $('#planTAB').prop("class").indexOf("ui-btn-active") == -1) {
-                $('#planTAB').addClass("ui-btn-active");
-                $('#planTAB').click();
+            if ($('#doneTAB').prop("class").indexOf("ui-btn-active") != -1 || $('#planTAB').prop("class").indexOf("ui-btn-active") != -1) {
                 printMyRides(myRides);
             }
             else {
+                $('#planTAB').addClass("ui-btn-active");
                 printMyRides(myRides);
             }
 
@@ -934,9 +945,9 @@
         $(document).on('pagebeforeshow', '#kavim2', function () {
             $('#addMaslul').on('click', function () {
 
-                var hetz = ' &#129136; ';
+                var hetz = ' <i class="fa fa-arrow-left"></i> ';
                 if ($('#kavim2CB').is(':checked')) {
-                    hetz = ' &#129138;&#129136; ';
+                    hetz = ' <i class="fa fa-arrow-right"></i><i class="fa fa-arrow-left"></i> ';
                 }
 
                 var str = '<li style="height:25px"><p style="font-size:18px;direction:rtl;text-align:right;margin:0">'
@@ -950,9 +961,9 @@
 
             $('#addMaslul2').on('click', function () {
 
-                var hetz = ' &#129136; ';
+                var hetz = ' <i class="fa fa-arrow-left"></i> ';
                 if ($('#kavim2CB2').is(':checked')) {
-                    hetz = ' &#129138;&#129136; ';
+                    hetz = ' <i class="fa fa-arrow-right"></i><i class="fa fa-arrow-left"></i> ';
                 }
 
                 var str = '<li style="height:25px"><p style="font-size:18px;direction:rtl;text-align:right;margin:0">'
@@ -1001,11 +1012,21 @@
         $(document).on('pagebeforeshow', '#loginLogo', function () {
 
             //for testing first time process
-            //localStorage.firstTime = undefined;
+            localStorage.clear();
 
             if (isAndroid()) {
 
-                var cellphone = readPhoneNumber();
+                var cellphone;
+
+                if (localStorage.cellphone == null) {
+                    cellphone = readPhoneNumber();
+                    localStorage.cellphone = cellphone;
+                }
+                else {
+                    cellphone = localStorage.cellphone;
+                }
+
+
                 checkUserPN(cellphone);
             }
             else {
@@ -1017,7 +1038,7 @@
 
         function checkUserPN(cellphone) {
             var request = {
-                id: cellphone
+                mobile: cellphone
             }
             checkUser(request, checkUserSuccessCB, checkUserErrorCB);
         }
@@ -1025,7 +1046,6 @@
 
         $(document).on('pagebeforeshow', '#loginFailed', function () {
 
-            manualLogin();
 
             $('#userPnBTN').on('click', function () {
 
@@ -1034,7 +1054,7 @@
                 localStorage.cellphone = cellphone;
 
                 var request = {
-                    id: cellphone
+                    mobile: cellphone
                 }
                 checkUser(request, checkUserSuccessCB, checkUserErrorCB);
             });
@@ -1044,28 +1064,24 @@
 
         function manualLogin() {
 
-            if (localStorage.firstTime == undefined) {
-                localStorage.firstTime = "no";
-                //first time login
-                //wait for pn insert
+            var cellphone;
+
+            if (localStorage.cellphone == null) {
+                setTimeout(function () {
+                    $.mobile.changePage("#loginFailed", { transition: "fade", changeHash: true });
+                    return;
+                }, 1500);
             }
             else {
-                //else times login
-                var cellphone = localStorage.cellphone;
+                cellphone = localStorage.cellphone;
                 checkUserPN(cellphone);
             }
-
         }
 
 
         function readPhoneNumber() {
 
-            var cellphone = "0528077973";
-
-            //read only once in android and then save it?
-            //or, read it from android every time?
-            //localStorage.cellphone = cellphone;
-
+            var cellphone = "052-8077973";
             return cellphone;
         }
 
@@ -1078,28 +1094,32 @@
         }
 
 
-        function checkUserSuccessCB(resutls) {
+        function checkUserSuccessCB(results) {
 
-            var resutls = $.parseJSON(resutls.d);
-
-            //for testing unassaigned user
-            //userInfo = null;
-
-            //for testing assaigned user
-            userInfo = resutls;
-
-            if (userInfo == null || userInfo == undefined) {
+            //unassaigned user
+            if (results.d == "none") {
+                //send request for volunteer
                 setTimeout(function () {
-                    $.mobile.changePage("#rtrInfo", { transition: "fade", changeHash: true });
+                    $.mobile.changePage("#volunteerRequest", { transition: "fade", changeHash: true });
                 }, 1500);
             }
+            //assaigned user
             else {
+
+                var results = $.parseJSON(results.d);
+
+                userInfo = results;
+                localStorage.userId = userInfo.Id;
+                //get personal info: name, photo, address etc.
+                //get preferences
+                //get number of seats in the car
+
                 //get all rides
                 getRidesList();
 
                 //getMyRides
                 var request = {
-                    id: "0528077973",
+                    id: userInfo.Id,
                 }
                 GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB);
 
@@ -1113,13 +1133,23 @@
 
 
         function checkUserErrorCB(e) {
-            setTimeout(function () {
-                $.mobile.changePage("#loginFailed", { transition: "fade", changeHash: true });
-            }, 1500);
+            alert("error in checkUser");
         }
 
 
-
+        $(window).load(function () {
+            var phones = [{ "mask": "###-#######" }];
+            $('#phoneTB').inputmask({
+                mask: phones,
+                greedy: false,
+                definitions: { '#': { validator: "[0-9]", cardinality: 1 } }
+            });
+            $('#userPnTB').inputmask({
+                mask: phones,
+                greedy: false,
+                definitions: { '#': { validator: "[0-9]", cardinality: 1 } }
+            });
+        });
     </script>
 
 
@@ -1283,7 +1313,7 @@
             margin-bottom: 20%;
         }
 
-        #rtrInfo, #loginFailed {
+        #rtrInfo, #loginFailed, #volunteerRequest {
             text-align: center;
             margin-top: 5%;
         }
@@ -1293,7 +1323,7 @@
                 margin-bottom: 0;
             }
 
-            #rtrInfo a {
+            #rtrInfo a, #volunteerRequest a {
                 text-decoration: none;
             }
 
@@ -1308,10 +1338,25 @@
                 margin-top: 7%;
             }
 
-            #loginFailed p {
+            #loginFailed p, #volunteerRequest p {
                 margin: 10%;
             }
+
+        #phoneTB {
+            text-align: left;
+        }
+        #nameTB {
+            text-align: right;
+        }
+        #volunteerRequest table{
+            margin:5%
+        }
+        #volunteerRequest table td{
+            padding:5%;
+        }
     </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.1.62/jquery.inputmask.bundle.js"></script>
 
 </head>
 <body>
@@ -1321,13 +1366,15 @@
         <p style="margin-top: 30%;">מהדורה מספר 1, מתאריך 04/2018</p>
     </div>
 
+
     <div data-role="page" id="loginFailed">
         <img src="Images/logo.png" />
         <p style="margin-top: 30%;">ההתחברות נכשלה</p>
         <p>אנא הכנס את מספר הטלפון שלך כדי שנוכל לזהות את חשבונך</p>
-        <input id="userPnTB" type="text" placeholder="052555...." />
+        <input id="userPnTB" type="text" />
         <a id="userPnBTN" data-role="button">התחבר</a>
     </div>
+
 
     <div data-role="page" id="loginPreference">
         <h6>התחברת בהצלחה</h6>
@@ -1338,6 +1385,8 @@
 
 
     <div id="rtrInfo" data-role="page">
+        <a data-rel="back" style="float:left;border:none;margin:0;margin-left:2%" href="#" class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"></a>
+
         <img src="Images/logo.png" />
         <p>
             הסכסוך הישראלי-פלסטיני הוא עמוק ובעל הסטוריה עקובה מדם. "בדרך להחלמה" מנסה לגשר על התהום הפעורה בין האנשים משני צדי הגבול עם חזון של תקווה, אחווה אנושית וחמלה.
@@ -1353,6 +1402,46 @@
         <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
             <div class="paypal-donations"><input type="hidden" name="cmd" value="_donations"><input type="hidden" name="business" value="roadtorecovery10@gmail.com"><input type="hidden" name="item_name" value="Our operation is funded by donations only. Any amount you might be willing to contribute will be greatly appreciated!"><input type="hidden" name="currency_code" value="USD"><input type="image" src="http://www.roadtorecovery.org.il/wp-content/uploads/2017/06/Donate_car.jpg" name="submit" alt="PayPal - The safer, easier way to pay online."><img alt="" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1"></div>
         </form>
+    </div>
+
+
+    <div id="volunteerRequest" data-role="page">
+        <img src="Images/logo.png" />
+        
+        <p>
+            אנחנו מצטערים שההתחברות נכשלה,
+            בירור סטטוס ההרשמה שלך מול העמותה
+            <br>
+            052-555555555555
+            <br /> <br />
+            או, אנא הכנס את פרטיך ואחד מעובדי העמותה ייצור עמך קשר.
+        </p>
+        
+        <table>
+            <tr>
+                <td>
+                    <input type="text" id="nameTB" />
+                </td>
+                <td>
+                    <label>שם מלא</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" id="phoneTB" />
+                </td>
+                <td>
+                    <label>מספר טלפון נייד</label>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <a href="#" style="margin:0" class="ui-btn ui-btn-inline ui-icon-check ui-btn-icon-right">שלח</a>
+                </td>
+            </tr>
+        </table>
+        <br>
+        <a href="#rtrInfo">עוד על העמותה</a>
     </div>
 
 
@@ -1690,13 +1779,13 @@
             <div>
                 <p>הסעות ממחסום לבתי חולים</p>
                 <select id="startD" data-icon="false"></select>
-                <label id="hetz">&#129136;</label>
+                <label id="hetz"><i class="fa fa-arrow-left"></i></label>
                 <select id="endD" data-icon="false"></select>
 
                 <fieldset data-role="controlgroup" data-type="horizontal" class="ui-grid-a" data-theme="a" style="float: right;margin: 0px 2px;">
 
                     <input type="checkbox" id="kavim2CB">
-                    <label for="kavim2CB">&#129136;&#129138;</label>
+                    <label for="kavim2CB"><i class="fa fa-arrow-left"></i><i class="fa fa-arrow-right"></i></label>
 
                 </fieldset>
                 <a data-role="button" id="addMaslul" data-theme="b">הוסף</a>
@@ -1705,13 +1794,13 @@
             <div>
                 <p>הסעות מבית חולים למחסומים</p>
                 <select id="startD2" data-icon="false"></select>
-                <label id="hetz">&#129136;</label>
+                <label id="hetz"><i class="fa fa-arrow-left"></i></label>
                 <select id="endD2" data-icon="false"></select>
 
                 <fieldset data-role="controlgroup" data-type="horizontal" class="ui-grid-a" data-theme="a" style="float: right;margin: 0px 2px;">
 
                     <input type="checkbox" id="kavim2CB2">
-                    <label for="kavim2CB2">&#129136;&#129138;</label>
+                    <label for="kavim2CB2"><i class="fa fa-arrow-left"></i><i class="fa fa-arrow-right"></i></label>
 
                 </fieldset>
                 <a data-role="button" id="addMaslul2" data-theme="b">הוסף</a>
