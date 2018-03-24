@@ -7,7 +7,7 @@ function GetRides(request, GetRidesSuccessCB, GetRidesErrorCB) {
     var dataString = JSON.stringify(request);
 
     $.ajax({ // ajax call starts
-        url: 'WebService.asmx/GetRidePat',
+        url: 'WebService.asmx/GetRidePatView',
         data: dataString,                          // the parameters sent to the server
         type: 'POST',                              // can be also GET
         dataType: 'json',                          // expecting JSON datatype from the server
@@ -23,7 +23,7 @@ function GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB) {
     var dataString = JSON.stringify(request);
 
     $.ajax({ // ajax call starts
-        url: 'ajaxWebService.asmx/GetMyRides',   // server side web service method
+        url: 'WebService.asmx/getMyRides',   // server side web service method
         data: dataString,                          // the parameters sent to the server
         type: 'POST',                              // can be also GET
         dataType: 'json',                          // expecting JSON datatype from the server
@@ -57,7 +57,7 @@ function deleteRide(request, deleteRideSuccessCB, deleteRideErrorCB) {
     var dataString = JSON.stringify(request);
 
     $.ajax({ // ajax call starts
-        url: 'ajaxWebService.asmx/deleteRide',   // server side web service method
+        url: 'WebService.asmx/DeleteDriver',   // server side web service method
         data: dataString,                          // the parameters sent to the server
         type: 'POST',                              // can be also GET
         dataType: 'json',                          // expecting JSON datatype from the server

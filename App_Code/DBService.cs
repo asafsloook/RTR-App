@@ -70,7 +70,6 @@ public class DbService
         int row_affected = 0;
         using (con)
         {
-
             con.Open();
             tran = con.BeginTransaction();
 
@@ -125,21 +124,5 @@ public class DbService
         return res;
     }
 
-    public DataTable getRidePat()
-    {
-        string cmdStr = "select * from RidePat";
-        DataSet ds = new DataSet();
-        try
-        {
-            adp = new SqlDataAdapter(cmdStr, con);
-
-            adp.Fill(ds, "RidePat");
-
-        }
-        catch (Exception e)
-        {
-            e.Message.ToString();
-        }
-        return ds.Tables["RidePAt"];
-    }
+   
 }

@@ -40,7 +40,7 @@
         //call the ajax function to import the rides list
         function getRidesList() {
             var request = {
-                test: "test"
+                volunteerId: parseInt(localStorage.userId)
             }
             GetRides(request, GetRidesSuccessCB, GetRidesErrorCB);
         }
@@ -49,9 +49,21 @@
         //success call back function for get rides
         function GetRidesSuccessCB(results) {
 
-            var results = $.parseJSON(results.d)
+            var results = $.parseJSON(results.d);
 
-            //from server structure to client structure (fields)
+            results = toClientStructure(results);
+
+            rides = results;
+
+            //printRides(results, 4);
+        }
+
+
+        //from server structure to client structure (fields)
+        function toClientStructure(before) {
+
+            var results = before;
+
             for (var i = 0; i < results.length; i++) {
 
                 results[i].Id = results[i].RidePatNum;
@@ -70,10 +82,7 @@
                     results[i].Melave.push(results[i].Pat.EscortedList[j].DisplayName);
                 }
             }
-
-            rides = results;
-
-            //printRides(results, 4);
+            return results;
         }
 
         //error call back function for get rides
@@ -87,10 +96,7 @@
 
             var results = $.parseJSON(results.d);
 
-            //convert server date structure to milliseconds
-            for (var i = 0; i < results.length; i++) {
-                results[i].DateTime = parseInt(results[i].DateTime.replace('/Date(', ''));
-            }
+            results = toClientStructure(results);
 
             myRides = results;
 
@@ -204,7 +210,8 @@
             }
 
             request = {
-                id: idDeleteChoose
+                ridePatId: idDeleteChoose,
+                driverId: localStorage.userId
             }
         }
         //delete ride with the request from the function above
@@ -219,7 +226,7 @@
         function deleteRideSuccessCB() {
 
             var request = {
-                id: userInfo.Id,
+                volunteerId: userInfo.Id
             }
             //for refreshing my rides after the delete
             GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB);
@@ -228,7 +235,7 @@
 
             setTimeout(function () {
                 $.mobile.changePage("#myRides", { transition: "fade", changeHash: true });
-            }, 100);
+            }, 500);
         }
 
         //error call back function for delete ride
@@ -391,6 +398,23 @@
         }
 
 
+        function filterByTextInput(results) {
+
+            var filteredRides = [];
+            var input = $('#signMe .ui-filterable input').val();
+
+            for (var i = 0; i < results.length; i++) {
+
+                if (results[i].StartPoint.indexOf(input) != -1 || results[i].EndPoint.indexOf(input) != -1 || results[i].Person.indexOf(input) != -1) {
+                    filteredRides.push(results[i]);
+                }
+            }
+
+            return filteredRides;
+
+        }
+
+
         //print the rides
         function printRides(results, numOfWantedSeats) {
             $("#ridesPH").empty();
@@ -399,6 +423,11 @@
 
             //filter rides
             var results = filterRides(results);
+
+            //filter by input
+            if ($('#signMe .ui-filterable input').val() != "") {
+                results = filterByTextInput(results);
+            }
 
             results.sort(sortFunc);
 
@@ -504,18 +533,23 @@
         function signDriverSuccessCB(results) {
 
 
-            getRidesList();
+            //getRidesList();
 
             var request = {
-                id: userInfo.Id,
+                volunteerId: userInfo.Id
             }
             //for refreshing my rides after signing to new ride
             GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB);
 
-            //set plan tab as active
-            $('#planTAB').click();
 
-            setTimeout(function () { }, 100);
+
+            setTimeout(function () {
+                $.mobile.changePage("#myRides", { transition: "fade", changeHash: true });
+                //set plan tab as active
+                $('#planTAB').click();
+            }
+                , 500);
+
         }
 
         //error call back function for get rides
@@ -657,7 +691,8 @@
                 var request = {
                     ridePatId: idChoose,
                     ridePatId2: -1,
-                    driverId: userInfo.Id
+                    driverId: userInfo.Id,
+                    primary: true
                 };
 
                 signDriver(request, signDriverSuccessCB, signDriverErrorCB);
@@ -734,22 +769,31 @@
 
         //after signing to ride and we suggest a suited ride, volenteer click ok
         $(document).on('pagebeforeshow', '#suggest', function () {
+
+
+            $("#suggestCancelBTN").on("click", function () {
+
+                var request = {
+                    ridePatId: idChoose,
+                    ridePatId2: -1,
+                    driverId: userInfo.Id,
+                    primary: true
+                };
+
+                signDriver(request, signDriverSuccessCB, signDriverErrorCB);
+            });
+
             $("#suggestOkBTN").on("click", function () {
 
-                if (suitedArr.length > 0) {
-                    idChoose2 = parseInt(suitedArr[0].Id);
-                    var request = {
-                        ridePatId: idChoose,
-                        ridePatId2: idChoose2,
-                        driverId: userInfo.Id
-                    };
-                    signDriver(request, signDriverSuccessCB, signDriverErrorCB);
-                }
+                idChoose2 = parseInt(suitedArr[0].Id);
+                var request = {
+                    ridePatId: idChoose,
+                    ridePatId2: idChoose2,
+                    driverId: userInfo.Id,
+                    primary: true
+                };
+                signDriver(request, signDriverSuccessCB, signDriverErrorCB);
 
-                setTimeout(function () {
-                    $.mobile.changePage("#myRides", { transition: "fade", changeHash: true });
-                }
-                    , 100);
             });
         });
 
@@ -858,6 +902,12 @@
             });
 
             $('#signMe .ui-filterable').focusout(function () {
+
+                printRides(rides, 4);
+
+            });
+
+            $('#signMe .ui-filterable input').change(function () {
 
                 printRides(rides, 4);
 
@@ -983,6 +1033,9 @@
 
         $(document).on('pagebeforeshow', '#loginPreference', function () {
 
+
+            $("#welcomeTitle").html("שלום " + userInfo.FirstNameH);
+
             $("#nextPageBTN").on('click', function () {
 
                 if (checkPlanRides(myRides)) {
@@ -1012,25 +1065,16 @@
         $(document).on('pagebeforeshow', '#loginLogo', function () {
 
             //for testing first time process
-            localStorage.clear();
+            //localStorage.clear();
+            
+            if (localStorage.cellphone == null) {
 
-            if (isAndroid()) {
+                manualLogin();
 
-                var cellphone;
-
-                if (localStorage.cellphone == null) {
-                    cellphone = readPhoneNumber();
-                    localStorage.cellphone = cellphone;
-                }
-                else {
-                    cellphone = localStorage.cellphone;
-                }
-
-
-                checkUserPN(cellphone);
             }
             else {
-                manualLogin();
+                var cellphone = localStorage.cellphone;
+                checkUserPN(cellphone);
             }
 
         });
@@ -1050,7 +1094,6 @@
             $('#userPnBTN').on('click', function () {
 
                 var cellphone = $('#userPnTB').val();
-
                 localStorage.cellphone = cellphone;
 
                 var request = {
@@ -1063,74 +1106,48 @@
 
 
         function manualLogin() {
-
-            var cellphone;
-
-            if (localStorage.cellphone == null) {
-                setTimeout(function () {
-                    $.mobile.changePage("#loginFailed", { transition: "fade", changeHash: true });
-                    return;
-                }, 1500);
-            }
-            else {
-                cellphone = localStorage.cellphone;
-                checkUserPN(cellphone);
-            }
+            
+            setTimeout(function () {
+                $.mobile.changePage("#loginFailed", { transition: "fade", changeHash: true });
+                return;
+            }, 500);
         }
-
-
-        function readPhoneNumber() {
-
-            var cellphone = "052-8077973";
-            return cellphone;
-        }
-
-
-        function isAndroid() {
-
-            return false;
-
-            //return true;
-        }
-
+        
 
         function checkUserSuccessCB(results) {
 
+            var results = $.parseJSON(results.d);
+
             //unassaigned user
-            if (results.d == "none") {
+
+            if (results.Id == 0) {
                 //send request for volunteer
                 setTimeout(function () {
-                    $.mobile.changePage("#volunteerRequest", { transition: "fade", changeHash: true });
-                }, 1500);
-            }
-            //assaigned user
-            else {
-
-                var results = $.parseJSON(results.d);
-
-                userInfo = results;
-                localStorage.userId = userInfo.Id;
-                //get personal info: name, photo, address etc.
-                //get preferences
-                //get number of seats in the car
-
-                //get all rides
-                getRidesList();
-
-                //getMyRides
-                var request = {
-                    id: userInfo.Id,
-                }
-                GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB);
-
-                setTimeout(function () {
-                    $.mobile.changePage("#loginPreference", { transition: "fade", changeHash: true });
-                }, 1500);
+                    alert("מספר הטלפון שהוכנס אינו רשום למשתמש במערכת");
+                }, 100);
+                return
             }
 
 
+            userInfo = results;
+            localStorage.userId = userInfo.Id;
+            //get personal info: name, photo, address etc.
+            //get preferences
+            //get number of seats in the car
+
+            //get all rides
+            getRidesList();
+
+            //getMyRides
+            var request = {
+                volunteerId: userInfo.Id
+            }
+            GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB);
+
+            setTimeout(function () {
+                $.mobile.changePage("#loginPreference", { transition: "fade", changeHash: true });
+            }, 1000);
         }
-
 
         function checkUserErrorCB(e) {
             alert("error in checkUser");
@@ -1345,15 +1362,18 @@
         #phoneTB {
             text-align: left;
         }
+
         #nameTB {
             text-align: right;
         }
-        #volunteerRequest table{
-            margin:5%
+
+        #volunteerRequest table {
+            margin: 5%
         }
-        #volunteerRequest table td{
-            padding:5%;
-        }
+
+            #volunteerRequest table td {
+                padding: 5%;
+            }
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.1.62/jquery.inputmask.bundle.js"></script>
@@ -1369,15 +1389,16 @@
 
     <div data-role="page" id="loginFailed">
         <img src="Images/logo.png" />
-        <p style="margin-top: 30%;">ההתחברות נכשלה</p>
         <p>אנא הכנס את מספר הטלפון שלך כדי שנוכל לזהות את חשבונך</p>
         <input id="userPnTB" type="text" />
         <a id="userPnBTN" data-role="button">התחבר</a>
+        <br /><br />
+        <a href="#volunteerRequest">לפיתרון בעיות בהתחברות</a>
     </div>
 
 
     <div data-role="page" id="loginPreference">
-        <h6>התחברת בהצלחה</h6>
+        <h2 id="welcomeTitle"></h2>
         <a id="changePrefBTN" data-role="button" data-inline="true">שינוי ההעדפות שלי</a>
         <br />
         <a id="nextPageBTN" data-role="button" data-inline="true">המשך</a>
@@ -1407,16 +1428,16 @@
 
     <div id="volunteerRequest" data-role="page">
         <img src="Images/logo.png" />
-        
+
         <p>
             אנחנו מצטערים שההתחברות נכשלה,
             בירור סטטוס ההרשמה שלך מול העמותה
             <br>
-            052-555555555555
+            <a href="tel:052-5555555">052-5555555</a>
             <br /> <br />
             או, אנא הכנס את פרטיך ואחד מעובדי העמותה ייצור עמך קשר.
         </p>
-        
+
         <table>
             <tr>
                 <td>
@@ -1442,6 +1463,8 @@
         </table>
         <br>
         <a href="#rtrInfo">עוד על העמותה</a>
+        <br>
+        <br>
     </div>
 
 
