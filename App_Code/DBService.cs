@@ -51,10 +51,10 @@ public class DbService
             }
             return ds;
         }
-        catch (Exception)
+        catch (Exception e)
         {
-
-            throw;
+            //Write exception to log
+            throw e;
         }
 
         finally
@@ -70,6 +70,7 @@ public class DbService
         int row_affected = 0;
         using (con)
         {
+
             con.Open();
             tran = con.BeginTransaction();
 
@@ -124,5 +125,5 @@ public class DbService
         return res;
     }
 
-   
+
 }

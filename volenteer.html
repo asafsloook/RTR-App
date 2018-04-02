@@ -1,0 +1,626 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>בדרך להחלמה</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+    <!-- source libraries for offline debugging -->
+    <!--<link href="src/jquery.mobile-1.4.5.css" rel="stylesheet" />
+    <script src="src/jquery-1.11.1.min.js"></script>
+    <script src="src/jquery.mobile-1.4.5.js"></script>-->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <script src="src/AjaxCalls.js"></script>
+
+    <script src="src/JavaScript.js"></script>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet">
+
+    <link href="src/StyleSheet.css" rel="stylesheet" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.1.62/jquery.inputmask.bundle.js"></script>
+
+</head>
+<body>
+
+    <div data-role="page" id="loginLogo">
+        <img src="Images/logo.png" />
+        <p style="margin-top: 30%;">מהדורה מספר 1, מתאריך 04/2018</p>
+    </div>
+
+
+    <div data-role="page" id="loginFailed">
+        <img src="Images/logo.png" />
+        <p>אנא הכנס את מספר הטלפון שלך כדי שנוכל לזהות את חשבונך</p>
+        <input id="userPnTB" type="text" />
+        <a id="userPnBTN" data-role="button">התחבר</a>
+        <br /><br />
+        <a href="#volunteerProblems">פיתרון בעיות בהתחברות</a>
+        <br /><br />
+        <a href="#volunteerRequest">להרשמה</a>
+    </div>
+
+
+    <div data-role="page" id="loginPreference">
+        <h2 id="welcomeTitle"></h2>
+        <a id="changePrefBTN" data-role="button" data-inline="true">שינוי ההעדפות שלי</a>
+        <br />
+        <a id="nextPageBTN" data-role="button" data-inline="true">המשך</a>
+    </div>
+
+
+    <div id="rtrInfo" data-role="page">
+        <a data-rel="back" style="float:left;border:none;margin:0;margin-left:2%" href="#" class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"></a>
+
+        <img src="Images/logo.png" />
+        <p>
+            הסכסוך הישראלי-פלסטיני הוא עמוק ובעל הסטוריה עקובה מדם. "בדרך להחלמה" מנסה לגשר על התהום הפעורה בין האנשים משני צדי הגבול עם חזון של תקווה, אחווה אנושית וחמלה.
+            <br /><br />
+            העמותה פועלת ללא כוונות רווח, מתוך התנדבות מלאה של חבריה המאמינים שהדרך לשלום ולאמון בין ישראלים לפלסטינים חייבת לעבור דרך מפגש אישי בין בני אדם, אנשים השמים את אנושיותם לפני כל אמונה דתית או פוליטית.
+            <br /><br />
+            כל ילד שאנו מסייעים לו, כל משפחה שאנו יוצרים איתה קשר אנושי וחם, הם זרעים לתקווה ולפיוס.
+        </p>
+        <br />
+        <a href="http://www.roadtorecovery.org.il/?lang=he">לאתר העמותה</a>
+        <br /><br />
+        <!-- Paypal donate btn -->
+        <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            <div class="paypal-donations"><input type="hidden" name="cmd" value="_donations"><input type="hidden" name="business" value="roadtorecovery10@gmail.com"><input type="hidden" name="item_name" value="Our operation is funded by donations only. Any amount you might be willing to contribute will be greatly appreciated!"><input type="hidden" name="currency_code" value="USD"><input type="image" src="http://www.roadtorecovery.org.il/wp-content/uploads/2017/06/Donate_car.jpg" name="submit" alt="PayPal - The safer, easier way to pay online."><img alt="" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1"></div>
+        </form>
+    </div>
+
+
+    <div id="volunteerRequest" data-role="page">
+
+        <a data-rel="back" style="float:left;border:none;margin:0;margin-left:2%" href="#" class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"></a>
+
+        <img src="Images/logo.png" />
+
+        <p>
+            אנא הכנס את פרטיך ואחד מעובדי העמותה ייצור עמך קשר.
+        </p>
+
+        <table>
+            <tr>
+                <td>
+                    <input type="text" id="nameTB" />
+                </td>
+                <td>
+                    <label>שם מלא</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" id="phoneTB" />
+                </td>
+                <td>
+                    <label>מספר טלפון נייד</label>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <br />
+                    <a href="#" style="margin:0" class="ui-btn ui-btn-inline ui-icon-check ui-btn-icon-right">שלח</a>
+                </td>
+            </tr>
+        </table>
+        <br>
+        <a href="#rtrInfo">עוד על העמותה</a>
+        <br>
+        <br>
+    </div>
+
+
+    <div id="volunteerProblems" data-role="page">
+
+        <a data-rel="back" style="float:left;border:none;margin:0;margin-left:2%" href="#" class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"></a>
+
+        <img src="Images/logo.png" />
+
+        <p style="margin:10% 15%;">
+            בירור סטטוס ההרשמה מול העמותה בטלפון &nbsp;
+            <a href="tel:052-5555555">052-5555555</a>
+        </p>
+
+        <table>
+            <tr>
+                <td>
+                    <input type="text" id="nameTB" />
+                </td>
+                <td>
+                    <label>שם מלא</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" id="phoneTB" />
+                </td>
+                <td>
+                    <label>מספר טלפון נייד</label>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <br />
+                    <label>תיאור הבעיה</label>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td colspan="2">
+                    <textarea id="infoTB"></textarea>
+                </td>
+
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <br>
+                    <a href="#" style="margin:0" class="ui-btn ui-btn-inline ui-icon-check ui-btn-icon-right">שלח</a>
+                </td>
+            </tr>
+        </table>
+        <br>
+    </div>
+
+
+    <div data-role="page" id="signMe">
+
+
+        <div data-role="header">
+            <h1>שבץ אותי</h1>
+            <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+            </a>
+
+        </div>
+
+        <div data-role="content">
+
+            <div>
+                <fieldset hidden="hidden" data-role="controlgroup" data-type="horizontal" data-icon="false" class="ui-grid-a" data-theme="a">
+
+                    <select id="shiftDDL" data-iconpos="left">
+                        <option>משמרת</option>
+                        <option>בוקר</option>
+                        <option>אחהצ</option>
+                    </select>
+
+                    <select id="dateDDL" data-iconpos="left"></select>
+
+                    <select id="dayDDL" data-iconpos="left">
+                        <option>יום</option>
+                        <option>א</option>
+                        <option>ב</option>
+                        <option>ג</option>
+                        <option>ד</option>
+                        <option>ה</option>
+                        <option>ו</option>
+                        <option>ש</option>
+                    </select>
+
+                </fieldset>
+
+                <fieldset hidden="hidden" data-role="controlgroup" data-type="horizontal" data-theme="a">
+
+                    <select id="endDDL" data-iconpos="left">
+                        <option>יעד</option>
+                        <option>ארז</option>
+                        <option>רמבם</option>
+                        <option>ג'למה</option>
+                        <option>אייל</option>
+                        <option>שיבא</option>
+                        <option>ירושלים</option>
+                    </select>
+
+                    <select id="startDDL" data-iconpos="left">
+                        <option>מוצא</option>
+                        <option>ארז</option>
+                        <option>רמבם</option>
+                        <option>ג'למה</option>
+                        <option>אייל</option>
+                        <option>שיבא</option>
+                        <option>ירושלים</option>
+                    </select>
+
+                    <select id="areaDDL" data-iconpos="left">
+                        <option>איזור</option>
+                        <option>דרום</option>
+                        <option>מרכז</option>
+                        <option>צפון</option>
+                    </select>
+
+                </fieldset>
+            </div>
+
+
+
+            <!--<div id="counterPH" data-role="fieldcontain">
+
+            </div>-->
+
+            <div data-role="navbar" id="shiftTABS">
+                <ul>
+                    <li><a id="afternoonTAB">צהריים</a></li>
+                    <li><a id="morningTAB">בוקר</a></li>
+                </ul>
+            </div>
+
+            <ul id="ridesPH" data- data-role="listview" data-filter-placeholder="" data-inset="true" data-filter="true" data-theme="a"></ul>
+
+        </div>
+
+    </div>
+
+
+    <div data-role="page" id="trackRides">
+
+
+        <div data-role="header">
+            <h1>מעקב הסעות</h1>
+            <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+            </a>
+
+        </div>
+
+        <div data-role="content">
+
+            <div>
+                <table>
+                    <tr>
+                        <td>ביעד</td>
+                        <td>נפגשו</td>
+                        <td>במחסום</td>
+                        <td>יצא</td>
+                        <td>שם</td>
+                    </tr>
+                </table>
+            </div>
+
+
+            <div id="ride1">
+                <h4>1. אייל - שיבא</h4>
+                <table class="realtime">
+                    <tr>
+                        <td rowspan="2" style="background-color:chartreuse">V</td>
+                        <td rowspan="2">06:40</td>
+                        <td>06:36</td>
+                        <td>06:15</td>
+                        <td>מני ישראלי</td>
+                    </tr>
+                    <tr>
+                        <td>06:36</td>
+                        <td>04:15</td>
+                        <td>מוחמד ג'אוול +2</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="ride2">
+                <h4>2. ארז - הדסה</h4>
+                <table class="realtime">
+                    <tr>
+                        <td rowspan="2">-</td>
+                        <td rowspan="2">-</td>
+                        <td>06:36</td>
+                        <td>06:15</td>
+                        <td>מני ישראלי</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color:tomato">!</td>
+                        <td>04:15</td>
+                        <td>מוחמד ג'אוול +2</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="ride3">
+                <h4>3. אייל - וולפסון</h4>
+                <table class="realtime">
+                    <tr>
+                        <td rowspan="2">-</td>
+                        <td rowspan="2">-</td>
+                        <td>06:36</td>
+                        <td>06:15</td>
+                        <td>מני ישראלי</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color:antiquewhite">-</td>
+                        <td>04:15</td>
+                        <td>מוחמד ג'אוול +2</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+
+    </div>
+
+
+    <div data-role="page" id="myRides">
+
+        <div data-role="header">
+
+            <h1>הנסיעות שלי</h1>
+            <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+            </a>
+        </div>
+
+        <div data-role="content">
+
+            <!--<div id="myRidesCounterPH" data-role="fieldcontain">    </div>-->
+
+
+            <div data-role="navbar" id="myRidesTABS">
+                <ul>
+                    <li><a id="doneTAB">עבר</a></li>
+                    <li><a id="planTAB" class="ui-btn-active">מתוכננות</a></li>
+                </ul>
+            </div>
+
+            <ul id="myRidesPH" data-role="listview" data-filter-placeholder="" data-filter="true" data-inset="true" data-icon="false" data-theme="a"></ul>
+
+        </div>
+        <div data-role="footer" id="material">
+            <a href="#signMe" style="border-radius:50px;background-color: #FFBF00;" class="ui-shadow ui-btn ui-corner-all ui-btn-inline ui-icon-plus ui-btn-icon-notext ui-btn-b ui-mini fab"></a>
+        </div>
+    </div>
+
+
+    <div data-role="page" id="deleteMePage">
+        <div role="main" class="ui-corner-bottom ui-content">
+            <div id="phPopDelete"></div>
+            <a data-icon="check" id="deleteokBTN" style="background-color:#004d00" data-rel="back" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">סגור</a>
+            <a data-icon="delete" onclick="deleteMyRide()" id="deletecancelBTN" style="background-color:#660000" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">בטל את הנסיעה</a>
+        </div>
+    </div>
+
+
+    <div data-role="page" id="infoPastRide">
+        <div role="main" class="ui-corner-bottom ui-content">
+            <div id="phPopInfo"><h1>פרטים נוספים</h1><br /></div>
+            <a data-icon="delete" onclick="" id="closeInfoBTN" href="#" style="background-color:#660000" data-role="button" data-rel="back" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">סגור</a>
+        </div>
+    </div>
+
+
+    <div data-role="page" id="signMePage">
+        <div role="main" class="ui-corner-bottom ui-content">
+            <div id="phPop"></div>
+            <a data-icon="check" id="okBTN" href="#suggest" style="background-color:#004d00" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">שבץ אותי</a>
+            <a data-icon="delete" id="cancelBTN" href="#" style="background-color:#660000" data-role="button" data-inline="true" data-rel="back" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">בטל</a>
+        </div>
+    </div>
+
+
+    <div data-role="page" id="suggest" style="text-align:center">
+
+        <h1 data-theme="b">נרשמת בהצלחה!</h1>
+        <div id="phSuggest"></div>
+        <a data-icon="check" id="suggestOkBTN" style="background-color:#004d00" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">נשמע טוב</a>
+        <a data-icon="delete" id="suggestCancelBTN" href="#myRides" style="background-color:#660000" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">לא מעוניין</a>
+    </div>
+
+
+    <div id="kavim1" data-role="page">
+        <div data-role="header">
+
+            <h1>ההעדפות שלי</h1>
+            <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+            </a>
+        </div>
+        <div data-role="content">
+            <select id="area" data-iconpos="left" style="width:100px;">
+                <option>אזור</option>
+                <option>צפון</option>
+                <option>מרכז</option>
+                <option>דרום</option>
+            </select>
+            <div id="start1" hidden="hidden" class="start">
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2a">
+                        <label for="checkbox-h-2a">ג'למה</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2b">
+                        <label for="checkbox-h-2b">ריחן</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2c">
+                        <label for="checkbox-h-2c">שער אפרים</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2d">
+                        <label for="checkbox-h-2d">אייל</label>
+                    </fieldset>
+                </form>
+            </div>
+            <div id="end1" hidden="hidden" class="end">
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2e">
+                        <label for="checkbox-h-2e">רמבם</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2f">
+                        <label for="checkbox-h-2f">שיבא</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2g">
+                        <label for="checkbox-h-2g">אסותא</label>
+                    </fieldset>
+                </form>
+            </div>
+
+            <div id="start2" hidden="hidden" class="start">
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2h">
+                        <label for="checkbox-h-2h">אייל</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2i">
+                        <label for="checkbox-h-2i">אליהו</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2j">
+                        <label for="checkbox-h-2j">הפרחים</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2k">
+                        <label for="checkbox-h-2k">נעלין</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2l">
+                        <label for="checkbox-h-2l">תרקומיה</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2m">
+                        <label for="checkbox-h-2m">בית לחם</label>
+                    </fieldset>
+                </form>
+            </div>
+            <div id="end2" hidden="hidden" class="end">
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2n">
+                        <label for="checkbox-h-2n">שיבא</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2o">
+                        <label for="checkbox-h-2o">וולפסון</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2p">
+                        <label for="checkbox-h-2p">איכילוב</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2q">
+                        <label for="checkbox-h-2q">שניידר</label>
+                    </fieldset>
+                </form>
+            </div>
+
+            <div id="start3" hidden="hidden" class="start">
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2r">
+                        <label for="checkbox-h-2r">ארז</label>
+                    </fieldset>
+                </form>
+                <!--<form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2b">
+                        <label for="checkbox-h-2b">קלנדיה</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2c">
+                        <label for="checkbox-h-2c">חיזמה</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2d">
+                        <label for="checkbox-h-2d">ירושלים</label>
+                    </fieldset>
+                </form>-->
+            </div>
+            <div id="end3" hidden="hidden" class="end">
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2s">
+                        <label for="checkbox-h-2s">מרכז</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="checkbox-h-2t">
+                        <label for="checkbox-h-2t">ירושלים</label>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="kavim2" data-role="page">
+        <div data-role="header">
+
+            <h1>ההעדפות שלי</h1>
+            <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+            </a>
+        </div>
+        <div data-role="content">
+            <div>
+                <p>הסעות ממחסום לבתי חולים</p>
+                <select id="startD" data-icon="false"></select>
+                <label id="hetz"><i class="fa fa-arrow-left"></i></label>
+                <select id="endD" data-icon="false"></select>
+
+                <fieldset data-role="controlgroup" data-type="horizontal" class="ui-grid-a" data-theme="a" style="float: right;margin: 0px 2px;">
+
+                    <input type="checkbox" id="kavim2CB">
+                    <label for="kavim2CB"><i class="fa fa-arrow-left"></i><i class="fa fa-arrow-right"></i></label>
+
+                </fieldset>
+                <a data-role="button" id="addMaslul" data-theme="b">הוסף</a>
+            </div>
+            <br /> <br /><br />
+            <div>
+                <p>הסעות מבית חולים למחסומים</p>
+                <select id="startD2" data-icon="false"></select>
+                <label id="hetz"><i class="fa fa-arrow-left"></i></label>
+                <select id="endD2" data-icon="false"></select>
+
+                <fieldset data-role="controlgroup" data-type="horizontal" class="ui-grid-a" data-theme="a" style="float: right;margin: 0px 2px;">
+
+                    <input type="checkbox" id="kavim2CB2">
+                    <label for="kavim2CB2"><i class="fa fa-arrow-left"></i><i class="fa fa-arrow-right"></i></label>
+
+                </fieldset>
+                <a data-role="button" id="addMaslul2" data-theme="b">הוסף</a>
+            </div>
+
+            <br /><br /><br />
+            <p>המסלולים שלי</p>
+            <ul id="maslulLV" data-role="listview" data-inset="true" data-icon="false" data-theme="a"></ul>
+        </div>
+    </div>
+
+</body>
+</html>

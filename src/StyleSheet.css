@@ -1,0 +1,250 @@
+﻿#trackRides table{
+width:100%;
+}
+#trackRides .realtime {
+    font-size: small;
+}
+
+#trackRides td {
+    width: 20% !important;
+    text-align: center;
+}
+
+#trackRides .realtime td {
+    border: 1px solid black;
+}
+
+#trackRides h4 {
+    text-align: right;
+    margin: 0;
+    margin-top: 5%;
+}
+
+option, select, span, #maslulLV, h4 {
+    direction: rtl;
+}
+
+.ui-listview > .ui-li-static, .ui-listview > .ui-li-divider, .ui-listview > li > a.ui-btn {
+    text-align: right;
+    font-size: 20px;
+}
+
+#ridesPH li a, #myRidesPH li a {
+    margin-top: 5px;
+}
+
+.ui-li-desc, p, h1, h2, h3 {
+    text-align: center;
+    direction: rtl;
+}
+
+fieldset {
+    text-align: center;
+}
+
+#ridesCounter {
+    /*right: 78%;
+            top: 12px;
+            border-radius: 16px;
+            background-color: #660000;*/
+    /*background-color: #fa3e3e;
+            border-radius: 21px;
+            color: white;
+            padding: 1px 3px;
+            font-size: 10px;
+            position: absolute;
+            top: 7px;
+            right: 100px;*/
+}
+
+#ridesPH a, #myRidesPH p {
+    text-align: right;
+}
+
+#shiftTABS, #myRidesTABS {
+    position: relative;
+    top: 50px;
+}
+
+.ui-filterable {
+    position: relative;
+    bottom: 50px;
+}
+
+input[data-type="search"] {
+    text-align: right;
+}
+
+hr {
+    width: 100%;
+}
+
+#deleteMePage, #signMePage, #suggest {
+    text-align: center;
+    padding: 50% 0px;
+}
+
+
+#material {
+    bottom: 0;
+    position: fixed !important;
+    top: auto !important;
+    background: none;
+    border: none;
+}
+
+.fab {
+    top: -15px;
+    right: -15px;
+    width: 50px;
+    height: 50px;
+    border: none;
+}
+
+#area-button, #area2-button {
+    width: 50px;
+    margin: 0 auto;
+}
+
+#startD-button, #startD2-button {
+    float: right;
+    padding: 10px 2px;
+}
+
+#endD-button, #endD2-button {
+    float: right;
+    padding: 10px 2px;
+}
+
+#startD-button, #endD2-button, #startD, #endD2 {
+    width: 130px;
+}
+
+#hetz {
+    float: right;
+    margin-top: 4%;
+    margin-left: 1%;
+    margin-right: 1%;
+}
+
+.start {
+    float: right;
+    margin-right: 10%;
+}
+
+.end {
+    float: left;
+    margin-left: 10%;
+}
+
+#kavim2 .ui-checkbox {
+    max-width: 94px;
+    position: relative;
+}
+
+
+    #kavim2 .ui-checkbox label {
+        padding: 10px 2px;
+        margin-right: 10px;
+    }
+
+#kavim2CB2 {
+    padding: 10px 2px;
+}
+
+#addMaslul, #addMaslul2 {
+    max-width: 35px;
+    float: left;
+    margin: 0px 2px;
+    padding: 10px 2px;
+}
+
+#loginLogo {
+    text-align: center;
+    margin-top: 50%;
+}
+
+#loginPreference {
+    margin-top: 50%;
+    text-align: center;
+}
+
+    #loginPreference a {
+    }
+
+#nextPageBTN {
+    margin-bottom: 20%;
+}
+
+#rtrInfo, #loginFailed, #volunteerRequest, #volunteerProblems {
+    text-align: center;
+    margin-top: 5%;
+}
+
+    #rtrInfo p {
+        margin: 5%;
+        margin-bottom: 0;
+    }
+
+    #rtrInfo a, #volunteerRequest a, #volunteerProblems a, #loginFailed a {
+        text-decoration: none;
+    }
+
+    #volunteerProblems .ui-input-text {
+        text-align: right
+    }
+
+
+    #loginFailed .ui-input-text {
+        width: 50%;
+        margin: 0 auto;
+    }
+
+    #loginFailed .ui-btn {
+        width: 20%;
+        margin: 0 auto;
+        margin-top: 7%;
+    }
+
+    #loginFailed p, #volunteerRequest p, #volunteerProblems p {
+        margin: 10%;
+    }
+
+#phoneTB {
+    text-align: left;
+}
+
+#nameTB {
+    text-align: right;
+}
+
+#volunteerRequest table, #volunteerProblems table {
+    margin: 3%
+}
+
+    #volunteerRequest table td, #volunteerProblems table td {
+        padding: 2%;
+    }
+
+#signMe .primary {
+    background-color: #cef4ff;
+}
+
+#signMe .backup {
+    background-color: #f9ffbf;
+}
+
+.rideIconInfo {
+    float: right;
+    padding: 5% 1%;
+    width: 10%;
+    margin-left: 3%;
+}
+
+hr.weekSeperator {
+    border-style: dashed;
+}
+
+.rideListHeader {
+    text-align: right;
+}

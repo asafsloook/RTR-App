@@ -33,8 +33,12 @@ public class Patient
     string status;//סטטוס
     string remarks;//הערות
     int id;
+    List<string> equipment;
 
     public int Id { get; set; }
+
+    public List<string> Equipment { get; set; }
+
     public string DisplayName
     {
         get
@@ -385,7 +389,7 @@ public class Patient
         History = _history;
     }
 
-
+    //By Sufa
     public List<Patient> getPatientsList(bool active)
     {
         #region DB functions
@@ -469,7 +473,7 @@ public class Patient
         return p;
     }
 
-    public void deactivatePatient(string active)
+    public void deactivatePatient(string active)// change name to SetStatus
     {
         DbService db = new DbService();
         db.ExecuteQuery("UPDATE Patient SET statusPatient='" + active + "' WHERE displayName='" + DisplayName + "'");
@@ -500,6 +504,7 @@ public class Patient
         db.ExecuteQuery(query);
     }
 
+    //By Sufa & Matan --Get a list of all Escorts for Patient.
     public List<Escorted> getescortedsList(string displayName)
     {
         #region DB functions
