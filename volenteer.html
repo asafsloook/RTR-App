@@ -259,6 +259,36 @@
     </div>
 
 
+    <div data-role="page" id="myRides">
+
+        <div data-role="header">
+
+            <h1>הנסיעות שלי</h1>
+            <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+            </a>
+        </div>
+
+        <div data-role="content">
+
+            <!--<div id="myRidesCounterPH" data-role="fieldcontain">    </div>-->
+
+
+            <div data-role="navbar" id="myRidesTABS">
+                <ul>
+                    <li><a id="doneTAB">עבר</a></li>
+                    <li><a id="planTAB" class="ui-btn-active">מתוכננות</a></li>
+                </ul>
+            </div>
+
+            <ul id="myRidesPH" data-role="listview" data-filter-placeholder="" data-filter="true" data-inset="true" data-icon="false" data-theme="a"></ul>
+
+        </div>
+        <div data-role="footer" id="material">
+            <a href="#signMe" style="border-radius:50px;background-color: #FFBF00;" class="ui-shadow ui-btn ui-corner-all ui-btn-inline ui-icon-plus ui-btn-icon-notext ui-btn-b ui-mini fab"></a>
+        </div>
+    </div>
+
+
     <div data-role="page" id="trackRides">
 
 
@@ -343,33 +373,110 @@
     </div>
 
 
-    <div data-role="page" id="myRides">
+    <div data-role="page" id="auction">
+
 
         <div data-role="header">
-
-            <h1>הנסיעות שלי</h1>
+            <h1>מעקב הסעות</h1>
             <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
             </a>
+
         </div>
 
         <div data-role="content">
 
-            <!--<div id="myRidesCounterPH" data-role="fieldcontain">    </div>-->
-
-
-            <div data-role="navbar" id="myRidesTABS">
-                <ul>
-                    <li><a id="doneTAB">עבר</a></li>
-                    <li><a id="planTAB" class="ui-btn-active">מתוכננות</a></li>
-                </ul>
+            <div id="auctionPanel">
+                <a style="float:right;padding: 1%;border-radius: 50px;" href="#" class="ui-btn ui-icon-power ui-btn-icon-notext ui-corner-all">No text</a>
+                <a style="float:left;padding: 1%;border-radius: 50px;" href="#" class="ui-btn ui-icon-action ui-btn-icon-notext ui-corner-all action">No text</a>
             </div>
 
-            <ul id="myRidesPH" data-role="listview" data-filter-placeholder="" data-filter="true" data-inset="true" data-icon="false" data-theme="a"></ul>
+            <div id="auctionInfo">
 
+                <img class="mihrazIcons" src="Images/babyseat.png" />
+
+                <img class="mihrazIcons" src="Images/wheelchair.png" />
+
+                <p>החולה: מוחמד ג'אוול +2</p>
+                <p>מ: שיבא ל: נעלין</p>
+                <p>מחר, יום ב', 26.2 בשעה 15:30</p>
+                <p>6 מועמדים</p>
+            </div>
+
+            <ul data-role="listview" data-inset="true" data-theme="a">
+                <li>
+                    <a href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all delete"></a>
+                    <a href="#" class="ui-btn ui-icon-action ui-btn-icon-notext ui-corner-all action"></a>
+                    <a href="#" class="ui-btn ui-icon-phone ui-btn-icon-notext ui-corner-all phone"></a>
+
+                    <p id="volenteerName">1. משה כהן</p>
+                    <br />
+                    <!--<p>16:45 לא הגיב</p>-->
+                    <p id="volenteerStatus">16:45 להתקשר עוד שעה</p>
+
+                </li>
+
+                <li>
+                    <a href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all delete"></a>
+                    <a href="#" class="ui-btn ui-icon-action ui-btn-icon-notext ui-corner-all action"></a>
+                    <a href="#" class="ui-btn ui-icon-phone ui-btn-icon-notext ui-corner-all phone"></a>
+
+                    <p id="volenteerName">2. משה אלפונסיחיאנו</p>
+                    <br />
+                    <!--<p>16:45 לא הגיב</p>-->
+                    <p id="volenteerStatus">16:45 להתקשר עוד שעה</p>
+
+                </li>
+
+                <li>
+                    <a href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all delete"></a>
+                    <a href="#" class="ui-btn ui-icon-action ui-btn-icon-notext ui-corner-all action"></a>
+                    <a href="#" class="ui-btn ui-icon-phone ui-btn-icon-notext ui-corner-all phone"></a>
+
+                    <p id="volenteerName">3. משה לוי</p>
+                    <br />
+                    <!--<p>16:45 לא הגיב</p>-->
+                    <p id="volenteerStatus">16:45 בודק</p>
+
+                </li>
+                <li>
+                    <a href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all delete"></a>
+                    <a href="#" class="ui-btn ui-icon-action ui-btn-icon-notext ui-corner-all action"></a>
+                    <a href="#" class="ui-btn ui-icon-phone ui-btn-icon-notext ui-corner-all phone"></a>
+
+                    <p id="volenteerName">4. משה לוי</p>
+                    <br />
+                    <!--<p>16:45 לא הגיב</p>-->
+                    <p id="volenteerStatus">16:45 בודק</p>
+
+                </li>
+                <li>
+                    <a href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all delete"></a>
+                    <a href="#" class="ui-btn ui-icon-action ui-btn-icon-notext ui-corner-all action"></a>
+                    <a href="#" class="ui-btn ui-icon-phone ui-btn-icon-notext ui-corner-all phone"></a>
+
+                    <p id="volenteerName">5. משה לוי</p>
+                    <br />
+                    <!--<p>16:45 לא הגיב</p>-->
+                    <p id="volenteerStatus">16:45 בודק</p>
+
+                </li>
+                <li>
+                    <a href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all delete"></a>
+                    <a href="#" class="ui-btn ui-icon-action ui-btn-icon-notext ui-corner-all action"></a>
+                    <a href="#" class="ui-btn ui-icon-phone ui-btn-icon-notext ui-corner-all phone"></a>
+
+                    <p id="volenteerName">6. משה לוי</p>
+                    <br />
+                    <!--<p>16:45 לא הגיב</p>-->
+                    <p id="volenteerStatus">16:45 בודק</p>
+
+                </li>
+            </ul>
         </div>
         <div data-role="footer" id="material">
-            <a href="#signMe" style="border-radius:50px;background-color: #FFBF00;" class="ui-shadow ui-btn ui-corner-all ui-btn-inline ui-icon-plus ui-btn-icon-notext ui-btn-b ui-mini fab"></a>
+            <a href="#signMe" style="border-radius:50px;background-color: grey;" class="ui-shadow ui-btn ui-corner-all ui-btn-inline ui-icon-plus ui-btn-icon-notext ui-btn-b ui-mini fab"></a>
         </div>
+
     </div>
 
 

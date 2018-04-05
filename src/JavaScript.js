@@ -406,13 +406,13 @@ function ListItemRide(results, i) {
 
 function RideEquipment(str, i) {
     //for testing user equipment print
-    str += '<p class="rideIconInfo">';
+    str += '<p style="width:20%;float:right;">';
     if (i % 3 == 0) {
-        str += '<i class="fa fa-wheelchair" style="font-size:24px;"></i>';
+        str += '<img class="ridesIcons" src="Images/wheelchair.png" />';
+
     }
-    str += '</p><p class="rideIconInfo">';
     if (i % 2 == 0) {
-        str += '<img src="https://image.flaticon.com/icons/svg/157/157671.svg">';
+        str += '<img class="ridesIcons" src="Images/babyseat.png" />';
     }
     str += '</p>';
     return str;
@@ -916,6 +916,7 @@ $(document).one('pagebeforecreate', function () {
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="signMeTab" href="#signMe" data-theme="b">שבץ אותי</a></li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="myRidesTab" href="#myRides" data-theme="b">הנסיעות שלי</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="trackRidesTab" href="#trackRides" data-theme="b">מעקב הסעות</a> </li>'
+        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="trackRidesTab" href="#auction" data-theme="b">מכרז</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-delete">'
         + '<a href="#" data-rel="close">סגירת התפריט</a>'
         + '</li>'

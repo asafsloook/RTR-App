@@ -1,6 +1,73 @@
-﻿#trackRides table{
-width:100%;
+﻿#auction .phone {
+    background-color: #98FB98;
 }
+
+#auction .action {
+    background-color: #ffcd56;
+}
+
+#auction .delete {
+    background-color: #FF6666;
+}
+
+.ridesIcons {
+    width: 45%;
+    float: right;
+    padding: 25% 2%;
+}
+
+.mihrazIcons {
+    width: 10%;
+    float: left;
+}
+
+#auction li p {
+    width: fit-content;
+    float: right;
+}
+
+#auction .ui-content {
+    margin-bottom:20%;
+}#auction li {
+    border: grey 1px solid;
+    height: 50px;
+    padding: 5% 2%;
+    margin: 2% 0;
+    border-radius: 10px;
+}
+
+    #auction li a {
+        float: left;
+        margin: 3%;
+        border-radius: 25px;
+    border:none;
+        }
+
+
+#auctionInfo {
+    margin-top: 5%;
+    margin-bottom: 5%;
+}
+
+#auction ul {
+    display: inline;
+    margin-bottom:15%;
+}
+
+#auctionPanel {
+    width: 100%;
+    height: 50px
+}
+
+#auction p {
+    text-align: right;
+    margin: 0;
+}
+
+#trackRides table {
+    width: 100%;
+}
+
 #trackRides .realtime {
     font-size: small;
 }
