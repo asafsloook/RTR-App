@@ -1,4 +1,9 @@
 ﻿
+//webservices - delete driver (maybe more, do tests with matan)
+
+//ask the user if he really want to delete the ride and who gonna stay on the ride (in mulitipule patiant ride)
+
+
 //get week function
 Date.prototype.getWeek = function () {
     var d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
@@ -10,8 +15,8 @@ Date.prototype.getWeek = function () {
 
 //global variables for ride management
 rides = null;
-idChoose = null;
 myRides = null;
+suitedArr = null;
 
 
 //call the ajax function to import the rides list
@@ -45,8 +50,8 @@ function ridesToClientStructure(before) {
 
         results[i].Id = results[i].RidePatNum;
         results[i].DateTime = parseInt(results[i].Date.replace('/Date(', ''));
-        results[i].StartPoint = results[i].StartPlace.Name;
-        results[i].EndPoint = results[i].Target.Name;
+        results[i].StartPoint = results[i].Origin.Name;
+        results[i].EndPoint = results[i].Destination.Name;
 
         if (results[i].Shift == "אחר צהריים") {
             results[i].Shift = "אחהצ";
@@ -85,6 +90,8 @@ function myRidesToClientStructure(before) {
 
     var results = before;
 
+    var after = [];
+
     //RIDES
     for (var i = 0; i < results.length; i++) {
 
@@ -94,12 +101,12 @@ function myRidesToClientStructure(before) {
 
             ridePat = results[i].RidePats[j];
 
-            //ridePat.Status = "";
+            ridePat.Status = results[i].Status;
 
             ridePat.Id = ridePat.RidePatNum;
             ridePat.DateTime = parseInt(ridePat.Date.replace('/Date(', ''));
-            ridePat.StartPoint = ridePat.StartPlace.Name;
-            ridePat.EndPoint = ridePat.Target.Name;
+            ridePat.StartPoint = ridePat.Origin.Name;
+            ridePat.EndPoint = ridePat.Destination.Name;
 
             if (ridePat.Shift == "אחר צהריים") {
                 ridePat.Shift = "אחהצ";
@@ -111,10 +118,11 @@ function myRidesToClientStructure(before) {
             for (var m = 0; m < ridePat.Pat.EscortedList.length; m++) {
                 ridePat.Melave.push(ridePat.Pat.EscortedList[m].DisplayName);
             }
+
+            after.push(ridePat);
         }
-        results[i] = ridePat;
     }
-    return results;
+    return after;
 }
 
 //error call back function for get my rides
@@ -164,22 +172,31 @@ function myRideListItem(myRides, i) {
 
     str += ' class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-info ui-btn-icon-left ';
 
-    if (myRides[i].Status == "שובץ נהג") {
-        str += 'backup"';
+    if (myRides[i].Status == "Primary") {
+        str += 'primary"';
     }
     else {
-        str += 'primary"';
+        str += 'backup"';
     }
 
 
     str += '  onClick="delInfo(' + myRides[i].Id + ')">'
-        + '<p>יום ' + day
-        + '  &nbsp; ' + myDate.getDate() + "/" + (myDate.getMonth() + 1)
-        + ' &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ' + myRides[i].StartPoint + '  <i class="fa fa-arrow-left"></i>  '
-        + myRides[i].EndPoint + '</p>'
-        + '<p>'
-        + myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1")
-        + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+        + '<p style="float:right;width:30%;">יום ' + day
+        + ' &nbsp; ' + myDate.getDate() + "/" + (myDate.getMonth() + 1)
+        + '<br>' + myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1")
+        + '</p>'
+        + '<p style="float:right;margin-right:10%;">';
+
+    if (myRides[i].Status == "Primary") {
+        str += '<b>הסעה</b><br>';
+    }
+    else {
+        str += '<b>גיבוי</b><br>';
+    }
+
+    str += myRides[i].StartPoint + '  <i class="fa fa-arrow-left"></i>  '
+        + myRides[i].EndPoint
+        + '<br>'
         + myRides[i].Person;
 
     if (myRides[i].Melave.length > 0) {
@@ -250,7 +267,7 @@ function deleteMyRide() {
 function deleteRideSuccessCB() {
 
     var request = {
-        volunteerId: userInfo.Id
+        volunteerId: parseInt(localStorage.userId)
     }
     //for refreshing my rides after the delete
     GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB);
@@ -299,6 +316,12 @@ function filterRides(rides) {
         else if ($('#endDDL').val() != "יעד" && $('#endDDL').val() != rides[i].EndPoint) {
 
         }
+        else if (checkMyRides(rides[i])) {
+
+        }
+        else if (parseInt(localStorage.availibleSeats) < rides[i].Melave.length + 1) {
+
+        }
         else {
             filteredRides.push(rides[i]);
         }
@@ -306,6 +329,25 @@ function filterRides(rides) {
 
     return filteredRides;
 }
+
+
+//for filtering rides that are in the same date and shift of myRides
+function checkMyRides(ride) {
+
+    for (var i = 0; i < myRides.length; i++) {
+
+        var rideDate = (new Date(ride.DateTime)).toLocaleDateString();
+        var myRideDate = (new Date(myRides[i].DateTime)).toLocaleDateString();
+
+        if (ride.Shift == myRides[i].Shift && rideDate == myRideDate) {
+            if ((parseInt(localStorage.availibleSeats) - (myRides[i].Melave.length + 1)) < ride.Melave.length + 1) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 
 //check for multiple rides in the same day for the listview item header
 function doRideHeader(results, i) {
@@ -373,17 +415,23 @@ function ListItemRide(results, i) {
     str = RideEquipment(str, i);
 
 
-    str += '<p style="padding: 4% 0;float: right;margin-right: 5%;text-align: right;"';
+    str += '<p style="padding: 4%;float: right;margin-right: 5%;text-align: right;border-radius:15px;"';
 
     if (results[i].Status == "שובץ נהג") {
-        str += ' class="backup" ';
+        str += ' class="backup" >';
     }
     else {
-        str += ' class="primary" ';
+        str += ' class="primary" >';
     }
 
+    if (results[i].Status == "שובץ נהג") {
+        str += '<b>גיבוי</b><br>';
+    }
+    else {
+        str += '<b>הסעה</b><br>';
+    }
 
-    str += '>' + results[i].StartPoint + ' <i class="fa fa-arrow-left"></i> ' //&#11164; &#129144;
+    str += results[i].StartPoint + ' <i class="fa fa-arrow-left"></i> ' //&#11164; &#129144;
         + '' + results[i].EndPoint
 
         + '<br/>' + results[i].Person;
@@ -392,8 +440,6 @@ function ListItemRide(results, i) {
         str += " +" + (results[i].Melave.length)
     }
     str += '</p>';
-
-
 
     str += '<a style="float:left;border:none;margin: 8% 3%;" id="pop' + i + '" href="#signMePage"'
         + 'class="ui-btn ui-icon-edit ui-btn-icon-notext ui-corner-all"'
@@ -534,7 +580,16 @@ function getRideStr(rideOBJ) {
 
     var day = numToDayHebrew(myDate.getDay());
 
-    var str = '<p>יום ' + day
+    var str = '<p>';
+
+    if (rideOBJ.Status == "Primary" || rideOBJ.Status == "ממתינה לשיבוץ") {
+        str += '<b>הסעה</b><br><br>';
+    }
+    else {
+        str += '<b>גיבוי</b><br><br>';
+    }
+
+    str += 'יום ' + day
         + ', ' + myDate.getDate() + "/" + (myDate.getMonth() + 1) + "/" + myDate.getFullYear()
         + ', ' + myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1") + '</p>'
         + '<p>מ' + rideOBJ.StartPoint + ' '
@@ -570,11 +625,10 @@ function info(inputID) {
 
 function signDriverSuccessCB(results) {
 
-
-    //getRidesList();
+    getRidesList();
 
     var request = {
-        volunteerId: userInfo.Id
+        volunteerId: parseInt(localStorage.userId)
     }
     //for refreshing my rides after signing to new ride
     GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB);
@@ -701,8 +755,10 @@ $(document).on('pagebeforeshow', '#signMePage', function () {
             }
         }
 
-        //go search for suited ride
-        suggestSuitedRides(ride);
+        createSuggestPage(false, ride);
+
+        //matching feature - go search for suited ride
+        //suggestSuitedRides(ride);
     });
 });
 
@@ -725,24 +781,36 @@ function suggestSuitedRides(ride) {
     if (checkRides(rides, idChoose)) {
         haveRides = true;
     }
-    else {
-        var request = {
-            ridePatId: idChoose,
-            ridePatId2: -1,
-            driverId: userInfo.Id,
-            primary: true
-        };
-
-        signDriver(request, signDriverSuccessCB, signDriverErrorCB);
-    }
 
     var str = createSuggestPage(haveRides, ride);
 
     $("#phSuggest").html(str);
 }
 
+
+//get ridt obj by real id (id in db)
+function getRideStatusById(id) {
+
+    var status = "";
+    for (var i = 0; i < rides.length; i++) {
+        if (rides[i].Id == id) {
+            status = rides[i].Status;
+        }
+    }
+
+    if (status == "ממתינה לשיבוץ") {
+        //sign as primary driver
+        return true;
+    }
+    else {
+        //sign as secondary driver
+        return false;
+    }
+}
+
 //create suggest page
 function createSuggestPage(haveRides, ride) {
+
     var str = "";
     if (haveRides) {
         str += '<p><b>נוסעים נוספים יכולים להצטרף לנסיעה</b></p>';
@@ -757,7 +825,7 @@ function createSuggestPage(haveRides, ride) {
         + '<p>מ' + ride.StartPoint + ' ' + 'ל' + ride.EndPoint + '.</p>';
 
     if (haveRides) {
-        str += "<p> מושבים פנויים ברכבך: " + maxSeats
+        str += "<p> מושבים ברכבך (לא כולל נהג): " + maxSeats
             + '<a data-icon="edit" id="updateSeatsBTN" href="#" style="background-color:#202020" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-button-inline ui-widget ui-button-a ui-link ui-btn ui-btn-b ui-icon-edit ui-btn-icon-left ui-btn-inline ui-shadow ui-corner-all" role="button">עדכן</a>'
             + '</p><p>האם אתה מעוניין לצרף לנסיעה את ' + suitedArr[0].Person;
 
@@ -811,11 +879,12 @@ $(document).on('pagebeforeshow', '#suggest', function () {
 
     $("#suggestCancelBTN").on("click", function () {
 
+        var status = getRideStatusById(idChoose);
 
         var request = {
             ridePatId: idChoose,
             ridePatId2: -1,
-            driverId: userInfo.Id,
+            driverId: parseInt(localStorage.userId),
             primary: status
         };
 
@@ -824,11 +893,30 @@ $(document).on('pagebeforeshow', '#suggest', function () {
 
     $("#suggestOkBTN").on("click", function () {
 
+        if (suitedArr == null || suitedArr.length == 0) {
+
+            var status = getRideStatusById(idChoose);
+
+            var request = {
+                ridePatId: idChoose,
+                ridePatId2: -1,
+                driverId: parseInt(localStorage.userId),
+                primary: status
+            };
+
+            signDriver(request, signDriverSuccessCB, signDriverErrorCB);
+
+            return;
+        }
+
         idChoose2 = parseInt(suitedArr[0].Id);
+
+        var status = getRideStatusById(idChoose);
+
         var request = {
             ridePatId: idChoose,
             ridePatId2: idChoose2,
-            driverId: userInfo.Id,
+            driverId: parseInt(localStorage.userId),
             primary: status
         };
         signDriver(request, signDriverSuccessCB, signDriverErrorCB);
@@ -894,6 +982,13 @@ $(document).on('pagebeforeshow', '#myRides', function () {
 
 //activate doneTAB after closing infoPastRide
 $(document).on('pagebeforeshow', '#infoPastRide', function () {
+
+
+    var myRide = getMyRideObjById(idDeleteChoose);
+
+    $('#phPopInfo').html(getRideStr(myRide));
+
+
     $("#closeInfoBTN").on('click', function () {
         $('#doneTAB').addClass('ui-btn-active');
         printMyRides(myRides);
@@ -902,11 +997,29 @@ $(document).on('pagebeforeshow', '#infoPastRide', function () {
 
 //activate planTAB after closing deleteMePage
 $(document).on('pagebeforeshow', '#deleteMePage', function () {
+
+
+    var myRide = getMyRideObjById(idDeleteChoose);
+
+    $('#phPopDelete').html(getRideStr(myRide));
+
     $("#deletecancelBTN, #deleteokBTN").on('click', function () {
         $('#planTAB').addClass('ui-btn-active');
         printMyRides(myRides);
     });
+
+
 });
+
+
+function getMyRideObjById(id) {
+    for (var i = 0; i < myRides.length; i++) {
+        if (myRides[i].Id == id) {
+            return myRides[i];
+        }
+    }
+}
+
 
 //create menu - side panel
 $(document).one('pagebeforecreate', function () {
@@ -915,6 +1028,7 @@ $(document).one('pagebeforecreate', function () {
         + '<ul data-role="listview">'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="signMeTab" href="#signMe" data-theme="b">שבץ אותי</a></li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="myRidesTab" href="#myRides" data-theme="b">הנסיעות שלי</a> </li>'
+        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="preferencesTab" href="#preferences" data-theme="b">העדפות</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="trackRidesTab" href="#trackRides" data-theme="b">מעקב הסעות</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="trackRidesTab" href="#auction" data-theme="b">מכרז</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-delete">'
@@ -969,30 +1083,43 @@ $(document).on('pagebeforeshow', '#signMe', function () {
 
 
 $(document).on('pagebeforeshow', '#kavim1', function () {
-    $('#area').on('change', function () {
-        var i = 0;
-        if ($('#area').val() == "צפון") {
-            i = 1;
-        }
-        else if ($('#area').val() == "מרכז") {
-            i = 2;
-        }
-        else {
-            i = 3;
-        }
 
-        $('#start' + i).show();
-        $('#end' + i).show();
+    $(document).ready(function () {
 
+        $('#area').on('change', function () {
 
-        for (var s = 1; s < 4; s++) {
+            var i = 0;
 
-            if (s != i) {
-                $('#start' + s).hide();
-                $('#end' + s).hide();
+            if ($('#area').val() == "צפון") {
+                i = 1;
             }
-        }
+            else if ($('#area').val() == "מרכז") {
+                i = 2;
+            }
+            else if ($('#area').val() == "דרום") {
+                i = 3;
+            }
+            else if ($('#area').val() == "צפון-מרכז") {
+                i = 4;
+            }
+            else if ($('#area').val() == "מרכז-דרום") {
+                i = 5;
+            }
+
+            $('#start' + i).show();
+            $('#end' + i).show();
+
+            for (var s = 1; s < 6; s++) {
+                if (s != i) {
+                    $('#start' + s).hide();
+                    $('#end' + s).hide();
+                }
+            }
+        });
+
+
     });
+
 });
 
 var json = {
@@ -1166,7 +1293,7 @@ function checkUserSuccessCB(results) {
         setTimeout(function () {
             alert("מספר הטלפון שהוכנס אינו רשום למשתמש במערכת");
         }, 100);
-        return
+        return;
     }
 
 
@@ -1175,13 +1302,21 @@ function checkUserSuccessCB(results) {
     //get personal info: name, photo, address etc.
     //get preferences
     //get number of seats in the car
+    
+
+    if (localStorage.availibleSeats == null) {
+        setTimeout(function () {
+            $.mobile.changePage("#preferences", { transition: "fade", changeHash: true });
+        }, 1000);
+        return;
+    }
 
     //get all rides
     getRidesList();
 
     //getMyRides
     var request = {
-        volunteerId: userInfo.Id
+        volunteerId: parseInt(localStorage.userId)
     }
     GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB);
 
@@ -1193,6 +1328,109 @@ function checkUserSuccessCB(results) {
 function checkUserErrorCB(e) {
     alert("error in checkUser");
 }
+
+$(document).on('pagebeforeshow', '#preferences', function () {
+
+    $('#seatsToAreaBTN').on('click', function () {
+
+        var seats = $('#availableSeats select').val();
+
+        userInfo.availibleSeats = seats;
+        localStorage.availibleSeats = seats;
+        //and also update the db with the seats
+
+        setTimeout(function () {
+            $.mobile.changePage("#firstTimeRoutes", { transition: "fade", changeHash: true });
+        }, 1000);
+
+    });
+});
+
+
+$(document).on('pagebeforeshow', '#firstTimeRoutes', function () {
+
+    $('#saveRoutesBTN').hide();
+
+    if ($('#area').val() != "אזור") {
+        $('#saveRoutesBTN').show();
+    }
+    else {
+        $('#saveRoutesBTN').hide();
+    }
+
+    $(document).ready(function () {
+
+        $('#area').on('change', function () {
+
+            var i = $('#area').prop('selectedIndex');
+            
+
+            $('#start' + i).show();
+            $('#end' + i).show();
+
+            for (var s = 1; s < 6; s++) {
+                if (s != i) {
+                    $('#start' + s).hide();
+                    $('#end' + s).hide();
+                }
+            }
+
+            if ($('#area').val() != "אזור") {
+                $('#saveRoutesBTN').show();
+            }
+            else {
+                $('#saveRoutesBTN').hide();
+            }
+        });
+
+    });
+
+    $('#saveRoutesBTN').on('click', function () {
+
+        var areaIndex = $('#area').prop('selectedIndex');
+
+        var startSelector = '#firstTimeRoutes #start' + areaIndex + ' .ui-btn-active';
+        var endSelector = '#firstTimeRoutes #end' + areaIndex + ' .ui-btn-active';
+        
+        var starts = $(startSelector);
+        var ends = $(endSelector);
+
+        var routesArr = [];
+
+        for (var i = 0; i < starts.length; i++) {
+            routesArr.push(starts[i].innerHTML);
+        }
+
+        for (var i = 0; i < ends.length; i++) {
+            routesArr.push(ends[i].innerHTML);
+        }
+
+        if (routesArr.length == 0) {
+            alert("אנא בחר העדפות ורק לאחר מכן לחץ על המשך");
+            return;
+        }
+
+        //save routesArr to DB
+        localStorage.routes = JSON.stringify(routesArr);
+
+
+        //get all rides
+        getRidesList();
+
+        //getMyRides
+        var request = {
+            volunteerId: parseInt(localStorage.userId)
+        }
+        GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB);
+
+
+
+        setTimeout(function () {
+            $.mobile.changePage("#signMe", { transition: "fade", changeHash: true });
+        }, 500);
+    });
+
+});
 
 
 $(window).load(function () {

@@ -50,7 +50,7 @@ public class Ride
                     RideExists = true;
                     foreach (RidePat ridepat in ride.RidePats)
                     {
-                        if (ridepat.RidePatNum == int.Parse(dr["ridePatNum"].ToString()))
+                        if (ridepat.RidePatNum == int.Parse(dr["RidePatNum"].ToString()))
                         {
                             RidePatexists = true;
                             break;
@@ -69,16 +69,16 @@ public class Ride
                     }
                     if (RidePatexists) continue;
                     RidePat rp = new RidePat();
-                    rp.RidePatNum = int.Parse(dr["ridePatNum"].ToString());
+                    rp.RidePatNum = int.Parse(dr["RidePatNum"].ToString());
                     rp.Pat = new Patient();
-                    rp.Pat.DisplayName = dr["patient"].ToString();
+                    rp.Pat.DisplayName = dr["Patient"].ToString();
                     // rp.Pat.EscortedList = new List<Escorted>();
                     Destination o = new Destination();
                     o.Name = dr["Origin"].ToString();
-                    rp.StartPlace = o;
+                    rp.Origin = o;
                     Destination destination = new Destination();
                     destination.Name = dr["Destination"].ToString();
-                    rp.Target = destination;
+                    rp.Destination = destination;
                     //rp.Area = dr["RidePatArea"].ToString();
                     //rp.Shift = dr["RidePatShift"].ToString();
                     rp.Date = Convert.ToDateTime(dr["dateRide"].ToString());
@@ -99,17 +99,17 @@ public class Ride
             r.Drivers.Add(driver);
             r.Id = int.Parse(dr["RideNum"].ToString());
             RidePat ridePat = new RidePat();
-            ridePat.RidePatNum = int.Parse(dr["ridePatNum"].ToString());
+            ridePat.RidePatNum = int.Parse(dr["RidePatNum"].ToString());
             ridePat.Pat = new Patient();
             ridePat.Pat.CellPhone = dr["PatientCell"].ToString();
-            ridePat.Pat.DisplayName = dr["patient"].ToString();
+            ridePat.Pat.DisplayName = dr["Patient"].ToString();
             // ridePat.Pat.EscortedList = new List<Escorted>();
             Destination origin = new Destination();
             origin.Name = dr["Origin"].ToString();
-            ridePat.StartPlace = origin;
+            ridePat.Origin = origin;
             Destination dest = new Destination();
             dest.Name = dr["Destination"].ToString();
-            ridePat.Target = dest;
+            ridePat.Destination = dest;
             //ridePat.Area = dr["RidePatArea"].ToString();
             //ridePat.Shift = dr["RidePatShift"].ToString();
             ridePat.Date = Convert.ToDateTime(dr["dateRide"].ToString());
@@ -141,11 +141,13 @@ public class Ride
         v.DisplayName = "אסף סלוק";
         v.CellPhone = "052-1111111";
         v.DriverType = "ראשי";
+        v.pnRegId = "aaaaa";
         r1.Drivers.Add(v);
         Volunteer v2 = new Volunteer();
         v2.DisplayName = "מתן דורון";
         v2.CellPhone = "052-2222222";
         v2.DriverType = "גיבוי";
+        v2.pnRegId = "mmmmm";
         r1.Drivers.Add(v2);
 
        
@@ -154,19 +156,21 @@ public class Ride
         //RidePat
         RidePat rp = new RidePat();
         rp.Date = new DateTime(2018,4,1,6,0,0);
-        rp.StartPlace = new Destination();
-        rp.StartPlace.Name = "ארז";
-        rp.Target = new Destination();
-        rp.Target.Name = "הלל יפה";
+        rp.Origin = new Destination();
+        rp.Origin.Name = "ארז";
+        rp.Destination = new Destination();
+        rp.Destination.Name = "הלל יפה";
         rp.Coordinator = new Volunteer();
         rp.Coordinator.DisplayName = "בני בורנפלד";
         rp.Coordinator.CellPhone = "050-0000000";
+        rp.Coordinator.pnRegId = "bbbbb";
 
         //Patient
         rp.Pat = new Patient();
         rp.Pat.DisplayName = "וואליד באדיר";
         rp.Pat.CellPhone = "050-9999999";
         rp.Pat.Id = 1;
+        rp.Pat.pnRegId = "wwwww";
 
         //Escort
         rp.Pat.EscortedList = new List<Escorted>();
@@ -198,11 +202,13 @@ public class Ride
         vv.DisplayName = "מסי";
         vv.CellPhone = "052-3333333";
         vv.DriverType = "ראשי";
+        vv.pnRegId = "lllll";
         r2.Drivers.Add(vv);
         Volunteer vv2 = new Volunteer();
         vv2.DisplayName = "רונאלדו";
         vv2.CellPhone = "052-4444444";
         vv2.DriverType = "גיבוי";
+        vv2.pnRegId = "cr7";
         r2.Drivers.Add(vv2);
 
 
@@ -211,30 +217,34 @@ public class Ride
         //RidePat 1
         RidePat rp1 = new RidePat();
         rp1.Date = new DateTime(2018, 4, 5, 11, 0, 0);
-        rp1.StartPlace = new Destination();
-        rp1.StartPlace.Name = "ג'למה";
-        rp1.Target = new Destination();
-        rp1.Target.Name = "רמבם";
+        rp1.Origin = new Destination();
+        rp1.Origin.Name = "ג'למה";
+        rp1.Destination = new Destination();
+        rp1.Destination.Name = "רמבם";
         rp1.Coordinator = new Volunteer();
         rp1.Coordinator.DisplayName = "בני בורנפלד";
         rp1.Coordinator.CellPhone = "050-0000000";
+        rp1.Coordinator.pnRegId = "bbbbb";
 
         //Patient
         rp1.Pat = new Patient();
         rp1.Pat.DisplayName = "אדיר מילר";
         rp1.Pat.CellPhone = "050-7777777";
         rp1.Pat.Id = 2;
+        rp1.Pat.pnRegId = "amama";
 
         //Escort
         rp1.Pat.EscortedList = new List<Escorted>();
         Escorted ee = new Escorted();
         ee.DisplayName = "שחר חסון";
         ee.CellPhone = "050-6666666";
+       
 
         rp1.Pat.EscortedList = new List<Escorted>();
         Escorted ee2 = new Escorted();
         ee2.DisplayName = "קובי מימון";
         ee2.CellPhone = "050-5555555";
+        
 
         rp1.Pat.EscortedList.Add(ee);
         rp1.Pat.EscortedList.Add(ee2);
@@ -248,19 +258,21 @@ public class Ride
         //RidePat 2
         RidePat rp2 = new RidePat();
         rp2.Date = new DateTime(2018, 4, 5, 11, 0, 0);
-        rp2.StartPlace = new Destination();
-        rp2.StartPlace.Name = "ג'למה";
-        rp2.Target = new Destination();
-        rp2.Target.Name = "רמבם";
+        rp2.Origin = new Destination();
+        rp2.Origin.Name = "ג'למה";
+        rp2.Destination = new Destination();
+        rp2.Destination.Name = "רמבם";
         rp2.Coordinator = new Volunteer();
         rp2.Coordinator.DisplayName = "בני בורנפלד";
         rp2.Coordinator.CellPhone = "050-0000000";
+        rp2.Coordinator.pnRegId = "bbbbb";
 
         //Patient
         rp2.Pat = new Patient();
         rp2.Pat.DisplayName = "שלמה ארצי";
         rp2.Pat.CellPhone = "050-1234567";
         rp2.Pat.Id = 3;
+        rp2.Pat.pnRegId = "sasas";
 
         //Escort
         rp2.Pat.EscortedList = new List<Escorted>();
@@ -287,7 +299,7 @@ public class Ride
 
     public List<Ride> GetMyRides(int volunteerId)
     {
-        string query = "select * from RidePatView where DriverId=" + volunteerId;
+        string query = "select * from RidePatView where MainDriver=" + volunteerId + " or secondaryDriver=" + volunteerId;
         DbService db = new DbService();
         DataSet ds = db.GetDataSetByQuery(query);
         Ride r = new Ride();
@@ -301,14 +313,14 @@ public class Ride
             RideExists = false;
             foreach (Ride ride in rl)
             {
-                if (ride.Id == int.Parse(dr["RideId"].ToString()))
+                if (ride.Id == int.Parse(dr["RideNum"].ToString()))
                 {
                     RideExists = true;
 
                     RidePatexists = false;
                     foreach (RidePat ridePat in ride.RidePats)
                     {
-                        if (ridePat.RidePatNum == int.Parse(dr["ridePatNum"].ToString())) RidePatexists = true;
+                        if (ridePat.RidePatNum == int.Parse(dr["RidePatNum"].ToString())) RidePatexists = true;
                         if (RidePatexists && dr["Escort"].ToString() != "")
                         {
                             Escorted es = new Escorted();
@@ -321,9 +333,9 @@ public class Ride
                     if (RidePatexists) continue;
                     RidePat rp2 = new RidePat();
                     //ride.RidePats = new List<RidePat>();
-                    rp2.RidePatNum = int.Parse(dr["ridePatNum"].ToString());
+                    rp2.RidePatNum = int.Parse(dr["RidePatNum"].ToString());
                     rp2.Pat = new Patient();
-                    rp2.Pat.DisplayName = dr["patient"].ToString();
+                    rp2.Pat.DisplayName = dr["Patient"].ToString();
                     rp2.Pat.EscortedList = new List<Escorted>();
                     if (dr["Escort"].ToString() != "")
                     {
@@ -334,25 +346,34 @@ public class Ride
 
                     Destination origin = new Destination();
                     origin.Name = dr["RidePatOrigin"].ToString();
-                    rp2.StartPlace = origin;
+                    rp2.Origin = origin;
                     Destination dest = new Destination();
                     dest.Name = dr["RidePatDestination"].ToString();
-                    rp2.Target = dest;
+                    rp2.Destination = dest;
                     rp2.Area = dr["RidePatArea"].ToString();
                     rp2.Shift = dr["RidePatShift"].ToString();
-                    rp2.Date = Convert.ToDateTime(dr["RidePatDate"].ToString());
+                    rp2.Date = Convert.ToDateTime(dr["RidePatPickupTime"].ToString());
                     ride.RidePats.Add(rp2);
                 }
             }
             if (RideExists) continue;
             Ride r2 = new Ride();
-            r2.Id = int.Parse(dr["RideID"].ToString());
-            r2.Status = dr["statusRide"].ToString();
+            if (dr["Maindriver"].ToString()==volunteerId.ToString())
+            {
+r2.Status = "Primary";
+            }
+            else
+            {
+                r2.Status = "Secondary";
+            }
+            
+            r2.Id = int.Parse(dr["RideNum"].ToString());
+           // r2.Status = dr["RidePatStatus"].ToString();
             RidePat rp = new RidePat();
             r2.RidePats = new List<RidePat>();
-            rp.RidePatNum = int.Parse(dr["ridePatNum"].ToString());
+            rp.RidePatNum = int.Parse(dr["RidePatNum"].ToString());
             rp.Pat = new Patient();
-            rp.Pat.DisplayName = dr["patient"].ToString();
+            rp.Pat.DisplayName = dr["Patient"].ToString();
             rp.Pat.EscortedList = new List<Escorted>();
             if (dr["Escort"].ToString() != "")
             {
@@ -363,13 +384,13 @@ public class Ride
 
             Destination origin2 = new Destination();
             origin2.Name = dr["RidePatOrigin"].ToString();
-            rp.StartPlace = origin2;
+            rp.Origin = origin2;
             Destination dest2 = new Destination();
             dest2.Name = dr["RidePatDestination"].ToString();
-            rp.Target = dest2;
+            rp.Destination = dest2;
             rp.Area = dr["RidePatArea"].ToString();
             rp.Shift = dr["RidePatShift"].ToString();
-            rp.Date = Convert.ToDateTime(dr["RidePatDate"].ToString());
+            rp.Date = Convert.ToDateTime(dr["RidePatPickupTime"].ToString());
             r2.RidePats.Add(rp);
             rl.Add(r2);
         }

@@ -1,4 +1,47 @@
-﻿#auction .phone {
+﻿label {
+    direction: rtl;
+}
+
+#saveRoutesBTN {
+    position: absolute;
+    bottom: 5%;
+    left: 10%;
+}
+
+#preferences table {
+    margin: 0 auto;
+    margin-top: 50%;
+    width: 80%;
+}
+
+#preferences td {
+    padding: 5%;
+    text-align: center;
+}
+
+#seatsToAreaBTN {
+    margin: 0;
+    margin-top: 20%;
+}
+
+#preferences td .ui-select {
+    width: 40%;
+    margin: 0 auto;
+}
+
+#firstTimeRoutes h3 {
+    margin-top: 0;
+}
+
+#kavim1 .ui-btn-active, #firstTimeRoutes .ui-btn-active {
+    background-color: #40a551;
+    border-color: #40a551;
+    color: #fff;
+    text-shadow: 0 1px 0 #2a7c38;
+}
+
+
+#auction .phone {
     background-color: #98FB98;
 }
 
@@ -27,8 +70,10 @@
 }
 
 #auction .ui-content {
-    margin-bottom:20%;
-}#auction li {
+    margin-bottom: 20%;
+}
+
+#auction li {
     border: grey 1px solid;
     height: 50px;
     padding: 5% 2%;
@@ -40,8 +85,8 @@
         float: left;
         margin: 3%;
         border-radius: 25px;
-    border:none;
-        }
+        border: none;
+    }
 
 
 #auctionInfo {
@@ -51,7 +96,7 @@
 
 #auction ul {
     display: inline;
-    margin-bottom:15%;
+    margin-bottom: 15%;
 }
 
 #auctionPanel {
@@ -146,9 +191,9 @@ hr {
     width: 100%;
 }
 
-#deleteMePage, #signMePage, #suggest {
+#deleteMePage, #signMePage, #suggest, #infoPastRide {
     text-align: center;
-    padding: 50% 0px;
+    padding: 30% 0px;
 }
 
 
@@ -169,7 +214,7 @@ hr {
 }
 
 #area-button, #area2-button {
-    width: 50px;
+    width: 100px;
     margin: 0 auto;
 }
 
@@ -293,11 +338,11 @@ hr {
         padding: 2%;
     }
 
-#signMe .primary {
+#signMe .primary, #myRides .primary {
     background-color: #cef4ff;
 }
 
-#signMe .backup {
+#signMe .backup, #myRides .backup {
     background-color: #f9ffbf;
 }
 

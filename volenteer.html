@@ -56,6 +56,44 @@
     </div>
 
 
+    <div data-role="page" id="preferences">
+
+        <div id="availableSeats">
+
+            <table>
+                <tr>
+                    <td>
+                        <label>כמה מקומות פנויים לנסיעה יש ברכבך?</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <select>
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                            <option>6</option>
+                            <option>7</option>
+                            <option>8</option>
+                            <option>9</option>
+                            <option>10</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a id="seatsToAreaBTN" data-role="button" data-inline="true">המשך</a>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+
+    </div>
+
+
     <div id="rtrInfo" data-role="page">
         <a data-rel="back" style="float:left;border:none;margin:0;margin-left:2%" href="#" class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"></a>
 
@@ -491,7 +529,7 @@
 
     <div data-role="page" id="infoPastRide">
         <div role="main" class="ui-corner-bottom ui-content">
-            <div id="phPopInfo"><h1>פרטים נוספים</h1><br /></div>
+            <div id="phPopInfo"></div>
             <a data-icon="delete" onclick="" id="closeInfoBTN" href="#" style="background-color:#660000" data-role="button" data-rel="back" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">סגור</a>
         </div>
     </div>
@@ -515,219 +553,324 @@
     </div>
 
 
-    <div id="kavim1" data-role="page">
-        <div data-role="header">
+    <div id="firstTimeRoutes" data-role="page">
 
-            <h1>ההעדפות שלי</h1>
-            <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
-            </a>
-        </div>
         <div data-role="content">
-            <select id="area" data-iconpos="left" style="width:100px;">
+            <h3>אנא בחר איזור ומחסומים/בתי חולים מועדפים</h3>
+            <select id="area" data-iconpos="left" style="padding-top: 0%;">
                 <option>אזור</option>
                 <option>צפון</option>
+                <option>צפון-מרכז</option>
                 <option>מרכז</option>
+                <option>מרכז-דרום</option>
                 <option>דרום</option>
             </select>
+
             <div id="start1" hidden="hidden" class="start">
                 <form>
                     <fieldset data-role="controlgroup" data-type="horizontal">
-                        <input type="checkbox" id="checkbox-h-2a">
-                        <label for="checkbox-h-2a">ג'למה</label>
+                        <input type="checkbox" id="s11">
+                        <label for="s11">ג'למה (גלבוע)</label>
                     </fieldset>
                 </form>
                 <form>
                     <fieldset data-role="controlgroup" data-type="horizontal">
-                        <input type="checkbox" id="checkbox-h-2b">
-                        <label for="checkbox-h-2b">ריחן</label>
-                    </fieldset>
-                </form>
-                <form>
-                    <fieldset data-role="controlgroup" data-type="horizontal">
-                        <input type="checkbox" id="checkbox-h-2c">
-                        <label for="checkbox-h-2c">שער אפרים</label>
-                    </fieldset>
-                </form>
-                <form>
-                    <fieldset data-role="controlgroup" data-type="horizontal">
-                        <input type="checkbox" id="checkbox-h-2d">
-                        <label for="checkbox-h-2d">אייל</label>
+                        <input type="checkbox" id="s12">
+                        <label for="s12">ריחן</label>
                     </fieldset>
                 </form>
             </div>
+
             <div id="end1" hidden="hidden" class="end">
                 <form>
                     <fieldset data-role="controlgroup" data-type="horizontal">
-                        <input type="checkbox" id="checkbox-h-2e">
-                        <label for="checkbox-h-2e">רמבם</label>
+                        <input type="checkbox" id="s13">
+                        <label for="s13">רמבם</label>
                     </fieldset>
                 </form>
                 <form>
                     <fieldset data-role="controlgroup" data-type="horizontal">
-                        <input type="checkbox" id="checkbox-h-2f">
-                        <label for="checkbox-h-2f">שיבא</label>
-                    </fieldset>
-                </form>
-                <form>
-                    <fieldset data-role="controlgroup" data-type="horizontal">
-                        <input type="checkbox" id="checkbox-h-2g">
-                        <label for="checkbox-h-2g">אסותא</label>
+                        <input type="checkbox" id="s14">
+                        <label for="s14">שיבא</label>
                     </fieldset>
                 </form>
             </div>
+
 
             <div id="start2" hidden="hidden" class="start">
                 <form>
                     <fieldset data-role="controlgroup" data-type="horizontal">
-                        <input type="checkbox" id="checkbox-h-2h">
-                        <label for="checkbox-h-2h">אייל</label>
+                        <input type="checkbox" id="s41">
+                        <label for="s41">ג'למה (גלבוע)</label>
                     </fieldset>
                 </form>
                 <form>
                     <fieldset data-role="controlgroup" data-type="horizontal">
-                        <input type="checkbox" id="checkbox-h-2i">
-                        <label for="checkbox-h-2i">אליהו</label>
+                        <input type="checkbox" id="s42">
+                        <label for="s42">ריחן</label>
                     </fieldset>
                 </form>
                 <form>
                     <fieldset data-role="controlgroup" data-type="horizontal">
-                        <input type="checkbox" id="checkbox-h-2j">
-                        <label for="checkbox-h-2j">הפרחים</label>
+                        <input type="checkbox" id="s43">
+                        <label for="s43">אייל</label>
                     </fieldset>
                 </form>
                 <form>
                     <fieldset data-role="controlgroup" data-type="horizontal">
-                        <input type="checkbox" id="checkbox-h-2k">
-                        <label for="checkbox-h-2k">נעלין</label>
+                        <input type="checkbox" id="s44">
+                        <label for="s44">אליהו</label>
                     </fieldset>
                 </form>
                 <form>
                     <fieldset data-role="controlgroup" data-type="horizontal">
-                        <input type="checkbox" id="checkbox-h-2l">
-                        <label for="checkbox-h-2l">תרקומיה</label>
+                        <input type="checkbox" id="s45">
+                        <label for="s45">בית לחם</label>
                     </fieldset>
                 </form>
                 <form>
                     <fieldset data-role="controlgroup" data-type="horizontal">
-                        <input type="checkbox" id="checkbox-h-2m">
-                        <label for="checkbox-h-2m">בית לחם</label>
+                        <input type="checkbox" id="s46">
+                        <label for="s46">הפרחים</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="s47">
+                        <label for="s47">נעלין</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="s48">
+                        <label for="s48">שער אפרים</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="s49">
+                        <label for="s49">תרקומיה</label>
                     </fieldset>
                 </form>
             </div>
+
             <div id="end2" hidden="hidden" class="end">
                 <form>
                     <fieldset data-role="controlgroup" data-type="horizontal">
-                        <input type="checkbox" id="checkbox-h-2n">
-                        <label for="checkbox-h-2n">שיבא</label>
+                        <input type="checkbox" id="s491">
+                        <label for="s491">רמבם</label>
                     </fieldset>
                 </form>
                 <form>
                     <fieldset data-role="controlgroup" data-type="horizontal">
-                        <input type="checkbox" id="checkbox-h-2o">
-                        <label for="checkbox-h-2o">וולפסון</label>
+                        <input type="checkbox" id="s492">
+                        <label for="s492">איכילוב</label>
                     </fieldset>
                 </form>
                 <form>
                     <fieldset data-role="controlgroup" data-type="horizontal">
-                        <input type="checkbox" id="checkbox-h-2p">
-                        <label for="checkbox-h-2p">איכילוב</label>
+                        <input type="checkbox" id="s493">
+                        <label for="s493">אסותא</label>
                     </fieldset>
                 </form>
                 <form>
                     <fieldset data-role="controlgroup" data-type="horizontal">
-                        <input type="checkbox" id="checkbox-h-2q">
-                        <label for="checkbox-h-2q">שניידר</label>
+                        <input type="checkbox" id="s494">
+                        <label for="s494">שיבא</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="s495">
+                        <label for="s495">וולפסון</label>
                     </fieldset>
                 </form>
             </div>
+
 
             <div id="start3" hidden="hidden" class="start">
                 <form>
                     <fieldset data-role="controlgroup" data-type="horizontal">
-                        <input type="checkbox" id="checkbox-h-2r">
-                        <label for="checkbox-h-2r">ארז</label>
-                    </fieldset>
-                </form>
-                <!--<form>
-                    <fieldset data-role="controlgroup" data-type="horizontal">
-                        <input type="checkbox" id="checkbox-h-2b">
-                        <label for="checkbox-h-2b">קלנדיה</label>
+                        <input type="checkbox" id="s21">
+                        <label for="s21">אייל</label>
                     </fieldset>
                 </form>
                 <form>
                     <fieldset data-role="controlgroup" data-type="horizontal">
-                        <input type="checkbox" id="checkbox-h-2c">
-                        <label for="checkbox-h-2c">חיזמה</label>
+                        <input type="checkbox" id="s22">
+                        <label for="s22">אליהו</label>
                     </fieldset>
                 </form>
                 <form>
                     <fieldset data-role="controlgroup" data-type="horizontal">
-                        <input type="checkbox" id="checkbox-h-2d">
-                        <label for="checkbox-h-2d">ירושלים</label>
+                        <input type="checkbox" id="s23">
+                        <label for="s23">בית לחם</label>
                     </fieldset>
-                </form>-->
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="s24">
+                        <label for="s24">הפרחים</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="s25">
+                        <label for="s25">נעלין</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="s26">
+                        <label for="s26">שער אפרים</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="s27">
+                        <label for="s27">תרקומיה</label>
+                    </fieldset>
+                </form>
             </div>
+
             <div id="end3" hidden="hidden" class="end">
                 <form>
                     <fieldset data-role="controlgroup" data-type="horizontal">
-                        <input type="checkbox" id="checkbox-h-2s">
-                        <label for="checkbox-h-2s">מרכז</label>
+                        <input type="checkbox" id="s28">
+                        <label for="s28">שיבא</label>
                     </fieldset>
                 </form>
                 <form>
                     <fieldset data-role="controlgroup" data-type="horizontal">
-                        <input type="checkbox" id="checkbox-h-2t">
-                        <label for="checkbox-h-2t">ירושלים</label>
+                        <input type="checkbox" id="s29">
+                        <label for="s29">וולפסון</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="s230">
+                        <label for="s230">איכילוב</label>
                     </fieldset>
                 </form>
             </div>
+
+
+            <div id="start4" hidden="hidden" class="start">
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="s51">
+                        <label for="s51">אייל</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="s52">
+                        <label for="s52">אליהו</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="s53">
+                        <label for="s53">בית לחם</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="s54">
+                        <label for="s54">הפרחים</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="s55">
+                        <label for="s55">נעלין</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="s56">
+                        <label for="s56">שער אפרים</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="s57">
+                        <label for="s57">תרקומיה</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="s58">
+                        <label for="s58">ארז</label>
+                    </fieldset>
+                </form>
+            </div>
+
+            <div id="end4" hidden="hidden" class="end">
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="s59">
+                        <label for="s59">שיבא</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="s591">
+                        <label for="s591">וולפסון</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="s592">
+                        <label for="s592">איכילוב</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="s593">
+                        <label for="s593">מרכז</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="s594">
+                        <label for="s594">ירושלים</label>
+                    </fieldset>
+                </form>
+            </div>
+
+
+            <div id="start5" hidden="hidden" class="start">
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="s31">
+                        <label for="s31">ארז</label>
+                    </fieldset>
+                </form>
+            </div>
+
+            <div id="end5" hidden="hidden" class="end">
+
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="s32">
+                        <label for="s32">ירושלים</label>
+                    </fieldset>
+                </form>
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="s33">
+                        <label for="s33">מרכז</label>
+                    </fieldset>
+                </form>
+            </div>
+
+
+            <a id="saveRoutesBTN" data-role="button" data-inline="true" hidden="hidden">המשך</a>
         </div>
+
     </div>
 
-
-    <div id="kavim2" data-role="page">
-        <div data-role="header">
-
-            <h1>ההעדפות שלי</h1>
-            <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
-            </a>
-        </div>
-        <div data-role="content">
-            <div>
-                <p>הסעות ממחסום לבתי חולים</p>
-                <select id="startD" data-icon="false"></select>
-                <label id="hetz"><i class="fa fa-arrow-left"></i></label>
-                <select id="endD" data-icon="false"></select>
-
-                <fieldset data-role="controlgroup" data-type="horizontal" class="ui-grid-a" data-theme="a" style="float: right;margin: 0px 2px;">
-
-                    <input type="checkbox" id="kavim2CB">
-                    <label for="kavim2CB"><i class="fa fa-arrow-left"></i><i class="fa fa-arrow-right"></i></label>
-
-                </fieldset>
-                <a data-role="button" id="addMaslul" data-theme="b">הוסף</a>
-            </div>
-            <br /> <br /><br />
-            <div>
-                <p>הסעות מבית חולים למחסומים</p>
-                <select id="startD2" data-icon="false"></select>
-                <label id="hetz"><i class="fa fa-arrow-left"></i></label>
-                <select id="endD2" data-icon="false"></select>
-
-                <fieldset data-role="controlgroup" data-type="horizontal" class="ui-grid-a" data-theme="a" style="float: right;margin: 0px 2px;">
-
-                    <input type="checkbox" id="kavim2CB2">
-                    <label for="kavim2CB2"><i class="fa fa-arrow-left"></i><i class="fa fa-arrow-right"></i></label>
-
-                </fieldset>
-                <a data-role="button" id="addMaslul2" data-theme="b">הוסף</a>
-            </div>
-
-            <br /><br /><br />
-            <p>המסלולים שלי</p>
-            <ul id="maslulLV" data-role="listview" data-inset="true" data-icon="false" data-theme="a"></ul>
-        </div>
-    </div>
 
 </body>
 </html>
