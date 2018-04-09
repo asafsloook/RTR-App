@@ -50,7 +50,7 @@
 
     <div data-role="page" id="loginPreference">
         <h2 id="welcomeTitle"></h2>
-        <a id="changePrefBTN" data-role="button" data-inline="true">שינוי ההעדפות שלי</a>
+        <a id="changePrefBTN" href="#preferences" data-role="button" data-inline="true">שינוי ההעדפות שלי</a>
         <br />
         <a id="nextPageBTN" data-role="button" data-inline="true">המשך</a>
     </div>
@@ -327,6 +327,19 @@
     </div>
 
 
+    <div data-role="page" id="deleteConfirm">
+        <div role="main" class="ui-corner-bottom ui-content">
+            <div id="phPopDeleteConfirm">
+                <p style="padding: 15%;">
+                    האם אתה בטוח שברצונך למחוק את שיבוצך לנסיעה זו?
+                </p>
+            </div>
+            <a data-icon="check" id="deleteokBTN" style="background-color:#004d00" data-rel="back" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">לא</a>
+            <a data-icon="delete" onclick="deleteMyRide()" id="deletecancelBTN" style="background-color:#660000" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">כן</a>
+        </div>
+    </div>
+
+
     <div data-role="page" id="trackRides">
 
 
@@ -522,7 +535,7 @@
         <div role="main" class="ui-corner-bottom ui-content">
             <div id="phPopDelete"></div>
             <a data-icon="check" id="deleteokBTN" style="background-color:#004d00" data-rel="back" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">סגור</a>
-            <a data-icon="delete" onclick="deleteMyRide()" id="deletecancelBTN" style="background-color:#660000" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">בטל את הנסיעה</a>
+            <a data-icon="delete" href="#deleteConfirm" style="background-color:#660000" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">בטל את הנסיעה</a>
         </div>
     </div>
 

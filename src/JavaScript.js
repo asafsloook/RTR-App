@@ -1,8 +1,5 @@
 ﻿
-//webservices - delete driver (maybe more, do tests with matan)
-
-//ask the user if he really want to delete the ride and who gonna stay on the ride (in mulitipule patiant ride)
-
+//load preferences from db on navigate to #preferences (seats and routes)
 
 //get week function
 Date.prototype.getWeek = function () {
@@ -319,7 +316,10 @@ function filterRides(rides) {
         else if (checkMyRides(rides[i])) {
 
         }
-        else if (parseInt(localStorage.availibleSeats) < rides[i].Melave.length + 1) {
+        else if (checkMySeats(rides[i])) {
+
+        }
+        else if (checkMyRoutes(rides[i])) {
 
         }
         else {
@@ -328,6 +328,29 @@ function filterRides(rides) {
     }
 
     return filteredRides;
+}
+
+
+//for filtering rides with prefered volunteer routes
+function checkMyRoutes(ride) {
+    for (var i = 0; i < routesArr.length; i++) {
+        if (routesArr[i] == ride.StartPoint) {
+            return false;
+        }
+        if (routesArr[i] == ride.EndPoint) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
+//for filtering rides with more seats than the volunteer has
+function checkMySeats(ride) {
+    var seats = parseInt(localStorage.availibleSeats);
+    var rideNeeds = ride.Melave.length + 1;
+
+    return seats < rideNeeds;
 }
 
 
@@ -1302,7 +1325,7 @@ function checkUserSuccessCB(results) {
     //get personal info: name, photo, address etc.
     //get preferences
     //get number of seats in the car
-    
+
 
     if (localStorage.availibleSeats == null) {
         setTimeout(function () {
@@ -1363,7 +1386,7 @@ $(document).on('pagebeforeshow', '#firstTimeRoutes', function () {
         $('#area').on('change', function () {
 
             var i = $('#area').prop('selectedIndex');
-            
+
 
             $('#start' + i).show();
             $('#end' + i).show();
@@ -1391,11 +1414,11 @@ $(document).on('pagebeforeshow', '#firstTimeRoutes', function () {
 
         var startSelector = '#firstTimeRoutes #start' + areaIndex + ' .ui-btn-active';
         var endSelector = '#firstTimeRoutes #end' + areaIndex + ' .ui-btn-active';
-        
+
         var starts = $(startSelector);
         var ends = $(endSelector);
 
-        var routesArr = [];
+        routesArr = [];
 
         for (var i = 0; i < starts.length; i++) {
             routesArr.push(starts[i].innerHTML);
