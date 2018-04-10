@@ -1323,8 +1323,7 @@ function checkUserSuccessCB(results) {
     userInfo = results;
     localStorage.userId = userInfo.Id;
     //get personal info: name, photo, address etc.
-    //get preferences
-    //get number of seats in the car
+    //get preferences routes and seats
 
 
     if (localStorage.availibleSeats == null) {
@@ -1354,6 +1353,16 @@ function checkUserErrorCB(e) {
 
 $(document).on('pagebeforeshow', '#preferences', function () {
 
+    if (localStorage.availibleSeats == null) {
+        //do nothing, wait for user to change preferences (seats)
+    }
+    else {
+        var seats = localStorage.availibleSeats;
+        $('#availableSeats select').val(seats);
+        $('#availableSeats select').selectmenu('refresh');
+    }
+    
+
     $('#seatsToAreaBTN').on('click', function () {
 
         var seats = $('#availableSeats select').val();
@@ -1363,14 +1372,17 @@ $(document).on('pagebeforeshow', '#preferences', function () {
         //and also update the db with the seats
 
         setTimeout(function () {
-            $.mobile.changePage("#firstTimeRoutes", { transition: "fade", changeHash: true });
+            $.mobile.changePage("#myRoutes", { transition: "fade", changeHash: true });
         }, 1000);
 
     });
 });
 
 
-$(document).on('pagebeforeshow', '#firstTimeRoutes', function () {
+$(document).on('pagebeforeshow', '#myRoutes', function () {
+
+
+
 
     $('#saveRoutesBTN').hide();
 
@@ -1381,29 +1393,64 @@ $(document).on('pagebeforeshow', '#firstTimeRoutes', function () {
         $('#saveRoutesBTN').hide();
     }
 
+
+
+    if (localStorage.routes == null) {
+        //do nothing, wait for user to change preferences (routes)
+    }
+    else {
+        var routes = $.parseJSON(localStorage.routes);
+
+        var areaIndex = routes[0];
+        $('#myRoutes select').prop('selectedIndex', areaIndex);
+        $('#myRoutes select').selectmenu('refresh');
+
+        showAreas();
+        
+        var startSelector = '#myRoutes #start' + areaIndex + ' .ui-checkbox';
+        var endSelector = '#myRoutes #end' + areaIndex + ' .ui-checkbox';
+        
+        var starts = $(startSelector);
+        var ends = $(endSelector);
+        
+
+        for (var r = 0; r < routes.length; r++) {
+
+            for (var i = 0; i < starts.length; i++) {
+
+                var startPoint = starts[i].children[0].innerHTML;
+                
+                if (startPoint == routes[r]) {
+
+                    var startSelector = '#myRoutes #start' + areaIndex + ' .ui-checkbox label';
+                    $(startSelector).eq(i).addClass('ui-checkbox-on').removeClass('ui-checkbox-off').addClass('ui-btn-active');
+
+                }
+            }
+
+            for (var i = 0; i < ends.length; i++) {
+
+                var endPoint = ends[i].children[0].innerHTML;
+
+                if (endPoint == routes[r]) {
+
+                    var endSelector = '#myRoutes #end' + areaIndex + ' .ui-checkbox label';
+                    $(endSelector).eq(i).addClass('ui-checkbox-on').removeClass('ui-checkbox-off').addClass('ui-btn-active');
+
+                }
+            }
+
+        }
+    }
+
+
+
     $(document).ready(function () {
 
         $('#area').on('change', function () {
 
-            var i = $('#area').prop('selectedIndex');
+            showAreas();
 
-
-            $('#start' + i).show();
-            $('#end' + i).show();
-
-            for (var s = 1; s < 6; s++) {
-                if (s != i) {
-                    $('#start' + s).hide();
-                    $('#end' + s).hide();
-                }
-            }
-
-            if ($('#area').val() != "אזור") {
-                $('#saveRoutesBTN').show();
-            }
-            else {
-                $('#saveRoutesBTN').hide();
-            }
         });
 
     });
@@ -1412,13 +1459,14 @@ $(document).on('pagebeforeshow', '#firstTimeRoutes', function () {
 
         var areaIndex = $('#area').prop('selectedIndex');
 
-        var startSelector = '#firstTimeRoutes #start' + areaIndex + ' .ui-btn-active';
-        var endSelector = '#firstTimeRoutes #end' + areaIndex + ' .ui-btn-active';
+        var startSelector = '#myRoutes #start' + areaIndex + ' .ui-btn-active';
+        var endSelector = '#myRoutes #end' + areaIndex + ' .ui-btn-active';
 
         var starts = $(startSelector);
         var ends = $(endSelector);
 
         routesArr = [];
+        routesArr.push($('#myRoutes select').prop('selectedIndex'));
 
         for (var i = 0; i < starts.length; i++) {
             routesArr.push(starts[i].innerHTML);
@@ -1454,6 +1502,28 @@ $(document).on('pagebeforeshow', '#firstTimeRoutes', function () {
     });
 
 });
+
+
+function showAreas() {
+    var i = $('#area').prop('selectedIndex');
+    
+    $('#start' + i).show();
+    $('#end' + i).show();
+
+    for (var s = 1; s < 6; s++) {
+        if (s != i) {
+            $('#start' + s).hide();
+            $('#end' + s).hide();
+        }
+    }
+
+    if ($('#area').val() != "אזור") {
+        $('#saveRoutesBTN').show();
+    }
+    else {
+        $('#saveRoutesBTN').hide();
+    }
+}
 
 
 $(window).load(function () {

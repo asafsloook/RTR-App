@@ -31,11 +31,11 @@
     margin: 0 auto;
 }
 
-#firstTimeRoutes h3 {
+#myRoutes h3 {
     margin-top: 0;
 }
 
-#kavim1 .ui-btn-active, #firstTimeRoutes .ui-btn-active {
+#kavim1 .ui-btn-active, #myRoutes .ui-btn-active {
     background-color: #40a551;
     border-color: #40a551;
     color: #fff;
