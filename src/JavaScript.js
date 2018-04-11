@@ -1364,7 +1364,7 @@ $(document).on('pagebeforeshow', '#preferences', function () {
         $('#availableSeats select').val(seats);
         $('#availableSeats select').selectmenu('refresh');
     }
-    
+
 
     $('#seatsToAreaBTN').on('click', function () {
 
@@ -1385,8 +1385,6 @@ $(document).on('pagebeforeshow', '#preferences', function () {
 $(document).on('pagebeforeshow', '#myRoutes', function () {
 
 
-
-
     $('#saveRoutesBTN').hide();
 
     if ($('#area').val() != "אזור") {
@@ -1402,6 +1400,8 @@ $(document).on('pagebeforeshow', '#myRoutes', function () {
         //do nothing, wait for user to change preferences (routes)
     }
     else {
+        //user have saved routes
+
         var routes = $.parseJSON(localStorage.routes);
 
         var areaIndex = routes[0];
@@ -1409,41 +1409,8 @@ $(document).on('pagebeforeshow', '#myRoutes', function () {
         $('#myRoutes select').selectmenu('refresh');
 
         showAreas();
-        
-        var startSelector = '#myRoutes #start' + areaIndex + ' .ui-checkbox';
-        var endSelector = '#myRoutes #end' + areaIndex + ' .ui-checkbox';
-        
-        var starts = $(startSelector);
-        var ends = $(endSelector);
-        
 
-        for (var r = 0; r < routes.length; r++) {
-
-            for (var i = 0; i < starts.length; i++) {
-
-                var startPoint = starts[i].children[0].innerHTML;
-                
-                if (startPoint == routes[r]) {
-
-                    var startSelector = '#myRoutes #start' + areaIndex + ' .ui-checkbox label';
-                    $(startSelector).eq(i).addClass('ui-checkbox-on').removeClass('ui-checkbox-off').addClass('ui-btn-active');
-
-                }
-            }
-
-            for (var i = 0; i < ends.length; i++) {
-
-                var endPoint = ends[i].children[0].innerHTML;
-
-                if (endPoint == routes[r]) {
-
-                    var endSelector = '#myRoutes #end' + areaIndex + ' .ui-checkbox label';
-                    $(endSelector).eq(i).addClass('ui-checkbox-on').removeClass('ui-checkbox-off').addClass('ui-btn-active');
-
-                }
-            }
-
-        }
+        showSavedRoutes(routes);
     }
 
 
@@ -1460,23 +1427,14 @@ $(document).on('pagebeforeshow', '#myRoutes', function () {
 
     $('#saveRoutesBTN').on('click', function () {
 
-        var areaIndex = $('#area').prop('selectedIndex');
-
-        var startSelector = '#myRoutes #start' + areaIndex + ' .ui-btn-active';
-        var endSelector = '#myRoutes #end' + areaIndex + ' .ui-btn-active';
-
-        var starts = $(startSelector);
-        var ends = $(endSelector);
 
         routesArr = [];
         routesArr.push($('#myRoutes select').prop('selectedIndex'));
 
-        for (var i = 0; i < starts.length; i++) {
-            routesArr.push(starts[i].innerHTML);
-        }
+        var actives = $('#myRoutes .ui-btn-active');
 
-        for (var i = 0; i < ends.length; i++) {
-            routesArr.push(ends[i].innerHTML);
+        for (var i = 0; i < actives.length; i++) {
+            routesArr.push(actives[i].innerHTML);
         }
 
         if (routesArr.length == 0) {
@@ -1507,17 +1465,66 @@ $(document).on('pagebeforeshow', '#myRoutes', function () {
 });
 
 
-function showAreas() {
-    var i = $('#area').prop('selectedIndex');
-    
-    $('#start' + i).show();
-    $('#end' + i).show();
+function showSavedRoutes(routes) {
 
-    for (var s = 1; s < 6; s++) {
-        if (s != i) {
-            $('#start' + s).hide();
-            $('#end' + s).hide();
+    var activates = $('#myRoutes .ui-checkbox');
+
+    for (var r = 0; r < routes.length; r++) {
+
+        for (var i = 0; i < activates.length; i++) {
+
+            var point = activates[i].children[0].innerHTML;
+
+            if (point == routes[r]) {
+
+                $('#myRoutes .ui-checkbox label').eq(i).click();
+
+            }
         }
+
+    }
+
+}
+
+
+function showAreas() {
+
+    $('.north , .center , .south').hide();
+
+    var i = $('#area').prop('selectedIndex');
+    var area = "";
+
+    switch (i) {
+        case 1:
+            area = 'north';
+            break;
+        case 2:
+            area = 'north-center';
+            break;
+        case 3:
+            area = 'center';
+            break;
+        case 4:
+            area = 'center-south';
+            break;
+        case 5:
+            area = 'south';
+            break;
+        default:
+    }
+
+    if (area.indexOf("-") != -1) {
+        var temp = area.split("-");
+
+        var selector = "." + temp[0];
+        $(selector).show();
+
+        selector = "." + temp[1];
+        $(selector).show();
+    }
+    else {
+        var selector = "." + area;
+        $(selector).show();
     }
 
     if ($('#area').val() != "אזור") {
