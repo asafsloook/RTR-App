@@ -1385,14 +1385,7 @@ $(document).on('pagebeforeshow', '#preferences', function () {
 $(document).on('pagebeforeshow', '#myRoutes', function () {
 
 
-    $('#saveRoutesBTN').hide();
-
-    if ($('#area').val() != "אזור") {
-        $('#saveRoutesBTN').show();
-    }
-    else {
-        $('#saveRoutesBTN').hide();
-    }
+    continueButtonRoutes();
 
 
 
@@ -1465,6 +1458,18 @@ $(document).on('pagebeforeshow', '#myRoutes', function () {
 });
 
 
+function continueButtonRoutes() {
+    $('#saveRoutesBTN').hide();
+
+    if ($('#area').val() != "אזור") {
+        $('#saveRoutesBTN').show();
+    }
+    else {
+        $('#saveRoutesBTN').hide();
+    }
+}
+
+
 function showSavedRoutes(routes) {
 
     var activates = $('#myRoutes .ui-checkbox');
@@ -1492,47 +1497,33 @@ function showAreas() {
     $('.north , .center , .south').hide();
 
     var i = $('#area').prop('selectedIndex');
-    var area = "";
+
+    var areaSelector = "";
 
     switch (i) {
         case 1:
-            area = 'north';
+            areaSelector = '.north';
             break;
         case 2:
-            area = 'north-center';
+            areaSelector = '.north , .center';
             break;
         case 3:
-            area = 'center';
+            areaSelector = '.center';
             break;
         case 4:
-            area = 'center-south';
+            areaSelector = '.center , .south';
             break;
         case 5:
-            area = 'south';
+            areaSelector = '.south';
             break;
         default:
     }
 
-    if (area.indexOf("-") != -1) {
-        var temp = area.split("-");
+    var selector = areaSelector;
+    $(selector).show();
 
-        var selector = "." + temp[0];
-        $(selector).show();
 
-        selector = "." + temp[1];
-        $(selector).show();
-    }
-    else {
-        var selector = "." + area;
-        $(selector).show();
-    }
-
-    if ($('#area').val() != "אזור") {
-        $('#saveRoutesBTN').show();
-    }
-    else {
-        $('#saveRoutesBTN').hide();
-    }
+    continueButtonRoutes();
 }
 
 
