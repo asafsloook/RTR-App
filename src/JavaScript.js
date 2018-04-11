@@ -333,6 +333,9 @@ function filterRides(rides) {
 
 //for filtering rides with prefered volunteer routes
 function checkMyRoutes(ride) {
+
+    routesArr = $.parseJSON(localStorage.routes);
+
     for (var i = 0; i < routesArr.length; i++) {
         if (routesArr[i] == ride.StartPoint) {
             return false;
