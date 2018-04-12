@@ -551,7 +551,7 @@
     <div data-role="page" id="signMePage">
         <div role="main" class="ui-corner-bottom ui-content">
             <div id="phPop"></div>
-            <a data-icon="check" id="okBTN" href="#suggest" style="background-color:#004d00" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">שבץ אותי</a>
+            <a data-icon="check" id="okBTN" href="#" style="background-color:#004d00" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">שבץ אותי</a>
             <a data-icon="delete" id="cancelBTN" href="#" style="background-color:#660000" data-role="button" data-inline="true" data-rel="back" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">בטל</a>
         </div>
     </div>
@@ -559,10 +559,18 @@
 
     <div data-role="page" id="suggest" style="text-align:center">
 
-        <h1 data-theme="b">נרשמת בהצלחה!</h1>
+        <h1 data-theme="b">suggest</h1>
         <div id="phSuggest"></div>
-        <a data-icon="check" id="suggestOkBTN" style="background-color:#004d00" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">נשמע טוב</a>
-        <a data-icon="delete" id="suggestCancelBTN" href="#myRides" style="background-color:#660000" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">לא מעוניין</a>
+        <a data-icon="check" id="suggestOkBTN" onclick="suggestSuitedRides()" style="background-color:#004d00" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">נשמע טוב</a>
+        <a data-icon="delete" id="suggestCancelBTN" href="#signConfirmation" style="background-color:#660000" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">לא מעוניין</a>
+    </div>
+
+
+    <div data-role="page" id="signConfirmation" style="text-align:center">
+        <h1 data-theme="b">signConfirmation</h1>
+        <div id="phConfirmation"></div>
+        <a data-icon="check" id="signConfirmationOkBTN" style="background-color:#004d00" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">נשמע טוב</a>
+        <a data-icon="delete" id="signConfirmationCancelBTN" href="#myRides" style="background-color:#660000" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">לא מעוניין</a>
     </div>
 
 
