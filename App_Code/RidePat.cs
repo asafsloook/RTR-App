@@ -428,7 +428,7 @@ public class RidePat
         return res;
     }
 
-    public int SignDriver(int ridePatId, int ridePatId2, int driverId, bool primary)
+    public int SignDriver(int ridePatId,  int driverId, bool primary)
     {
         DbService db = new DbService();
         string query = "select Origin, Destination, PickupTime from RidePat where ridePatNum=" + ridePatId;
@@ -460,12 +460,12 @@ public class RidePat
             DbService db3 = new DbService();
             query = "update RidePat set RideId=" + RideId + " where ridePatNum=" + RidePatNum;
             res = db3.ExecuteQuery(query);
-            if (ridePatId2 != -1)
-            {
-                query = "update RidePat set RideId=" + RideId + " where ridePatNum=" + ridePatId2;
-                DbService db4 = new DbService();
-                res += db4.ExecuteQuery(query);
-            }
+            //if (ridePatId2 != -1)
+            //{
+            //    query = "update RidePat set RideId=" + RideId + " where ridePatNum=" + ridePatId2;
+            //    DbService db4 = new DbService();
+            //    res += db4.ExecuteQuery(query);
+            //}
         }
         else
         {

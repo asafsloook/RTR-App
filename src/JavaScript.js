@@ -270,8 +270,8 @@ function deleteRideSuccessCB() {
     GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB);
 
     getRidesList();
-
-
+    
+    $.mobile.changePage("#myRides", { transition: "fade", changeHash: true });
 }
 
 //error call back function for delete ride
@@ -362,9 +362,10 @@ function checkMyRides(ride) {
 
         var rideDate = (new Date(ride.DateTime)).toLocaleDateString();
         var myRideDate = (new Date(myRides[i].DateTime)).toLocaleDateString();
+        var myseats = parseInt(localStorage.availableSeats);
 
         if (ride.Shift == myRides[i].Shift && rideDate == myRideDate) {
-            if ((parseInt(localStorage.availableSeats) - (myRides[i].Melave.length + 1)) < ride.Melave.length + 1) {
+            if ((myseats - (myRides[i].Melave.length + 1)) < ride.Melave.length + 1) {
                 return true;
             }
         }
@@ -661,16 +662,8 @@ function signDriverSuccessCB(rideId) {
     GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB);
 
 
-    var ride = getRideById(idChoose);
-
-    if (ride == null) {
-        alert("Error, ride was not found");
-    }
-    //createSuggestPage(false, ride);
 
     //matching feature - go search for suited ride
-    originalRide = ride;
-
     suggestSuitedRides();
 }
 
@@ -732,11 +725,15 @@ $(document).on('pagebeforeshow', '#signMe', function () {
 });
 
 //check for suited rides with the ride that chosen
-function checkRides(results, id, avaiableSeats) {
+function checkRides() {
 
     suitedArr = [];
 
-    var ride = originalRide;
+    var results = rides;
+    var id = lastRide.Id;
+    var availableSeats = maxSeats;
+    var ride = lastRide;
+
 
     for (var i = 0; i < results.length; i++) {
 
@@ -779,16 +776,39 @@ $(document).on('pagebeforeshow', '#signMePage', function () {
 
     $("#okBTN").on("click", function () {
 
-        maxSeats = 5;
 
         lastRide = getRideById(idChoose);
 
-        signDriverToRide();
+        var mySeats = parseInt(localStorage.availableSeats);
+
+        maxSeats = mySeats - checkAvailabilty(lastRide);
+
+
+        signDriverToRide(idChoose);
         //handle case that rise is already taken
 
 
     });
 });
+
+
+//check how many seats are available in a specific day and shift
+function checkAvailabilty(lastRide) {
+
+    var ride = lastRide;
+    var sum = 0;
+
+    for (var i = 0; i < myRides.length; i++) {
+
+        var rideDate = (new Date(ride.DateTime)).toLocaleDateString();
+        var myRideDate = (new Date(myRides[i].DateTime)).toLocaleDateString();
+
+        if (ride.Shift == myRides[i].Shift && rideDate == myRideDate) {
+            sum += (myRides[i].Melave.length + 1);
+        }
+    }
+    return sum;
+}
 
 
 //get the ride that the volenteer sign to, by id
@@ -806,53 +826,28 @@ function getRideById(id) {
 //suggest suited rides
 function suggestSuitedRides() {
 
-    var suggestedRide = checkRides(rides, idChoose, avaiableSeats);
+    suggestedRide = checkRides();
 
     if (suggestedRide != null) {
-        signDriverToRide();
 
-        //signDriverToRide(suggestedRide.Id);
+        var str = createSuggestPage(suggestedRide);
 
+        $("#phSuggest").html(str);
+
+        if (window.location.href.toString().indexOf('suggest') == -1) {
+
+            $.mobile.changePage("#suggest", { transition: "fade", changeHash: true });
+        }
+        
     }
-
-
-    if (suggestArrPosition + 1 == suitedArr.length) {
-        var str = createConfirmationPage(ride);
+    else {
+        var str = createConfirmationPage(lastRide);
         $.mobile.changePage("#signConfirmation", { transition: "fade", changeHash: true });
         $("#phConfirmation").html(str);
         return;
     }
-    else {
-
-        suggestArrPosition++;
-        var str = createSuggestPage(ride);
-
-        $("#phSuggest").html(str);
-
-
-        if (window.location.toString().indexOf('#suggest') == -1) {
-            $.mobile.changePage("#suggest", { transition: "fade", changeHash: true });
-        }
-
-    }
 }
 
-
-//function calculateAvailableSeats() {
-
-
-//    totalPassengers = 0;
-
-//    for (var i = 0; i < suitedArr.length; i++) {
-
-//        totalPassengers += (suitedArr[i].Melave.length + 1);
-
-//    }
-
-//    availableSeats = maxSeats - totalPassengers;
-
-//    return availableSeats;
-//}
 
 
 //get ridt obj by real id (id in db)
@@ -889,8 +884,8 @@ function createSuggestPage(ride) {
         + '<p>מ' + ride.StartPoint + ' ' + 'ל' + ride.EndPoint + '.</p>'
         + "<p> מושבים ברכבך (לא כולל נהג): " + maxSeats
         + '<a data-icon="edit" id="updateSeatsBTN" href="#" style="background-color:#202020" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-button-inline ui-widget ui-button-a ui-link ui-btn ui-btn-b ui-icon-edit ui-btn-icon-left ui-btn-inline ui-shadow ui-corner-all" role="button">עדכן</a>'
-        + '</p><p>האם אתה מעוניין לצרף לנסיעה את ' + suitedArr[suggestArrPosition].Person
-        + ' +' + suitedArr[suggestArrPosition].Melave.length
+        + '</p><p>האם אתה מעוניין לצרף לנסיעה את ' + suggestedRide.Person
+        + ' +' + suggestedRide.Melave.length
         + "</p>";
 
 
@@ -940,29 +935,21 @@ function createMelaveStr() {
 
 //after signing to ride and we suggest a suited ride, volenteer click ok
 $(document).on('pagebeforeshow', '#suggest', function () {
-
-
-    $("#suggestCancelBTN").on("click", function () {
-
-
-
-    });
+    
 
     $("#suggestOkBTN").on("click", function () {
 
-        signDriverToRide();
+        signDriverToRide(suggestedRide);
 
     });
 });
 
-function signDriverToRide() {
+function signDriverToRide(id) {
 
-    lastRide = getRideById(idChoose);
-
-    var status = getRideStatusById(idChoose);
+    var status = getRideStatusById(id);
 
     var request = {
-        ridePatId: idChoose,
+        ridePatId: id,
         driverId: parseInt(localStorage.userId),
         primary: status
     };
