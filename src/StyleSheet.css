@@ -2,9 +2,8 @@
     direction: rtl;
 }
 
-#phPopDeleteConfirm {
 
-}#saveRoutesBTN {
+#saveRoutesBTN {
     position: absolute;
     bottom: 5%;
     left: 10%;
@@ -193,7 +192,7 @@ hr {
     width: 100%;
 }
 
-#deleteMePage, #signMePage, #suggest, #infoPastRide, #deleteConfirm {
+#deleteMePage, #signMePage, #suggest, #infoPastRide, #deleteConfirm , #signConfirmation{
     text-align: center;
     padding: 30% 0px;
 }

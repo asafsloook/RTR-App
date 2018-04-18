@@ -1,6 +1,4 @@
 ﻿
-//load preferences from db on navigate to #preferences (seats and routes)
-
 //get week function
 Date.prototype.getWeek = function () {
     var d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
@@ -248,16 +246,43 @@ function delInfo(rideID) {
     if (rideID != undefined) {
         idDeleteChoose = rideID;
     }
+}
 
+//delete ride with the request from the function above
+function deleteMyRide() {
+
+    var myRide = getMyRideObjById(idDeleteChoose);
+
+    request = {
+        ridePatId: idDeleteChoose,
+        rideId: myRide.rideId,
+        driverId: parseInt(localStorage.userId)
+    }
+    deleteRide(request, deleteRideSuccessCB, deleteRideErrorCB);
+
+}
+
+function deleteAllFromMyRide() {
     request = {
         ridePatId: idDeleteChoose,
         driverId: parseInt(localStorage.userId)
     }
+    deleteAllRide(request, deleteAllRideSuccessCB, deleteAllRideErrorCB);
 }
-//delete ride with the request from the function above
-function deleteMyRide() {
 
-    deleteRide(request, deleteRideSuccessCB, deleteRideErrorCB)
+
+function deleteAllRideSuccessCB() {
+    //for refreshing my rides after the delete
+    getMyRidesList(parseInt(localStorage.userId));
+
+    getRidesList();
+
+    $.mobile.changePage("#myRides", { transition: "fade", changeHash: true });
+    return;
+}
+
+function deleteAllRideErrorCB() {
+    alert("I caught the exception : failed in deleteAllRideErrorCB \n The exception message is : " + e.responseText);
 
 }
 
@@ -271,11 +296,12 @@ function deleteRideSuccessCB() {
     getRidesList();
     
     $.mobile.changePage("#myRides", { transition: "fade", changeHash: true });
+    return;
 }
 
 //error call back function for delete ride
 function deleteRideErrorCB(e) {
-    alert("I caught the exception : failed in GetRidesErrorCB \n The exception message is : " + e.responseText);
+    alert("I caught the exception : failed in deleteRideErrorCB \n The exception message is : " + e.responseText);
 }
 
 
@@ -824,9 +850,9 @@ function suggestSuitedRides() {
         
     }
     else {
-        var str = createConfirmationPage(lastRide);
+        //var str = createConfirmationPage(lastRide);
         $.mobile.changePage("#signConfirmation", { transition: "fade", changeHash: true });
-        $("#phConfirmation").html(str);
+        //$("#phConfirmation").html(str);
         return;
     }
 }
@@ -865,11 +891,14 @@ function createSuggestPage(ride) {
         + ', ' + myDate.getDate() + "/" + (myDate.getMonth() + 1) + "/" + myDate.getFullYear()
         + ', בשעה ' + myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1") + '</p>'
         + '<p>מ' + ride.StartPoint + ' ' + 'ל' + ride.EndPoint + '.</p>'
-        + "<p> מושבים ברכבך (לא כולל נהג): " + maxSeats
-        + '<a data-icon="edit" id="updateSeatsBTN" href="#" style="background-color:#202020" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-button-inline ui-widget ui-button-a ui-link ui-btn ui-btn-b ui-icon-edit ui-btn-icon-left ui-btn-inline ui-shadow ui-corner-all" role="button">עדכן</a>'
-        + '</p><p>האם אתה מעוניין לצרף לנסיעה את ' + suggestedRide.Person
+
+        //+ "<p> מושבים ברכבך (לא כולל נהג): " + maxSeats
+        //+ '<a data-icon="edit" id="updateSeatsBTN" href="#" style="background-color:#202020" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-button-inline ui-widget ui-button-a ui-link ui-btn ui-btn-b ui-icon-edit ui-btn-icon-left ui-btn-inline ui-shadow ui-corner-all" role="button">עדכן</a>'
+        //+ '</p>'
+
+        + '<p>האם אתה מעוניין לצרף לנסיעה את ' + suggestedRide.Person
         + ' +' + suggestedRide.Melave.length
-        + "</p>";
+        + "?</p>";
 
 
     return str;
@@ -878,15 +907,18 @@ function createSuggestPage(ride) {
 //create suggest page
 function createConfirmationPage(ride) {
 
+    var str = "";
+
     var myDate = new Date(ride.DateTime);
     var day = numToDayHebrew(myDate.getDay());
 
     str += '<p>ביום ' + day
         + ', ' + myDate.getDate() + "/" + (myDate.getMonth() + 1) + "/" + myDate.getFullYear()
         + ', בשעה ' + myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1") + '</p>'
-        + '<p>מ' + ride.StartPoint + ' ' + 'ל' + ride.EndPoint + '.</p>'
-        + createMelaveStr(ride)
-        + "</p>";
+        + '<p>מ' + ride.StartPoint + ' ' + 'ל' + ride.EndPoint
+        + '<br>' + ride.Person + " ו-" + ride.Melave.length+ " מלווים";
+        + '</p>'
+    //+ createMelaveStr(ride);
 
     return str;
 }
@@ -925,6 +957,8 @@ $(document).on('pagebeforeshow', '#suggest', function () {
         CombineRideRidePat(suggestedRide.Id, parseInt(localStorage.lastRideId));
 
     });
+    
+    
 });
 
 function signDriverToRide(id) {
@@ -952,7 +986,7 @@ function CombineRideRidePat(id,rideid) {
 function CombineRideRidePatAjaxSuccessCB(res) {
     //res = -1 ridepat already signed to another ride
     //res >= 0 rows updated
-
+    
     maxSeats -= (suggestedRide.Melave.length + 1);
 
     getRidesList();
@@ -1054,14 +1088,34 @@ $(document).on('pagebeforeshow', '#deleteMePage', function () {
     var myRide = getMyRideObjById(idDeleteChoose);
 
     $('#phPopDelete').html(getRideStr(myRide));
-
-    $("#deletecancelBTN, #deleteokBTN").on('click', function () {
-        $('#planTAB').addClass('ui-btn-active');
-        printMyRides(myRides);
-    });
-
-
+    
 });
+
+$(document).ready(function () {
+    $("#deleteokBTN").on('click', function () {
+
+        if (myRideHasMultipulePats(idDeleteChoose)) {
+            $.mobile.changePage("#deleteOptions", { transition: "fade", changeHash: true });
+            return;
+        }
+        else {
+            $.mobile.changePage("#deleteConfirm", { transition: "fade", changeHash: true });
+            return;
+        }
+    });
+});
+
+function myRideHasMultipulePats(ridePatId) {
+    var thisRide = getMyRideObjById(ridePatId);
+    var rideId = thisRide.rideId;
+
+    for (var i = 0; i < myRides.length; i++) {
+        if (myRides[i].Id != ridePatId && myRides[i].rideId == rideId) {
+            return true;
+        }
+    }
+    return false;
+}
 
 
 function getMyRideObjById(id) {
@@ -1499,8 +1553,11 @@ function showSavedRoutes(routes) {
 
             if (point == routes[r]) {
 
-                $('#myRoutes .ui-checkbox label').eq(i).click();
+                if ($('#myRoutes .ui-checkbox label').eq(i)[0].classList.contains("ui-checkbox-off")) {
 
+                    $('#myRoutes .ui-checkbox label').eq(i).click();
+                }
+                
             }
         }
 
