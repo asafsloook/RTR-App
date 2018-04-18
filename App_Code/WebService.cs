@@ -39,6 +39,15 @@ public class WebService : System.Web.Services.WebService
     }
 
     [WebMethod]
+    public string getCoorList()
+    {
+        JavaScriptSerializer j = new JavaScriptSerializer();
+        Volunteer v = new Volunteer();
+        List<Volunteer> vl = v.getCoorList();
+        return j.Serialize(vl);
+    }
+
+    [WebMethod]
     public string getPatientEscorted(string displayName)
     {
         JavaScriptSerializer j = new JavaScriptSerializer();
@@ -56,11 +65,11 @@ public class WebService : System.Web.Services.WebService
     }
 
     [WebMethod]
-    public void deactivatePatient(string displayName, string active)// change name to SetStatus
+    public void SetPatientStatus(string displayName, string active)
     {
         Patient c = new Patient();
         c.DisplayName = displayName;
-        c.deactivatePatient(active);
+        c.SetPatientStatus(active);
     }
 
     [WebMethod]
@@ -122,6 +131,18 @@ public class WebService : System.Web.Services.WebService
         return j.Serialize(r);
     }
 
+    [WebMethod]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public string GetRidePat(int ridePatNum)
+    {
+        RidePat rp = new RidePat();
+            rp = rp.GetRidePat(ridePatNum);
+        JavaScriptSerializer j = new JavaScriptSerializer();
+        return j.Serialize(rp);
+    }
+
+
+
 
     [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
@@ -179,10 +200,10 @@ public class WebService : System.Web.Services.WebService
 
     [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public string SignDriver(int ridePatId, int driverId, bool primary)
+    public string SignDriver(int ridePatId, int ridePatId2, int driverId, bool primary)
     {
         RidePat rp = new RidePat();
-        int res = rp.SignDriver(ridePatId, driverId, primary);
+        int res = rp.SignDriver(ridePatId, ridePatId2, driverId, primary);
         JavaScriptSerializer j = new JavaScriptSerializer();
         return j.Serialize(res);
     }
@@ -193,6 +214,36 @@ public class WebService : System.Web.Services.WebService
     {
         RidePat rp = new RidePat();
         int res = rp.DeleteDriver(ridePatId, driverId);
+        JavaScriptSerializer j = new JavaScriptSerializer();
+        return j.Serialize(res);
+    }
+
+    [WebMethod]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public string AssignRideToRidePat(int ridePatId, int userId) //Get RidePatId & UserId, Create a new Ride with this info - then return RideId
+    {
+        RidePat rp = new RidePat();
+        int res = rp.AssignRideToRidePat(ridePatId, userId);
+        JavaScriptSerializer j = new JavaScriptSerializer();
+        return j.Serialize(res);
+    }
+
+    [WebMethod]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public string CombineRideRidePat(int rideId, int RidePatId) //Get RideId & RidePatId - combine them
+    {
+        RidePat rp = new RidePat();
+        int res = rp.CombineRideRidePat(rideId, RidePatId);
+        JavaScriptSerializer j = new JavaScriptSerializer();
+        return j.Serialize(res);
+    }
+
+    [WebMethod]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public string LeaveRidePat(int ridePatId, int driverId)
+    {
+        RidePat rp = new RidePat();
+        int res = rp.LeaveRidePat(ridePatId);
         JavaScriptSerializer j = new JavaScriptSerializer();
         return j.Serialize(res);
     }
@@ -240,8 +291,8 @@ public class WebService : System.Web.Services.WebService
     public string getDestinationView(bool active)
     {
         JavaScriptSerializer j = new JavaScriptSerializer();
-        Destination d = new Destination();
-        List<Destination> destinationsList = d.getDestinationsListForView(active);
+        Location d = new Location();
+        List<Location> destinationsList = d.getDestinationsListForView(active);
         return j.Serialize(destinationsList);
     }
 
@@ -249,8 +300,8 @@ public class WebService : System.Web.Services.WebService
     public string getHospitalView(bool active)
     {
         JavaScriptSerializer j = new JavaScriptSerializer();
-        Destination d = new Destination();
-        List<Destination> hospitalList = d.getHospitalListForView(active);
+        Location d = new Location();
+        List<Location> hospitalList = d.getHospitalListForView(active);
         return j.Serialize(hospitalList);
     }
 
@@ -258,8 +309,8 @@ public class WebService : System.Web.Services.WebService
     public string getBarrierView(bool active)
     {
         JavaScriptSerializer j = new JavaScriptSerializer();
-        Destination d = new Destination();
-        List<Destination> hospitalList = d.getBarrierListForView(active);
+        Location d = new Location();
+        List<Location> hospitalList = d.getBarrierListForView(active);
         return j.Serialize(hospitalList);
     }
     #endregion

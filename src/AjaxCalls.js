@@ -42,7 +42,23 @@ function signDriver(request, signDriverSuccessCB, signDriverErrorCB) {
     var dataString = JSON.stringify(request);
 
     $.ajax({ // ajax call starts
-        url: '../WebService.asmx/SignDriver',   // server side web service method
+        url: '../WebService.asmx/AssignRideToRidePat',   // server side web service method
+        data: dataString,                          // the parameters sent to the server
+        type: 'POST',                              // can be also GET
+        dataType: 'json',                          // expecting JSON datatype from the server
+        contentType: 'application/json; charset = utf-8', // sent to the server
+        success: signDriverSuccessCB,                // data.d id the Variable data contains the data we get from serverside
+        error: signDriverErrorCB
+    }) // end of ajax call
+}
+
+function CombineRideRidePatAjax(request, signDriverSuccessCB, signDriverErrorCB) {
+
+    // serialize the object to JSON string
+    var dataString = JSON.stringify(request);
+
+    $.ajax({ // ajax call starts
+        url: '../WebService.asmx/CombineRideRidePat',   // server side web service method
         data: dataString,                          // the parameters sent to the server
         type: 'POST',                              // can be also GET
         dataType: 'json',                          // expecting JSON datatype from the server

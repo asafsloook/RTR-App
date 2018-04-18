@@ -95,8 +95,10 @@ function myRidesToClientStructure(before) {
         //RIDEPATS
 
         for (var j = 0; j < results[i].RidePats.length; j++) {
-
+            
             ridePat = results[i].RidePats[j];
+
+            ridePat.rideId = results[i].Id;
 
             ridePat.Status = results[i].Status;
 
@@ -249,7 +251,7 @@ function delInfo(rideID) {
 
     request = {
         ridePatId: idDeleteChoose,
-        driverId: localStorage.userId
+        driverId: parseInt(localStorage.userId)
     }
 }
 //delete ride with the request from the function above
@@ -262,12 +264,9 @@ function deleteMyRide() {
 
 //success call back function for delete ride
 function deleteRideSuccessCB() {
-
-    var request = {
-        volunteerId: parseInt(localStorage.userId)
-    }
+    
     //for refreshing my rides after the delete
-    GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB);
+    getMyRidesList(parseInt(localStorage.userId));
 
     getRidesList();
     
@@ -311,14 +310,11 @@ function filterRides(rides) {
         else if ($('#endDDL').val() != "יעד" && $('#endDDL').val() != rides[i].EndPoint) {
 
         }
-        else if (checkMyRides(rides[i])) {
-
-        }
-        else if (checkMySeats(rides[i])) {
-
+        else if (!checkMySeats(rides[i])) {
+           
         }
         else if (checkMyRoutes(rides[i])) {
-
+           
         }
         else {
             filteredRides.push(rides[i]);
@@ -348,30 +344,15 @@ function checkMyRoutes(ride) {
 
 //for filtering rides with more seats than the volunteer has
 function checkMySeats(ride) {
-    var seats = parseInt(localStorage.availableSeats);
+    var seatsTaken = checkAvailabilty(ride);
+
+    var maxSeats = parseInt(localStorage.availableSeats) - seatsTaken;
+
     var rideNeeds = ride.Melave.length + 1;
 
-    return seats < rideNeeds;
+    return maxSeats >= rideNeeds;
 }
 
-
-//for filtering rides that are in the same date and shift of myRides
-function checkMyRides(ride) {
-
-    for (var i = 0; i < myRides.length; i++) {
-
-        var rideDate = (new Date(ride.DateTime)).toLocaleDateString();
-        var myRideDate = (new Date(myRides[i].DateTime)).toLocaleDateString();
-        var myseats = parseInt(localStorage.availableSeats);
-
-        if (ride.Shift == myRides[i].Shift && rideDate == myRideDate) {
-            if ((myseats - (myRides[i].Melave.length + 1)) < ride.Melave.length + 1) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
 
 
 //check for multiple rides in the same day for the listview item header
@@ -650,19 +631,15 @@ function info(inputID) {
 
 function signDriverSuccessCB(rideId) {
 
-    maxSeats -= (lastRide.Melave + 1);
+    maxSeats -= (lastRide.Melave.length + 1);
+    
+    localStorage.lastRideId = $.parseJSON(rideId.d);
 
 
     getRidesList();
+    getMyRidesList(parseInt(localStorage.userId));
 
-    var request = {
-        volunteerId: parseInt(localStorage.userId)
-    }
-    //for refreshing my rides after signing to new ride
-    GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB);
-
-
-
+    
     //matching feature - go search for suited ride
     suggestSuitedRides();
 }
@@ -783,8 +760,13 @@ $(document).on('pagebeforeshow', '#signMePage', function () {
 
         maxSeats = mySeats - checkAvailabilty(lastRide);
 
-
-        signDriverToRide(idChoose);
+        if (maxSeats == mySeats) {
+            signDriverToRide(idChoose);
+        }
+        else {
+            CombineRideRidePat(idChoose, localStorage.myRideTemp);
+        }
+        
         //handle case that rise is already taken
 
 
@@ -805,6 +787,7 @@ function checkAvailabilty(lastRide) {
 
         if (ride.Shift == myRides[i].Shift && rideDate == myRideDate) {
             sum += (myRides[i].Melave.length + 1);
+            localStorage.myRideTemp = myRides[i].rideId;
         }
     }
     return sum;
@@ -902,7 +885,7 @@ function createConfirmationPage(ride) {
         + ', ' + myDate.getDate() + "/" + (myDate.getMonth() + 1) + "/" + myDate.getFullYear()
         + ', בשעה ' + myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1") + '</p>'
         + '<p>מ' + ride.StartPoint + ' ' + 'ל' + ride.EndPoint + '.</p>'
-        + createMelaveStr()
+        + createMelaveStr(ride)
         + "</p>";
 
     return str;
@@ -910,23 +893,23 @@ function createConfirmationPage(ride) {
 
 
 //create melave string for suggest page
-function createMelaveStr() {
+function createMelaveStr(ride) {
     var str = "";
-    if (suitedArr[0].Melave.length == 0) {
+    if (ride.Melave.length == 0) {
         str += "?";
     }
-    else if (suitedArr[0].Melave.length == 1) {
-        str += " ו" + suitedArr[0].Melave[0] + "?";
+    else if (ride.Melave.length == 1) {
+        str += " ו" + ride.Melave[0] + "?";
     }
     else {
-        for (var i = 0; i < suitedArr[0].Melave.length; i++) {
+        for (var i = 0; i < ride.Melave.length; i++) {
 
 
-            if (i == suitedArr[0].Melave.length - 1) {
-                str += " ו" + suitedArr[0].Melave[i] + "?";
+            if (i == ride.Melave.length - 1) {
+                str += " ו" + ride.Melave[i] + "?";
             }
             else {
-                str += ", " + suitedArr[0].Melave[i] + " ";
+                str += ", " + ride.Melave[i] + " ";
             }
         }
     }
@@ -939,26 +922,59 @@ $(document).on('pagebeforeshow', '#suggest', function () {
 
     $("#suggestOkBTN").on("click", function () {
 
-        signDriverToRide(suggestedRide);
+        CombineRideRidePat(suggestedRide.Id, parseInt(localStorage.lastRideId));
 
     });
 });
 
 function signDriverToRide(id) {
-
-    var status = getRideStatusById(id);
-
+    
     var request = {
         ridePatId: id,
-        driverId: parseInt(localStorage.userId),
-        primary: status
+        userId: parseInt(localStorage.userId)
     };
 
     signDriver(request, signDriverSuccessCB, signDriverErrorCB);
 
 }
 
+function CombineRideRidePat(id,rideid) {
+    
+    var request = {
+        rideId: parseInt(rideid),
+        RidePatId: id
+    };
 
+    CombineRideRidePatAjax(request, CombineRideRidePatAjaxSuccessCB, CombineRideRidePatAjaxErrorCB);
+
+}
+
+function CombineRideRidePatAjaxSuccessCB(res) {
+    //res = -1 ridepat already signed to another ride
+    //res >= 0 rows updated
+
+    maxSeats -= (suggestedRide.Melave.length + 1);
+
+    getRidesList();
+    
+    getMyRidesList(parseInt(localStorage.userId));
+
+
+    suggestSuitedRides();
+}
+
+function getMyRidesList(id) {
+    var request = {
+        volunteerId: id
+    }
+
+    GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB);
+}
+
+
+function CombineRideRidePatAjaxErrorCB() {
+    //error handle
+}
 
 //clear filter button
 $(document).on('pagebeforeshow', '#signMe', function () {
@@ -1350,10 +1366,7 @@ function checkUserSuccessCB(results) {
     getRidesList();
 
     //getMyRides
-    var request = {
-        volunteerId: parseInt(localStorage.userId)
-    }
-    GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB);
+    getMyRidesList(parseInt(localStorage.userId));
 
     $.mobile.changePage("#loginPreference", { transition: "fade", changeHash: true });
 
@@ -1452,10 +1465,7 @@ $(document).on('pagebeforeshow', '#myRoutes', function () {
         getRidesList();
 
         //getMyRides
-        var request = {
-            volunteerId: parseInt(localStorage.userId)
-        }
-        GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB);
+        getMyRidesList(parseInt(localStorage.userId));
 
 
         $.mobile.changePage("#signMe", { transition: "fade", changeHash: true });
