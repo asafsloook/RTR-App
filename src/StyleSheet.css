@@ -1,4 +1,4 @@
-﻿label,p {
+﻿label, p {
     direction: rtl;
 }
 
@@ -41,6 +41,11 @@
     text-shadow: 0 1px 0 #2a7c38;
 }
 
+
+#myRoutes #area .ui-btn-active {
+    background-color: #4189fc;
+    border-color: #4189fc;
+}
 
 #auction .phone {
     background-color: #98FB98;
@@ -192,7 +197,7 @@ hr {
     width: 100%;
 }
 
-#deleteMePage, #signMePage, #suggest, #infoPastRide, #deleteConfirm , #signConfirmation{
+#deleteMePage, #signMePage, #suggest, #infoPastRide, #deleteConfirm, #signConfirmation {
     text-align: center;
     padding: 30% 0px;
 }

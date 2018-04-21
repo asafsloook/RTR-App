@@ -1477,15 +1477,15 @@ $(document).on('pagebeforeshow', '#myRoutes', function () {
         var routes = $.parseJSON(localStorage.routes);
 
         if (routes[0].south) {
-                $('#southArea').click();
+            $('#myRoutes #area .ui-checkbox label').eq(0).click();
                 $('.south').show();
         }
         if (routes[0].center) {
-                $('#centerArea').click();
+            $('#myRoutes #area .ui-checkbox label').eq(1).click();
                 $('.center').show();
         }
         if (routes[0].north) {
-                $('#northArea').click();
+            $('#myRoutes #area .ui-checkbox label').eq(2).click();
                 $('.north').show();
         }
     }
