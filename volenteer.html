@@ -348,8 +348,8 @@
                 </p>
             </div>
             <a data-icon="check" id="deleteOptionsNOBTN" style="background-color:#004d00" data-rel="back" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">בטל</a>
-            <a data-icon="delete" onclick="deleteMyRide()"  style="background-color:#660000" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">נסיעה זו בלבד</a>
-            <a data-icon="delete" onclick="deleteAllFromMyRide()"  style="background-color:#660000" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">כל הנסיעות ביום ובשעה הנוכחית</a>
+            <a data-icon="delete" onclick="deleteMyRide()" style="background-color:#660000" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">נסיעה זו בלבד</a>
+            <a data-icon="delete" onclick="deleteAllFromMyRide()" style="background-color:#660000" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">כל הנסיעות ביום ובשעה הנוכחית</a>
 
         </div>
     </div>
@@ -591,15 +591,28 @@
     <div id="myRoutes" data-role="page">
 
         <div data-role="content">
-            <h3>אנא בחר איזור ומחסומים/בתי חולים מועדפים</h3>
-            <select id="area" data-iconpos="left" style="padding-top: 0%;">
+
+            <div id="area">
+                <form>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <input type="checkbox" id="southArea">
+                        <label for="southArea">דרום</label>
+                        <input type="checkbox" id="centerArea">
+                        <label for="centerArea">מרכז</label>
+                        <input type="checkbox" id="northArea">
+                        <label for="northArea">צפון</label>
+                    </fieldset>
+                </form>
+            </div>
+
+            <!--<select id="area" data-iconpos="left" style="padding-top: 0%;">
                 <option>אזור</option>
                 <option>צפון</option>
                 <option>צפון-מרכז</option>
                 <option>מרכז</option>
                 <option>מרכז-דרום</option>
                 <option>דרום</option>
-            </select>
+            </select>-->
 
             <div id="starts" class="start">
                 <form hidden="hidden" class="north">

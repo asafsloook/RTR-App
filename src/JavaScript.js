@@ -93,7 +93,7 @@ function myRidesToClientStructure(before) {
         //RIDEPATS
 
         for (var j = 0; j < results[i].RidePats.length; j++) {
-            
+
             ridePat = results[i].RidePats[j];
 
             ridePat.rideId = results[i].Id;
@@ -289,12 +289,12 @@ function deleteAllRideErrorCB() {
 
 //success call back function for delete ride
 function deleteRideSuccessCB() {
-    
+
     //for refreshing my rides after the delete
     getMyRidesList(parseInt(localStorage.userId));
 
     getRidesList();
-    
+
     $.mobile.changePage("#myRides", { transition: "fade", changeHash: true });
     return;
 }
@@ -337,10 +337,10 @@ function filterRides(rides) {
 
         }
         else if (!checkMySeats(rides[i])) {
-           
+
         }
         else if (checkMyRoutes(rides[i])) {
-           
+
         }
         else {
             filteredRides.push(rides[i]);
@@ -370,9 +370,8 @@ function checkMyRoutes(ride) {
 
 //for filtering rides with more seats than the volunteer has
 function checkMySeats(ride) {
-    var seatsTaken = checkAvailabilty(ride);
 
-    var maxSeats = parseInt(localStorage.availableSeats) - seatsTaken;
+    var maxSeats = checkAvailabilty(ride);
 
     var rideNeeds = ride.Melave.length + 1;
 
@@ -657,15 +656,12 @@ function info(inputID) {
 
 function signDriverSuccessCB(rideId) {
 
-    maxSeats -= (lastRide.Melave.length + 1);
-    
     localStorage.lastRideId = $.parseJSON(rideId.d);
-
 
     getRidesList();
     getMyRidesList(parseInt(localStorage.userId));
 
-    
+
     //matching feature - go search for suited ride
     suggestSuitedRides();
 }
@@ -734,9 +730,8 @@ function checkRides() {
 
     var results = rides;
     var id = lastRide.Id;
-    var availableSeats = maxSeats;
     var ride = lastRide;
-
+    var availableSeats = checkAvailabilty(ride);
 
     for (var i = 0; i < results.length; i++) {
 
@@ -779,12 +774,11 @@ $(document).on('pagebeforeshow', '#signMePage', function () {
 
     $("#okBTN").on("click", function () {
 
-
         lastRide = getRideById(idChoose);
 
-        var mySeats = parseInt(localStorage.availableSeats);
+        maxSeats = checkAvailabilty(lastRide);
 
-        maxSeats = mySeats - checkAvailabilty(lastRide);
+        mySeats = parseInt(localStorage.availableSeats);
 
         if (maxSeats == mySeats) {
             signDriverToRide(idChoose);
@@ -792,7 +786,7 @@ $(document).on('pagebeforeshow', '#signMePage', function () {
         else {
             CombineRideRidePat(idChoose, localStorage.myRideTemp);
         }
-        
+
         //handle case that rise is already taken
 
 
@@ -816,7 +810,9 @@ function checkAvailabilty(lastRide) {
             localStorage.myRideTemp = myRides[i].rideId;
         }
     }
-    return sum;
+
+    var mySeats = parseInt(localStorage.availableSeats);
+    return mySeats - sum;
 }
 
 
@@ -843,11 +839,12 @@ function suggestSuitedRides() {
 
         $("#phSuggest").html(str);
 
+
         if (window.location.href.toString().indexOf('suggest') == -1) {
 
             $.mobile.changePage("#suggest", { transition: "fade", changeHash: true });
         }
-        
+
     }
     else {
         //var str = createConfirmationPage(lastRide);
@@ -916,8 +913,8 @@ function createConfirmationPage(ride) {
         + ', ' + myDate.getDate() + "/" + (myDate.getMonth() + 1) + "/" + myDate.getFullYear()
         + ', בשעה ' + myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1") + '</p>'
         + '<p>מ' + ride.StartPoint + ' ' + 'ל' + ride.EndPoint
-        + '<br>' + ride.Person + " ו-" + ride.Melave.length+ " מלווים";
-        + '</p>'
+        + '<br>' + ride.Person + " ו-" + ride.Melave.length + " מלווים";
+    + '</p>'
     //+ createMelaveStr(ride);
 
     return str;
@@ -950,19 +947,21 @@ function createMelaveStr(ride) {
 
 //after signing to ride and we suggest a suited ride, volenteer click ok
 $(document).on('pagebeforeshow', '#suggest', function () {
-    
+
 
     $("#suggestOkBTN").on("click", function () {
 
-        CombineRideRidePat(suggestedRide.Id, parseInt(localStorage.lastRideId));
+        lastRide =
+
+            CombineRideRidePat(suggestedRide.Id, parseInt(localStorage.lastRideId));
 
     });
-    
-    
+
+
 });
 
 function signDriverToRide(id) {
-    
+
     var request = {
         ridePatId: id,
         userId: parseInt(localStorage.userId)
@@ -972,8 +971,10 @@ function signDriverToRide(id) {
 
 }
 
-function CombineRideRidePat(id,rideid) {
-    
+function CombineRideRidePat(id, rideid) {
+
+    localStorage.lastRidePat = id;
+
     var request = {
         rideId: parseInt(rideid),
         RidePatId: id
@@ -986,11 +987,13 @@ function CombineRideRidePat(id,rideid) {
 function CombineRideRidePatAjaxSuccessCB(res) {
     //res = -1 ridepat already signed to another ride
     //res >= 0 rows updated
-    
-    maxSeats -= (suggestedRide.Melave.length + 1);
+
+    lastRide = getRideById(parseInt(localStorage.lastRidePat));
+
+    maxSeats = checkAvailabilty(lastRide);
 
     getRidesList();
-    
+
     getMyRidesList(parseInt(localStorage.userId));
 
 
@@ -1088,7 +1091,7 @@ $(document).on('pagebeforeshow', '#deleteMePage', function () {
     var myRide = getMyRideObjById(idDeleteChoose);
 
     $('#phPopDelete').html(getRideStr(myRide));
-    
+
 });
 
 $(document).ready(function () {
@@ -1473,32 +1476,43 @@ $(document).on('pagebeforeshow', '#myRoutes', function () {
 
         var routes = $.parseJSON(localStorage.routes);
 
-        var areaIndex = routes[0];
-        $('#myRoutes select').prop('selectedIndex', areaIndex);
-        $('#myRoutes select').selectmenu('refresh');
+        if (routes[0].south) {
+                $('#southArea').click();
+                $('.south').show();
+        }
+        if (routes[0].center) {
+                $('#centerArea').click();
+                $('.center').show();
+        }
+        if (routes[0].north) {
+                $('#northArea').click();
+                $('.north').show();
+        }
+    }
+
+    showAreas();
+
+    showSavedRoutes(routes);
+
+
+    $('#area input').on('change', function () {
 
         showAreas();
 
-        showSavedRoutes(routes);
-    }
-
-
-
-    $(document).ready(function () {
-
-        $('#area').on('change', function () {
-
-            showAreas();
-
-        });
-
     });
-
+    
     $('#saveRoutesBTN').on('click', function () {
 
 
         routesArr = [];
-        routesArr.push($('#myRoutes select').prop('selectedIndex'));
+
+        var area = {};
+        area.south = $('#southArea').is(':checked');
+        area.center = $('#centerArea').is(':checked');
+        area.north = $('#northArea').is(':checked');
+
+
+        routesArr.push(area);
 
         var actives = $('#myRoutes .ui-btn-active');
 
@@ -1528,11 +1542,11 @@ $(document).on('pagebeforeshow', '#myRoutes', function () {
 
 });
 
-
 function continueButtonRoutes() {
     $('#saveRoutesBTN').hide();
 
-    if ($('#area').val() != "אזור") {
+
+    if ($('#southArea').is(':checked') || $('#centerArea').is(':checked') || $('#northArea').is(':checked')) {
         $('#saveRoutesBTN').show();
     }
     else {
@@ -1557,7 +1571,7 @@ function showSavedRoutes(routes) {
 
                     $('#myRoutes .ui-checkbox label').eq(i).click();
                 }
-                
+
             }
         }
 
@@ -1570,32 +1584,18 @@ function showAreas() {
 
     $('.north , .center , .south').hide();
 
-    var i = $('#area').prop('selectedIndex');
 
-    var areaSelector = "";
-
-    switch (i) {
-        case 1:
-            areaSelector = '.north';
-            break;
-        case 2:
-            areaSelector = '.north , .center';
-            break;
-        case 3:
-            areaSelector = '.center';
-            break;
-        case 4:
-            areaSelector = '.center , .south';
-            break;
-        case 5:
-            areaSelector = '.south';
-            break;
-        default:
+    if ($('#southArea').is(':checked')) {
+        $('.south').show();
     }
 
-    var selector = areaSelector;
-    $(selector).show();
+    if ($('#centerArea').is(':checked')) {
+        $('.center').show();
+    }
 
+    if ($('#northArea').is(':checked')) {
+        $('.north').show();
+    }
 
     continueButtonRoutes();
 }
