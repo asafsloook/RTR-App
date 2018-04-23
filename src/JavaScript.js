@@ -1488,13 +1488,13 @@ $(document).on('pagebeforeshow', '#myRoutes', function () {
             $('#myRoutes #area .ui-checkbox label').eq(2).click();
                 $('.north').show();
         }
+
+
+        showSavedRoutes(routes);
     }
 
     showAreas();
-
-    showSavedRoutes(routes);
-
-
+    
     $('#area input').on('change', function () {
 
         showAreas();
