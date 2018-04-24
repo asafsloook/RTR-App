@@ -1160,6 +1160,12 @@ $(document).on('pagebeforeshow', '#signMe', function () {
 
     });
 
+    $(document).on('keydown', '#signMe input[data-type="search"]', function () {
+
+        printRides(rides, 4);
+
+    });
+
     $('#signMe .ui-filterable').click(function () {
 
         printRides(rides, 4);
