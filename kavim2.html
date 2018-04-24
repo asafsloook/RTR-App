@@ -203,6 +203,128 @@
 
     </script>
 
+    <script>
+        //more kavim
+
+
+        $(document).on('pagebeforeshow', '#kavim1', function () {
+
+            $(document).ready(function () {
+
+                $('#area').on('change', function () {
+
+                    var i = 0;
+
+                    if ($('#area').val() == "צפון") {
+                        i = 1;
+                    }
+                    else if ($('#area').val() == "מרכז") {
+                        i = 2;
+                    }
+                    else if ($('#area').val() == "דרום") {
+                        i = 3;
+                    }
+                    else if ($('#area').val() == "צפון-מרכז") {
+                        i = 4;
+                    }
+                    else if ($('#area').val() == "מרכז-דרום") {
+                        i = 5;
+                    }
+
+                    $('#start' + i).show();
+                    $('#end' + i).show();
+
+                    for (var s = 1; s < 6; s++) {
+                        if (s != i) {
+                            $('#start' + s).hide();
+                            $('#end' + s).hide();
+                        }
+                    }
+                });
+
+
+            });
+
+        });
+
+        var json = {
+            'צפון': { 0: 'גלמה', 1: 'ריחן', 2: 'שער אפרים', 3: 'אייל', 4: 'רמבם', 5: 'שיבא', 6: 'אסותא' },
+            'מרכז': { 0: 'אייל', 1: 'אליהו', 2: 'נעלין', 3: 'בית לחם', 4: 'הפרחים', 5: 'תרקומיה', 6: 'וולפסון', 7: 'שיבא', 8: 'איכילוב', 9: 'שניידר' },
+            'דרום': { 0: 'ארז', 1: 'שיבא', 2: 'איכילוב', 3: 'שניידר', 4: 'וולפסון' }
+        }
+
+        var json2 = {
+            'מחסומים': { 0: 'כל מחסום', 1: 'גלמה (צפון)', 2: 'ריחן (צפון)', 3: 'אייל (מרכז)', 4: 'אליהו (מרכז)', 5: 'נעלין (מרכז)', 6: 'בית לחם (מרכז)', 7: 'תרקומיה (מרכז)', 8: 'שער אפרים (מרכז)', 9: 'ארז (דרום)' },
+            'בתי חולים': { 0: 'כל בי"ח', 1: 'רמבם', 2: 'אסותא', 3: 'שיבא', 4: 'איכילוב', 5: 'שניידר', 6: 'וולפסון', 7: 'הדסה' }
+        }
+
+        $(document).on('pagebeforeshow', '#kavim2', function () {
+            $('#startD').empty();
+            $('#endD').empty();
+            $('#startD2').empty();
+            $('#endD2').empty();
+
+            var str = "";
+            var str2 = "";
+
+            for (var i = 0; i < Object.keys(json2['מחסומים']).length; i++) {
+
+                str += "<option>" + json2['מחסומים'][i] + "</option>";
+            }
+
+            for (var i = 0; i < Object.keys(json2['בתי חולים']).length; i++) {
+
+                str2 += "<option>" + json2['בתי חולים'][i] + "</option>";
+            }
+
+            $('#startD').html(str);
+            $('#endD').html(str2);
+            $('#startD2').html(str2);
+            $('#endD2').html(str);
+
+
+        });
+
+        $(document).on('pagebeforeshow', '#kavim2', function () {
+            $('#addMaslul').on('click', function () {
+
+                var hetz = ' <i class="fa fa-arrow-left"></i> ';
+                if ($('#kavim2CB').is(':checked')) {
+                    hetz = ' <i class="fa fa-arrow-right"></i><i class="fa fa-arrow-left"></i> ';
+                }
+
+                var str = '<li style="height:25px"><p style="font-size:18px;direction:rtl;text-align:right;margin:0">'
+                    + '<a style="float:left;border:none;margin:0" href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all itemDelete">No text</a>'
+                    + $('#startD').val() + hetz + $('#endD').val()
+                    + '</li>';
+
+                $('#maslulLV').append(str);
+                $('#maslulLV').listview('refresh');
+            });
+
+            $('#addMaslul2').on('click', function () {
+
+                var hetz = ' <i class="fa fa-arrow-left"></i> ';
+                if ($('#kavim2CB2').is(':checked')) {
+                    hetz = ' <i class="fa fa-arrow-right"></i><i class="fa fa-arrow-left"></i> ';
+                }
+
+                var str = '<li style="height:25px"><p style="font-size:18px;direction:rtl;text-align:right;margin:0">'
+                    + '<a style="float:left;border:none;margin:0" href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all itemDelete">No text</a>'
+                    + $('#startD2').val() + hetz + $('#endD2').val() + '</p>'
+                    + '</li>';
+
+                $('#maslulLV').append(str);
+                $('#maslulLV').listview('refresh');
+            });
+
+            $('#maslulLV').on('click', '.itemDelete', function () {
+                $(this).parent().parent().remove();
+            });
+        });
+
+    </script>
+
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
           rel="stylesheet">
