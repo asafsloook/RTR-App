@@ -837,14 +837,22 @@ function suggestSuitedRides() {
 
         var str = createSuggestPage(suggestedRide);
 
-        $("#phSuggest").html(str);
-
-
         if (window.location.href.toString().indexOf('suggest') == -1) {
 
+            //first time in suggest page
             $.mobile.changePage("#suggest", { transition: "fade", changeHash: true });
+            $("#phSuggest").html(str);
         }
+        else {
 
+            //from suggest page to another suggest 
+            $("#suggest h1,#suggest a,#suggest div").hide();
+
+            $("#phSuggest").html(str);
+
+            $("#suggest h1,#suggest a,#suggest div").fadeIn(1000);
+        }
+        
     }
     else {
         //var str = createConfirmationPage(lastRide);
