@@ -13,8 +13,8 @@ function GetRides(request, GetRidesSuccessCB, GetRidesErrorCB) {
         dataType: 'json',                          // expecting JSON datatype from the server
         contentType: 'application/json; charset = utf-8', // sent to the server
         success: GetRidesSuccessCB,                // data.d id the Variable data contains the data we get from serverside
-        error: GetRidesErrorCB,
-        async: false
+        error: GetRidesErrorCB
+        //async: false
     }) // end of ajax call
 }
 
@@ -30,8 +30,8 @@ function GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB) {
         dataType: 'json',                          // expecting JSON datatype from the server
         contentType: 'application/json; charset = utf-8', // sent to the server
         success: GetMyRidesSuccessCB,                // data.d id the Variable data contains the data we get from serverside
-        error: GetMyRidesErrorCB,
-        async: false
+        error: GetMyRidesErrorCB
+        //async: false
     }) // end of ajax call
 }
 

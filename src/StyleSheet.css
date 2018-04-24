@@ -1,4 +1,10 @@
-﻿label, p {
+﻿#starts label, #ends label {
+    width: 100px;
+    text-align: center;
+}
+
+
+label, p {
     direction: rtl;
 }
 
@@ -247,12 +253,10 @@ hr {
 
 .start {
     float: right;
-    margin-right: 10%;
 }
 
 .end {
     float: left;
-    margin-left: 10%;
 }
 
 #kavim2 .ui-checkbox {

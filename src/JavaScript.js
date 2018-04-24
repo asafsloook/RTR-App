@@ -16,8 +16,11 @@ suitedArr = null;
 
 //call the ajax function to import the rides list
 function getRidesList() {
+
+    var id = parseInt(localStorage.userId);
+
     var request = {
-        volunteerId: parseInt(localStorage.userId)
+        volunteerId: id
     }
     GetRides(request, GetRidesSuccessCB, GetRidesErrorCB);
 }
@@ -273,7 +276,7 @@ function deleteAllFromMyRide() {
 
 function deleteAllRideSuccessCB() {
     //for refreshing my rides after the delete
-    getMyRidesList(parseInt(localStorage.userId));
+    getMyRidesPrint();
 
     getRidesList();
 
@@ -291,7 +294,7 @@ function deleteAllRideErrorCB() {
 function deleteRideSuccessCB() {
 
     //for refreshing my rides after the delete
-    getMyRidesList(parseInt(localStorage.userId));
+    getMyRidesPrint();
 
     getRidesList();
 
@@ -654,7 +657,7 @@ function signDriverSuccessCB(rideId) {
     localStorage.lastRideId = $.parseJSON(rideId.d);
 
     getRidesList();
-    getMyRidesList(parseInt(localStorage.userId));
+    getMyRidesList();
 
 
     //matching feature - go search for suited ride
@@ -728,11 +731,15 @@ function checkRides() {
     var ride = lastRide;
     var availableSeats = checkAvailabilty(ride);
 
+    if (ride.Status != 'ממתינה לשיבוץ') {
+        return suitedArr[0];
+    }
+
     for (var i = 0; i < results.length; i++) {
 
         var rideDate = new Date(results[i].DateTime);
         var chooseRideDate = new Date(ride.DateTime);
-
+        
         if (rideDate.toDateString() != chooseRideDate.toDateString()) {
             continue;
         }
@@ -749,6 +756,9 @@ function checkRides() {
             continue;
         }
         if (availableSeats < (results[i].Melave.length + 1)) {
+            continue;
+        }
+        if (results[i].Status != 'ממתינה לשיבוץ') {
             continue;
         }
 
@@ -774,8 +784,8 @@ $(document).on('pagebeforeshow', '#signMePage', function () {
         maxSeats = checkAvailabilty(lastRide);
 
         mySeats = parseInt(localStorage.availableSeats);
-
-        if (maxSeats == mySeats) {
+        
+         if (maxSeats == mySeats || lastRide.Status != 'ממתינה לשיבוץ') {
             signDriverToRide(idChoose);
         }
         else {
@@ -845,7 +855,7 @@ function suggestSuitedRides() {
 
             $("#phSuggest").html(str);
 
-            $("#suggest h1,#suggest a,#suggest div").fadeIn(1000);
+            $("#suggest h1,#suggest a,#suggest div").fadeIn(350);
         }
         
     }
@@ -995,18 +1005,49 @@ function CombineRideRidePatAjaxSuccessCB(res) {
 
     getRidesList();
 
-    getMyRidesList(parseInt(localStorage.userId));
+    getMyRidesList();
 
 
     suggestSuitedRides();
 }
 
-function getMyRidesList(id) {
+function getMyRidesList() {
+
+    var id = parseInt(localStorage.userId);
+
     var request = {
         volunteerId: id
     }
 
     GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB);
+}
+
+function getMyRidesPrint() {
+    
+    var id = parseInt(localStorage.userId);
+
+    var request = {
+        volunteerId: id
+    }
+
+    GetMyRides(request, getMyRidesPrintSuccessCB, getMyRidesPrintErrorCB);
+}
+
+
+function getMyRidesPrintSuccessCB(results){
+
+    var results = $.parseJSON(results.d);
+
+    results = myRidesToClientStructure(results);
+
+    myRides = results;
+
+    printMyRides(myRides);
+
+}
+
+function getMyRidesPrintErrorCB() {
+    alert("error in getMyRidesPrintErrorCB");
 }
 
 
@@ -1313,7 +1354,7 @@ function checkUserSuccessCB(results) {
     getRidesList();
 
     //getMyRides
-    getMyRidesList(parseInt(localStorage.userId));
+    getMyRidesList();
 
     $.mobile.changePage("#loginPreference", { transition: "fade", changeHash: true });
 
@@ -1423,7 +1464,7 @@ $(document).on('pagebeforeshow', '#myRoutes', function () {
         getRidesList();
 
         //getMyRides
-        getMyRidesList(parseInt(localStorage.userId));
+        getMyRidesList();
 
 
         $.mobile.changePage("#signMe", { transition: "fade", changeHash: true });
