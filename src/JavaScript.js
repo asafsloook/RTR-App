@@ -1,4 +1,7 @@
 ﻿
+//gather backup rides into 1 ui element (maybe without <hr>)
+
+
 //get week function
 Date.prototype.getWeek = function () {
     var d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
@@ -35,7 +38,9 @@ function GetRidesSuccessCB(results) {
 
     rides = results;
 
-    //printRides(results, 4);
+    if (typeof goSuggest !== 'undefined') {
+        getMyRidesList();
+    }
 }
 
 
@@ -80,7 +85,15 @@ function GetMyRidesSuccessCB(results) {
 
     myRides = results;
 
-    //printMyRides(myRides);
+    if (typeof myRidesPrint !== 'undefined') {
+        printMyRides(myRides);
+        myRidesPrint = undefined;
+    }
+
+    if (typeof goSuggest !== 'undefined') {
+        suggestSuitedRides();
+        goSuggest = undefined;
+    }
 }
 
 //from server structure to client structure (fields)
@@ -133,7 +146,7 @@ function GetMyRidesErrorCB(e) {
 //print my rides
 function printMyRides(myRides) {
     $("#myRidesPH").empty();
-
+    
     //sort result by datetime
     myRides.sort(function (a, b) {
         return a.DateTime.toString().localeCompare(b.DateTime.toString());
@@ -151,6 +164,11 @@ function printMyRides(myRides) {
 
     $("#myRidesPH").html(str);
     $("#myRidesPH").listview("refresh");
+
+    if ($('#myRidesPH li').length == 0) {
+        $("#myRidesPH").html('<p style="text-align:center;padding:10%">אין נסיעות מתוכננות עבורך</p>');
+        $("#myRidesPH").listview("refresh");
+    }
     //$("#myRidesCounterPH").html(counterStr);
 }
 
@@ -276,7 +294,8 @@ function deleteAllFromMyRide() {
 
 function deleteAllRideSuccessCB() {
     //for refreshing my rides after the delete
-    getMyRidesPrint();
+    myRidesPrint = true;
+    getMyRidesList();
 
     getRidesList();
 
@@ -294,7 +313,8 @@ function deleteAllRideErrorCB() {
 function deleteRideSuccessCB() {
 
     //for refreshing my rides after the delete
-    getMyRidesPrint();
+    myRidesPrint = true;
+    getMyRidesList();
 
     getRidesList();
 
@@ -655,13 +675,14 @@ function info(inputID) {
 function signDriverSuccessCB(rideId) {
 
     localStorage.lastRideId = $.parseJSON(rideId.d);
+    
+    suggestStart();
+    
+}
 
+function suggestStart() {
+    goSuggest = true;
     getRidesList();
-    getMyRidesList();
-
-
-    //matching feature - go search for suited ride
-    suggestSuitedRides();
 }
 
 //error call back function for get rides
@@ -847,6 +868,7 @@ function suggestSuitedRides() {
             //first time in suggest page
             $.mobile.changePage("#suggest", { transition: "fade", changeHash: true });
             $("#phSuggest").html(str);
+            return;
         }
         else {
 
@@ -857,7 +879,7 @@ function suggestSuitedRides() {
 
             $("#suggest h1,#suggest a,#suggest div").fadeIn(350);
         }
-        
+       
     }
     else {
         //var str = createConfirmationPage(lastRide);
@@ -1003,12 +1025,7 @@ function CombineRideRidePatAjaxSuccessCB(res) {
 
     maxSeats = checkAvailabilty(lastRide);
 
-    getRidesList();
-
-    getMyRidesList();
-
-
-    suggestSuitedRides();
+    suggestStart();
 }
 
 function getMyRidesList() {
@@ -1020,34 +1037,6 @@ function getMyRidesList() {
     }
 
     GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB);
-}
-
-function getMyRidesPrint() {
-    
-    var id = parseInt(localStorage.userId);
-
-    var request = {
-        volunteerId: id
-    }
-
-    GetMyRides(request, getMyRidesPrintSuccessCB, getMyRidesPrintErrorCB);
-}
-
-
-function getMyRidesPrintSuccessCB(results){
-
-    var results = $.parseJSON(results.d);
-
-    results = myRidesToClientStructure(results);
-
-    myRides = results;
-
-    printMyRides(myRides);
-
-}
-
-function getMyRidesPrintErrorCB() {
-    alert("error in getMyRidesPrintErrorCB");
 }
 
 
@@ -1393,11 +1382,7 @@ $(document).on('pagebeforeshow', '#preferences', function () {
 
 
 $(document).on('pagebeforeshow', '#myRoutes', function () {
-
-
-    continueButtonRoutes();
-
-
+    
 
     if (localStorage.routes == null) {
         //do nothing, wait for user to change preferences (routes)
@@ -1424,7 +1409,7 @@ $(document).on('pagebeforeshow', '#myRoutes', function () {
         showSavedRoutes(routes);
     }
 
-    showAreas();
+    
     
     $('#area input').on('change', function () {
 
@@ -1434,6 +1419,10 @@ $(document).on('pagebeforeshow', '#myRoutes', function () {
     
     $('#saveRoutesBTN').on('click', function () {
 
+        if (!$('#southArea').is(':checked') && !$('#centerArea').is(':checked') && !$('#northArea').is(':checked')) {
+            alert("אנא בחר איזורים והעדפות ורק לאחר מכן לחץ על המשך");
+            return;
+        }
 
         routesArr = [];
 
@@ -1473,17 +1462,9 @@ $(document).on('pagebeforeshow', '#myRoutes', function () {
 
 });
 
-function continueButtonRoutes() {
-    $('#saveRoutesBTN').hide();
-
-
-    if ($('#southArea').is(':checked') || $('#centerArea').is(':checked') || $('#northArea').is(':checked')) {
-        $('#saveRoutesBTN').show();
-    }
-    else {
-        $('#saveRoutesBTN').hide();
-    }
-}
+$(document).on('ready', '#myRoutes', function () {
+    showAreas();
+});
 
 
 function showSavedRoutes(routes) {
@@ -1527,8 +1508,6 @@ function showAreas() {
     if ($('#northArea').is(':checked')) {
         $('.north').show();
     }
-
-    continueButtonRoutes();
 }
 
 
