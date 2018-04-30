@@ -146,7 +146,7 @@ function GetMyRidesErrorCB(e) {
 //print my rides
 function printMyRides(myRides) {
     $("#myRidesPH").empty();
-    
+
     //sort result by datetime
     myRides.sort(function (a, b) {
         return a.DateTime.toString().localeCompare(b.DateTime.toString());
@@ -468,12 +468,40 @@ function ListItemRide(results, i) {
 
     str = RideEquipment(str, i);
 
+    str = rideStr(str, results, i);
 
+    //ride without driver (demand)
+    if (results[i].Status == 'ממתינה לשיבוץ') {
+
+        str += '<hr style="margin:0;">';
+    }
+    else {
+        if (i != 0 && results[i].RideNum == results[i - 1].RideNum) {
+            str = str.replace('<a style="', '<a style="display:none;');
+            str += '<hr style="margin:0;border:0">';
+        }
+        else if (results[i].RideNum == results[i + 1].RideNum) {
+
+            str += '<hr style="margin:0;border:0">';
+        }
+        else {
+
+            str += '<hr style="margin:0;">';
+        }
+    }
+
+
+    return str;
+}
+
+
+
+function rideStr(str, results, i) {
     str += '<p style="padding: 4%;float: right;margin-right: 5%;text-align: right;border-radius:15px;"';
 
     if (results[i].Status == "שובץ נהג") {
         str += ' class="backup" >'
-        + '<b>גיבוי</b><br>';
+            + '<b>גיבוי</b><br>';
     }
     else {
         str += ' class="primary" >'
@@ -494,10 +522,10 @@ function ListItemRide(results, i) {
         + 'class="ui-btn ui-icon-edit ui-btn-icon-notext ui-corner-all"'
         + '  onClick="info(' + results[i].Id + ')">' + "</a>";
 
-    str += '<hr style="margin:0;">';
-
     return str;
 }
+
+
 
 function RideEquipment(str, i) {
     //for testing user equipment print
@@ -549,10 +577,12 @@ function filterByTextInput(results) {
 
 
 //print the rides
-function printRides(results, numOfWantedSeats) {
+function printRides(results) {
     $("#ridesPH").empty();
     var str = "";
     ridesCounter = 0;
+
+    results.sort(sortFunc);
 
     //filter rides
     var results = filterRides(results);
@@ -562,7 +592,6 @@ function printRides(results, numOfWantedSeats) {
         results = filterByTextInput(results);
     }
 
-    results.sort(sortFunc);
 
     for (var i = 0; i < results.length; i++) {
 
@@ -675,9 +704,9 @@ function info(inputID) {
 function signDriverSuccessCB(rideId) {
 
     localStorage.lastRideId = $.parseJSON(rideId.d);
-    
+
     suggestStart();
-    
+
 }
 
 function suggestStart() {
@@ -738,7 +767,8 @@ $(document).on('pagebeforeshow', '#signMe', function () {
 //handle the filter events
 $(document).on('pagebeforeshow', '#signMe', function () {
     $('#signMe fieldset select').change(function () {
-        printRides(rides, 4);
+
+        printRides(rides);
     });
 });
 
@@ -760,7 +790,7 @@ function checkRides() {
 
         var rideDate = new Date(results[i].DateTime);
         var chooseRideDate = new Date(ride.DateTime);
-        
+
         if (rideDate.toDateString() != chooseRideDate.toDateString()) {
             continue;
         }
@@ -805,8 +835,8 @@ $(document).on('pagebeforeshow', '#signMePage', function () {
         maxSeats = checkAvailabilty(lastRide);
 
         mySeats = parseInt(localStorage.availableSeats);
-        
-         if (maxSeats == mySeats || lastRide.Status != 'ממתינה לשיבוץ') {
+
+        if (maxSeats == mySeats || lastRide.Status != 'ממתינה לשיבוץ') {
             signDriverToRide(idChoose);
         }
         else {
@@ -879,7 +909,7 @@ function suggestSuitedRides() {
 
             $("#suggest h1,#suggest a,#suggest div").fadeIn(350);
         }
-       
+
     }
     else {
         //var str = createConfirmationPage(lastRide);
@@ -1061,7 +1091,7 @@ $(document).on('pagebeforeshow', '#signMe', function () {
         $("#dateDDL").prop('selectedIndex', 0);
         $("#dateDDL").selectmenu("refresh");
 
-        printRides(rides, 4);
+        printRides(rides);
     });
 });
 
@@ -1074,13 +1104,15 @@ $(document).on('pagebeforeshow', '#signMe', function () {
     $(document).on('click', '#morningTAB', function () {
         $("#shiftDDL").prop('selectedIndex', 1);
         $("#shiftDDL").selectmenu("refresh");
-        printRides(rides, 4);
+
+        printRides(rides);
     });
 
     $(document).on('click', '#afternoonTAB', function () {
         $("#shiftDDL").prop('selectedIndex', 2);
         $("#shiftDDL").selectmenu("refresh");
-        printRides(rides, 4);
+
+        printRides(rides);
     });
 });
 
@@ -1186,31 +1218,31 @@ $(document).one('pagebeforecreate', function () {
 $(document).on('pagebeforeshow', '#signMe', function () {
     $(document).on('keyup', '#signMe input[data-type="search"]', function () {
 
-        printRides(rides, 4);
+        printRides(rides);
 
     });
 
     $(document).on('keydown', '#signMe input[data-type="search"]', function () {
 
-        printRides(rides, 4);
+        printRides(rides);
 
     });
 
     $('#signMe .ui-filterable').click(function () {
 
-        printRides(rides, 4);
+        printRides(rides);
 
     });
 
     $('#signMe .ui-filterable').focusout(function () {
 
-        printRides(rides, 4);
+        printRides(rides);
 
     });
 
     $('#signMe .ui-filterable input').change(function () {
 
-        printRides(rides, 4);
+        printRides(rides);
 
     });
 });
@@ -1224,7 +1256,7 @@ $(document).on('pagebeforeshow', '#signMe', function () {
     else if ($('#shiftDDL').val() == 'אחהצ') {
         $('#afternoonTAB').addClass('ui-btn-active');
     }
-    printRides(rides, 4);
+    printRides(rides);
 });
 
 
@@ -1332,6 +1364,13 @@ function checkUserSuccessCB(results) {
     //get preferences routes and seats
 
 
+    //get all rides
+    getRidesList();
+
+    //getMyRides
+    getMyRidesList();
+
+
     if (localStorage.availableSeats == null) {
         setTimeout(function () {
             $.mobile.changePage("#preferences", { transition: "fade", changeHash: true });
@@ -1339,11 +1378,6 @@ function checkUserSuccessCB(results) {
         return;
     }
 
-    //get all rides
-    getRidesList();
-
-    //getMyRides
-    getMyRidesList();
 
     $.mobile.changePage("#loginPreference", { transition: "fade", changeHash: true });
 
@@ -1382,7 +1416,7 @@ $(document).on('pagebeforeshow', '#preferences', function () {
 
 
 $(document).on('pagebeforeshow', '#myRoutes', function () {
-    
+
 
     if (localStorage.routes == null) {
         //do nothing, wait for user to change preferences (routes)
@@ -1394,29 +1428,29 @@ $(document).on('pagebeforeshow', '#myRoutes', function () {
 
         if (routes[0].south) {
             $('#myRoutes #area .ui-checkbox label').eq(0).click();
-                $('.south').show();
+            $('.south').show();
         }
         if (routes[0].center) {
             $('#myRoutes #area .ui-checkbox label').eq(1).click();
-                $('.center').show();
+            $('.center').show();
         }
         if (routes[0].north) {
             $('#myRoutes #area .ui-checkbox label').eq(2).click();
-                $('.north').show();
+            $('.north').show();
         }
 
 
         showSavedRoutes(routes);
     }
 
-    
-    
+
+
     $('#area input').on('change', function () {
 
         showAreas();
 
     });
-    
+
     $('#saveRoutesBTN').on('click', function () {
 
         if (!$('#southArea').is(':checked') && !$('#centerArea').is(':checked') && !$('#northArea').is(':checked')) {
