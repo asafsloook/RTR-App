@@ -1,7 +1,4 @@
 ﻿
-//gather backup rides into 1 ui element (maybe without <hr>)
-
-
 //get week function
 Date.prototype.getWeek = function () {
     var d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
@@ -476,7 +473,8 @@ function ListItemRide(results, i) {
         str += '<hr style="margin:0;">';
     }
     else {
-        if (i != 0 && results[i].RideNum == results[i - 1].RideNum) {
+
+        if (i!=0 && results[i].RideNum == results[i - 1].RideNum) {
             str = str.replace('<a style="', '<a style="display:none;');
             str += '<hr style="margin:0;border:0">';
         }
@@ -581,7 +579,7 @@ function printRides(results) {
     $("#ridesPH").empty();
     var str = "";
     ridesCounter = 0;
-
+    
     results.sort(sortFunc);
 
     //filter rides
@@ -629,16 +627,12 @@ function printRides(results) {
         str += ListItemRide(results, i);
 
         ridesCounter++;
-
-        //filter by seats
-        //if (numOfWantedSeats < (results[i].Melave.length) + 1) {
-        //    continue;
-        //}
+        
 
     }
 
     if (ridesCounter == 0) {
-        var counterStr = '<p>לא נמצאו נסיעות  <a id="clearFilter" href="#" style="background-color:#202020" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-button-inline ui-widget ui-button-a ui-link ui-btn ui-btn-b ui-btn-icon-left ui-btn-inline ui-shadow ui-corner-all ui-icon-refresh" role="button">נקה</a></p>';
+        var counterStr = '<p>לא נמצאו נסיעות  <a href="#preferences" style="background-color:#202020" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-button-inline ui-widget ui-button-a ui-link ui-btn ui-btn-b ui-btn-icon-left ui-btn-inline ui-shadow ui-corner-all ui-icon-arrow-l" role="button">ההעדפות שלי</a></p>';
     }
     else {
 
@@ -647,7 +641,7 @@ function printRides(results) {
     $("#ridesPH").html(str);
     $("#ridesPH").listview("refresh");
     $("#ridesPH li").collapsible();
-    //$("#counterPH").html(counterStr);
+    $("#counterPH").html(counterStr);
 
 }
 
@@ -1426,15 +1420,15 @@ $(document).on('pagebeforeshow', '#myRoutes', function () {
 
         var routes = $.parseJSON(localStorage.routes);
 
-        if (routes[0].south) {
+        if (routes[0].south && !$('#southArea').is(':checked')) {
             $('#myRoutes #area .ui-checkbox label').eq(0).click();
             $('.south').show();
         }
-        if (routes[0].center) {
+        if (routes[0].center && !$('#centerArea').is(':checked')) {
             $('#myRoutes #area .ui-checkbox label').eq(1).click();
             $('.center').show();
         }
-        if (routes[0].north) {
+        if (routes[0].north && !$('#northArea').is(':checked')) {
             $('#myRoutes #area .ui-checkbox label').eq(2).click();
             $('.north').show();
         }
@@ -1468,13 +1462,13 @@ $(document).on('pagebeforeshow', '#myRoutes', function () {
 
         routesArr.push(area);
 
-        var actives = $('#myRoutes .ui-btn-active');
+        var actives = $('#starts .ui-btn-active,#ends .ui-btn-active');
 
         for (var i = 0; i < actives.length; i++) {
             routesArr.push(actives[i].innerHTML);
         }
 
-        if (routesArr.length == 0) {
+        if (routesArr.length < 2) {
             alert("אנא בחר העדפות ורק לאחר מכן לחץ על המשך");
             return;
         }
