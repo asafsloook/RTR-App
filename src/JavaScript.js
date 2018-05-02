@@ -1,4 +1,8 @@
 ﻿
+//preferences from signMe double (async breach?)
+//session storrage show without filters, show all
+//show all btn next searchbox
+
 //get week function
 Date.prototype.getWeek = function () {
     var d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
@@ -633,9 +637,6 @@ function printRides(results) {
 
     if (ridesCounter == 0) {
         var counterStr = '<p>לא נמצאו נסיעות  <a href="#preferences" style="background-color:#202020" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-button-inline ui-widget ui-button-a ui-link ui-btn ui-btn-b ui-btn-icon-left ui-btn-inline ui-shadow ui-corner-all ui-icon-arrow-l" role="button">ההעדפות שלי</a></p>';
-    }
-    else {
-
     }
 
     $("#ridesPH").html(str);

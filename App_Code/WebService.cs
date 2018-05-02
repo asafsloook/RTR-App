@@ -39,12 +39,30 @@ public class WebService : System.Web.Services.WebService
     }
 
     [WebMethod]
+    public string getEquipmentForPatient(string patient)
+    {
+        JavaScriptSerializer j = new JavaScriptSerializer();
+        Patient p = new Patient();
+        p.Equipment = p.getEquipmentForPatient(patient);
+        return j.Serialize(p.Equipment);
+    }
+
+    [WebMethod]
     public string getCoorList()
     {
         JavaScriptSerializer j = new JavaScriptSerializer();
         Volunteer v = new Volunteer();
         List<Volunteer> vl = v.getCoorList();
         return j.Serialize(vl);
+    }
+
+    [WebMethod]
+    public string getCoor(string userName)
+    {
+        JavaScriptSerializer j = new JavaScriptSerializer();
+        Volunteer v = new Volunteer();
+        v = v.getCoor(userName);
+        return j.Serialize(v);
     }
 
     [WebMethod]
@@ -141,9 +159,7 @@ public class WebService : System.Web.Services.WebService
         return j.Serialize(rp);
     }
 
-
-
-
+    
     [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     public string getMyRides(int volunteerId)
@@ -191,7 +207,6 @@ public class WebService : System.Web.Services.WebService
         }
         catch (Exception e)
         {
-
             throw new Exception("Error in CheckUser; " + e.Message);
         }
 
@@ -246,6 +261,17 @@ public class WebService : System.Web.Services.WebService
         int res = rp.LeaveRidePat(ridePatId,rideId,driverId);
         JavaScriptSerializer j = new JavaScriptSerializer();
         return j.Serialize(res);
+    }
+
+    [WebMethod]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public string getAllStatus()
+    {
+        Status s = new Status();
+        List<Status> sl = new List<Status>();
+        sl = s.getAllStatus();
+        JavaScriptSerializer j = new JavaScriptSerializer();
+        return j.Serialize(sl);
     }
 
     #region volunteers functions
