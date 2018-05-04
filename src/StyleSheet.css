@@ -1,4 +1,27 @@
 ﻿
+#shiftTABS a {
+    font-size: 16px;
+}
+
+#shiftTABS a {
+    padding: 4%;
+}
+
+#signMe fieldset {
+    margin: 0;
+}
+
+#showAllRides {
+    width: 25%;
+    position: absolute;
+    float: left;
+}
+
+
+#signMe .ui-filterable {
+    width: 70%;
+    margin-left: 30%;
+}
 
 #starts label, #ends label {
     width: 100px;
