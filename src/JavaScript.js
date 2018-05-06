@@ -297,8 +297,7 @@ function deleteAllRideSuccessCB() {
 
     getRidesList();
 
-    $.mobile.changePage("#myRides", { transition: "fade", changeHash: true });
-    return;
+    $.mobile.pageContainer.pagecontainer("change", "#myRides");
 }
 
 function deleteAllRideErrorCB() {
@@ -316,8 +315,7 @@ function deleteRideSuccessCB() {
 
     getRidesList();
 
-    $.mobile.changePage("#myRides", { transition: "fade", changeHash: true });
-    return;
+    $.mobile.pageContainer.pagecontainer("change", "#myRides");
 }
 
 //error call back function for delete ride
@@ -771,12 +769,16 @@ $(document).on('pagebeforeshow', '#signMe', function () {
 
 
 //handle the filter events
-$(document).on('pagebeforeshow', '#signMe', function () {
+$(document).ready(function () {
     $('#signMe fieldset select').change(function () {
 
         printRides(rides);
     });
 
+
+});
+
+$(document).ready(function () {
     $('#showAllRidesBTN').on('click', function () {
 
         if ($('#showAllRidesBTN').is(':checked')) {
@@ -798,11 +800,10 @@ $(document).on('pagebeforeshow', '#signMe', function () {
             showAll = undefined;
         }
         printRides(rides);
-
-
     });
-
 });
+
+
 
 //check for suited rides with the ride that chosen
 function checkRides() {
@@ -858,7 +859,7 @@ function checkRides() {
 
 
 //on sign me to ride click ok
-$(document).on('pagebeforeshow', '#signMePage', function () {
+$(document).ready(function () {
 
     $("#okBTN").on("click", function () {
 
@@ -928,7 +929,9 @@ function suggestSuitedRides() {
         if (window.location.href.toString().indexOf('suggest') == -1) {
 
             //first time in suggest page
-            $.mobile.changePage("#suggest", { transition: "fade", changeHash: true });
+
+            $.mobile.pageContainer.pagecontainer("change", "#suggest");
+
             $("#phSuggest").html(str);
             return;
         }
@@ -945,9 +948,9 @@ function suggestSuitedRides() {
     }
     else {
         //var str = createConfirmationPage(lastRide);
-        $.mobile.changePage("#signConfirmation", { transition: "fade", changeHash: true });
+
+        $.mobile.pageContainer.pagecontainer("change", "#signConfirmation");
         //$("#phConfirmation").html(str);
-        return;
     }
 }
 
@@ -1043,7 +1046,7 @@ function createMelaveStr(ride) {
 }
 
 //after signing to ride and we suggest a suited ride, volenteer click ok
-$(document).on('pagebeforeshow', '#suggest', function () {
+$(document).ready(function () {
 
 
     $("#suggestOkBTN").on("click", function () {
@@ -1106,33 +1109,13 @@ function CombineRideRidePatAjaxErrorCB() {
     //error handle
 }
 
-//clear filter button
-$(document).on('pagebeforeshow', '#signMe', function () {
-    $(document).on('click', '#clearFilter', function () {
-
-        $("#dayDDL").prop('selectedIndex', 0);
-        $("#dayDDL").selectmenu("refresh");
-        $("#endDDL").prop('selectedIndex', 0);
-        $("#endDDL").selectmenu("refresh");
-        $("#startDDL").prop('selectedIndex', 0);
-        $("#startDDL").selectmenu("refresh");
-        $("#areaDDL").prop('selectedIndex', 0);
-        $("#areaDDL").selectmenu("refresh");
-        $("#shiftDDL").prop('selectedIndex', 0);
-        $("#shiftDDL").selectmenu("refresh");
-        $("#dateDDL").prop('selectedIndex', 0);
-        $("#dateDDL").selectmenu("refresh");
-
-        printRides(rides);
-    });
-});
 
 
 //tabs control
 //////////////
 
 //click on morningTAB or afternoonTAB
-$(document).on('pagebeforeshow', '#signMe', function () {
+$(document).ready(function () {
     $(document).on('click', '#morningTAB', function () {
 
         $("#shiftDDL").prop('selectedIndex', 1);
@@ -1162,6 +1145,10 @@ $(document).on('pagebeforeshow', '#myRides', function () {
         printMyRides(myRides);
     }
 
+
+});
+
+$(document).ready(function () {
     $(document).on('click', '#doneTAB,#planTAB', function () {
         printMyRides(myRides);
     });
@@ -1175,7 +1162,9 @@ $(document).on('pagebeforeshow', '#infoPastRide', function () {
 
     $('#phPopInfo').html(getRideStr(myRide));
 
+});
 
+$(document).ready(function () {
     $("#closeInfoBTN").on('click', function () {
         $('#doneTAB').addClass('ui-btn-active');
         printMyRides(myRides);
@@ -1196,12 +1185,12 @@ $(document).ready(function () {
     $("#deleteokBTN").on('click', function () {
 
         if (myRideHasMultipulePats(idDeleteChoose)) {
-            $.mobile.changePage("#deleteOptions", { transition: "fade", changeHash: true });
-            return;
+            $.mobile.pageContainer.pagecontainer("change", "#deleteOptions");
+
         }
         else {
-            $.mobile.changePage("#deleteConfirm", { transition: "fade", changeHash: true });
-            return;
+            $.mobile.pageContainer.pagecontainer("change", "#deleteConfirm");
+
         }
     });
 });
@@ -1246,12 +1235,12 @@ $(document).one('pagebeforecreate', function () {
         + '</div>';
     $.mobile.pageContainer.prepend(panel);
     $("#mypanel").panel().enhanceWithin();
-    return;
+
 });
 
 
 //keyup/click/focusout events, refreshing the rides when jquery list filter is on action
-$(document).on('pagebeforeshow', '#signMe', function () {
+$(document).ready(function () {
     $(document).on('keyup', '#signMe input[data-type="search"]', function () {
 
         showInput = true;
@@ -1306,15 +1295,16 @@ $(document).on('pagebeforeshow', '#loginPreference', function () {
 
     $("#welcomeTitle").html("שלום " + userInfo.FirstNameH);
 
+});
+
+$(document).ready(function () {
     $("#nextPageBTN").on('click', function () {
 
         if (checkPlanRides(myRides)) {
-            $.mobile.changePage("#myRides", { transition: "fade", changeHash: true });
-            return;
+            $.mobile.pageContainer.pagecontainer("change", "#myRides");
         }
         else {
-            $.mobile.changePage("#signMe", { transition: "fade", changeHash: true });
-            return;
+            $.mobile.pageContainer.pagecontainer("change", "#signMe");
         }
     });
 });
@@ -1360,7 +1350,7 @@ function checkUserPN(cellphone) {
 }
 
 
-$(document).on('pagebeforeshow', '#loginFailed', function () {
+$(document).ready(function () {
 
 
     $('#userPnBTN').on('click', function () {
@@ -1380,8 +1370,7 @@ $(document).on('pagebeforeshow', '#loginFailed', function () {
 function manualLogin() {
 
     setTimeout(function () {
-        $.mobile.changePage("#loginFailed", { transition: "fade", changeHash: true });
-        return;
+        $.mobile.pageContainer.pagecontainer("change", "#loginFailed");
     }, 500);
 }
 
@@ -1416,14 +1405,14 @@ function checkUserSuccessCB(results) {
 
     if (localStorage.availableSeats == null) {
         setTimeout(function () {
-            $.mobile.changePage("#preferences", { transition: "fade", changeHash: true });
+
+            $.mobile.pageContainer.pagecontainer("change", "#preferences");
         }, 1000);
-        return;
     }
+    else {
+        $.mobile.pageContainer.pagecontainer("change", "#loginPreference");
 
-
-    $.mobile.changePage("#loginPreference", { transition: "fade", changeHash: true });
-    return;
+    }
 
 }
 
@@ -1442,7 +1431,10 @@ $(document).on('pagebeforeshow', '#preferences', function () {
         $('#availableSeats select').selectmenu('refresh');
     }
 
+});
 
+
+$(document).ready(function () {
     $('#seatsToAreaBTN').on('click', function () {
 
         var seats = $('#availableSeats select').val();
@@ -1452,10 +1444,9 @@ $(document).on('pagebeforeshow', '#preferences', function () {
         //and also update the db with the seats
 
 
-        $.mobile.changePage("#myRoutes", { transition: "fade", changeHash: true });
-        return;
-
+        $.mobile.pageContainer.pagecontainer("change", "#myRoutes");
     });
+
 });
 
 
@@ -1487,8 +1478,10 @@ $(document).on('pagebeforeshow', '#myRoutes', function () {
         showSavedRoutes(routes);
     }
 
+});
 
 
+$(document).ready(function () {
     $('#area input').on('change', function () {
 
         showAreas();
@@ -1534,8 +1527,7 @@ $(document).on('pagebeforeshow', '#myRoutes', function () {
         getMyRidesList();
 
 
-        $.mobile.changePage("#signMe", { transition: "fade", changeHash: true });
-        return;
+        $.mobile.pageContainer.pagecontainer("change", "#signMe");
     });
 
 });
