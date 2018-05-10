@@ -51,15 +51,15 @@
 
     <div data-role="page" id="loginPreference">
         <h2 id="welcomeTitle"></h2>
-        <a id="changePrefBTN" href="#preferences" data-role="button" data-inline="true">שינוי ההעדפות שלי</a>
+        <a id="changePrefBTN" href="#myPreferences" data-role="button" data-inline="true">שינוי ההעדפות שלי</a>
         <br />
         <a id="nextPageBTN" data-role="button" data-inline="true">המשך</a>
     </div>
 
 
-    <div data-role="page" id="preferences">
+    <div data-role="page" id="firstTimeSeats">
 
-        <div id="availableSeats">
+        <div id="firstTimeAvailableSeats">
 
             <table>
                 <tr>
@@ -73,7 +73,7 @@
                             <option>1</option>
                             <option>2</option>
                             <option>3</option>
-                            <option>4</option>
+                            <option selected="selected">4</option>
                             <option>5</option>
                             <option>6</option>
                             <option>7</option>
@@ -85,7 +85,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <a id="seatsToAreaBTN" data-role="button" data-inline="true">המשך</a>
+                        <a id="ftSeatsSave" data-role="button" data-inline="true">המשך</a>
                     </td>
                 </tr>
             </table>
@@ -597,7 +597,7 @@
     </div>
 
 
-    <div id="myRoutes" data-role="page">
+    <!--<div id="myRoutes" data-role="page">
 
         <div data-role="content">
 
@@ -613,15 +613,6 @@
                     </fieldset>
                 </form>
             </div>
-
-            <!--<select id="area" data-iconpos="left" style="padding-top: 0%;">
-                <option>אזור</option>
-                <option>צפון</option>
-                <option>צפון-מרכז</option>
-                <option>מרכז</option>
-                <option>מרכז-דרום</option>
-                <option>דרום</option>
-            </select>-->
 
             <div id="starts" class="start">
                 <form hidden="hidden" class="north">
@@ -736,8 +727,285 @@
             <a id="saveRoutesBTN" data-role="button" data-inline="true">המשך</a>
         </div>
 
-    </div>
+    </div>-->
 
+    <div id="myPreferences" data-role="page">
+
+        <div data-role="header">
+            <h1>ההעדפות שלי</h1>
+            <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+            </a>
+        </div>
+
+        <div data-role="content">
+
+
+            <div data-role="tabs" id="prefTabs">
+                <div data-role="navbar">
+                    <ul>
+                        <li><a href="#other" data-ajax="false">אחר</a></li>
+                        <li><a href="#zmanim" data-ajax="false">זמנים</a></li>
+                        <li><a href="#kavim" data-ajax="false">קווי הסעה</a></li>
+                    </ul>
+                </div>
+                <div id="other">
+
+                    <table>
+                        <tr>
+
+                            <td>
+                                <select id="mySeats">
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option selected="selected">4</option>
+                                    <option>5</option>
+                                    <option>6</option>
+                                    <option>7</option>
+                                    <option>8</option>
+                                    <option>9</option>
+                                    <option>10</option>
+                                </select>
+                            </td>
+                            <td ><label>מושבים פנויים</label></td>
+                        </tr>
+
+                    </table>
+
+                    
+                    
+                </div>
+                <div id="zmanim">
+                    <table>
+                        <tr>
+                            <td>
+                                <form class="morning">
+                                    <fieldset data-role="controlgroup" data-type="horizontal">
+                                        <input type="checkbox" id="morningE">
+                                        <label for="morningE">ה</label>
+                                    </fieldset>
+                                </form>
+                            </td>
+                            <td>
+                                <form class="morning">
+                                    <fieldset data-role="controlgroup" data-type="horizontal">
+                                        <input type="checkbox" id="morningD">
+                                        <label for="morningD">ד</label>
+                                    </fieldset>
+                                </form>
+                            </td>
+                            <td>
+                                <form class="morning">
+                                    <fieldset data-role="controlgroup" data-type="horizontal">
+                                        <input type="checkbox" id="morningC">
+                                        <label for="morningC">ג</label>
+                                    </fieldset>
+                                </form>
+                            </td>
+                            <td>
+                                <form class="morning">
+                                    <fieldset data-role="controlgroup" data-type="horizontal">
+                                        <input type="checkbox" id="morningB">
+                                        <label for="morningB">ב</label>
+                                    </fieldset>
+                                </form>
+                            </td>
+                            <td>
+                                <form class="morning">
+                                    <fieldset data-role="controlgroup" data-type="horizontal">
+                                        <input type="checkbox" id="morningA">
+                                        <label for="morningA">א</label>
+                                    </fieldset>
+                                </form>
+                            </td>
+                            <td>
+                                <label>בוקר</label>
+                            </td>
+                        </tr>
+                        <tr>
+
+                            <td>
+                                <form class="evening">
+                                    <fieldset data-role="controlgroup" data-type="horizontal">
+                                        <input type="checkbox" id="eveningE">
+                                        <label for="eveningE">ה</label>
+                                    </fieldset>
+                                </form>
+                            </td>
+                            <td>
+                                <form class="evening">
+                                    <fieldset data-role="controlgroup" data-type="horizontal">
+                                        <input type="checkbox" id="eveningD">
+                                        <label for="eveningD">ד</label>
+                                    </fieldset>
+                                </form>
+                            </td>
+                            <td>
+                                <form class="evening">
+                                    <fieldset data-role="controlgroup" data-type="horizontal">
+                                        <input type="checkbox" id="eveningC">
+                                        <label for="eveningC">ג</label>
+                                    </fieldset>
+                                </form>
+                            </td>
+                            <td>
+                                <form class="evening">
+                                    <fieldset data-role="controlgroup" data-type="horizontal">
+                                        <input type="checkbox" id="eveningB">
+                                        <label for="eveningB">ב</label>
+                                    </fieldset>
+                                </form>
+                            </td>
+                            <td>
+                                <form class="evening">
+                                    <fieldset data-role="controlgroup" data-type="horizontal">
+                                        <input type="checkbox" id="eveningA">
+                                        <label for="eveningA">א</label>
+                                    </fieldset>
+                                </form>
+                            </td>
+                            <td>
+                                <label>אחה"צ</label>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div id="kavim">
+
+                    <div id="area">
+                        <form>
+                            <fieldset data-role="controlgroup" data-type="horizontal">
+                                <input type="checkbox" id="southArea">
+                                <label for="southArea">דרום</label>
+                                <input type="checkbox" id="centerArea">
+                                <label for="centerArea">מרכז</label>
+                                <input type="checkbox" id="northArea">
+                                <label for="northArea">צפון</label>
+                            </fieldset>
+                        </form>
+                    </div>
+
+                    <div id="starts" class="start">
+                        <form hidden="hidden" class="north">
+                            <fieldset data-role="controlgroup" data-type="horizontal">
+                                <input type="checkbox" id="north1">
+                                <label for="north1">ג'למה (גלבוע)</label>
+                            </fieldset>
+                        </form>
+                        <form hidden="hidden" class="north">
+                            <fieldset data-role="controlgroup" data-type="horizontal">
+                                <input type="checkbox" id="north2">
+                                <label for="north2">ריחן</label>
+                            </fieldset>
+                        </form>
+                        <form hidden="hidden" class="center">
+                            <fieldset data-role="controlgroup" data-type="horizontal">
+                                <input type="checkbox" id="center1">
+                                <label for="center1">אייל</label>
+                            </fieldset>
+                        </form>
+                        <form hidden="hidden" class="center">
+                            <fieldset data-role="controlgroup" data-type="horizontal">
+                                <input type="checkbox" id="center2">
+                                <label for="center2">אליהו</label>
+                            </fieldset>
+                        </form>
+                        <form hidden="hidden" class="center">
+                            <fieldset data-role="controlgroup" data-type="horizontal">
+                                <input type="checkbox" id="center3">
+                                <label for="center3">בית לחם</label>
+                            </fieldset>
+                        </form>
+                        <form hidden="hidden" class="center">
+                            <fieldset data-role="controlgroup" data-type="horizontal">
+                                <input type="checkbox" id="center4">
+                                <label for="center4">הפרחים</label>
+                            </fieldset>
+                        </form>
+                        <form hidden="hidden" class="center">
+                            <fieldset data-role="controlgroup" data-type="horizontal">
+                                <input type="checkbox" id="center5">
+                                <label for="center5">נעלין</label>
+                            </fieldset>
+                        </form>
+                        <form hidden="hidden" class="center">
+                            <fieldset data-role="controlgroup" data-type="horizontal">
+                                <input type="checkbox" id="center6">
+                                <label for="center6">שער אפרים</label>
+                            </fieldset>
+                        </form>
+                        <form hidden="hidden" class="center">
+                            <fieldset data-role="controlgroup" data-type="horizontal">
+                                <input type="checkbox" id="center7">
+                                <label for="center7">תרקומיה</label>
+                            </fieldset>
+                        </form>
+                        <form hidden="hidden" class="south">
+                            <fieldset data-role="controlgroup" data-type="horizontal">
+                                <input type="checkbox" id="south1">
+                                <label for="south1">ארז</label>
+                            </fieldset>
+                        </form>
+                    </div>
+
+                    <div id="ends" class="end">
+
+                        <form hidden="hidden" class="north">
+                            <fieldset data-role="controlgroup" data-type="horizontal">
+                                <input type="checkbox" id="north3">
+                                <label for="north3">רמבם</label>
+                            </fieldset>
+                        </form>
+                        <form hidden="hidden" class="center north">
+                            <fieldset data-role="controlgroup" data-type="horizontal">
+                                <input type="checkbox" id="center8">
+                                <label for="center8">שיבא</label>
+                            </fieldset>
+                        </form>
+                        <form hidden="hidden" class="center">
+                            <fieldset data-role="controlgroup" data-type="horizontal">
+                                <input type="checkbox" id="center9">
+                                <label for="center9">איכילוב</label>
+                            </fieldset>
+                        </form>
+                        <form hidden="hidden" class="center">
+                            <fieldset data-role="controlgroup" data-type="horizontal">
+                                <input type="checkbox" id="center10">
+                                <label for="center10">אסותא</label>
+                            </fieldset>
+                        </form>
+                        <form hidden="hidden" class="center">
+                            <fieldset data-role="controlgroup" data-type="horizontal">
+                                <input type="checkbox" id="center11">
+                                <label for="center11">וולפסון</label>
+                            </fieldset>
+                        </form>
+                        <form hidden="hidden" class="south">
+                            <fieldset data-role="controlgroup" data-type="horizontal">
+                                <input type="checkbox" id="south2">
+                                <label for="south2">מרכז</label>
+                            </fieldset>
+                        </form>
+                        <form hidden="hidden" class="south">
+                            <fieldset data-role="controlgroup" data-type="horizontal">
+                                <input type="checkbox" id="south3">
+                                <label for="south3">ירושלים</label>
+                            </fieldset>
+                        </form>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+            <a id="saveRoutesBTN" data-role="button" data-inline="true">שמור</a>
+         
+        </div>
+
+        
+
+    </div>
 
 </body>
 </html>

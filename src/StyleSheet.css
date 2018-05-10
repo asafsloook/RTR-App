@@ -1,4 +1,31 @@
-﻿
+﻿#myPreferences #zmanim td {
+    padding: 1%;
+}
+
+#myPreferences #zmanim table {
+    width: 100%;
+    margin-top:5%;
+}
+
+
+
+#myPreferences #other td {
+    padding: 5%;
+}
+#myPreferences #other table {
+    float: right;
+    width: 100%;
+    margin-top: 5%;
+}
+
+#other label{
+    text-align:center;
+}
+
+#ends {
+    margin-top: 10%;
+}
+
 #shiftTABS a {
     font-size: 16px;
 }
@@ -36,17 +63,20 @@ label, p {
 
 #saveRoutesBTN {
     position: absolute;
-    bottom: 5%;
-    left: 10%;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    margin: 2%;
+    padding: 2%;
 }
 
-#preferences table {
+#firstTimeSeats table {
     margin: 0 auto;
     margin-top: 50%;
     width: 80%;
 }
 
-#preferences td {
+#firstTimeSeats td {
     padding: 5%;
     text-align: center;
 }
@@ -56,16 +86,16 @@ label, p {
     margin-top: 20%;
 }
 
-#preferences td .ui-select {
+#firstTimeSeats td .ui-select {
     width: 40%;
     margin: 0 auto;
 }
 
-#myRoutes h3 {
+#myPreferences h3 {
     margin-top: 0;
 }
 
-#kavim1 .ui-btn-active, #myRoutes .ui-btn-active {
+#kavim1 .ui-btn-active, #myPreferences .ui-btn-active {
     background-color: #40a551;
     border-color: #40a551;
     color: #fff;
@@ -73,7 +103,7 @@ label, p {
 }
 
 
-#myRoutes #area .ui-btn-active {
+#myPreferences #area .ui-btn-active {
     background-color: #4189fc;
     border-color: #4189fc;
 }
