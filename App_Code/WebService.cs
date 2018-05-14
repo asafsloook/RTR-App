@@ -24,9 +24,50 @@ public class WebService : System.Web.Services.WebService
     }
 
     //----------------------Road to decovery-----------------------------------------------
+    //[WebMethod]
+    //[ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    //public void test(Class1 c)
+    //{
+    //  //  Test test = t;
+
+    //    //Dictionary<string, object> d = (Dictionary<string, object>)ridePat;
+    //    // d = (Dictionary<string, object>)ridePat;
+    //    // JavaScriptSerializer j = new JavaScriptSerializer();
+    //    // Object[] o = j.Deserialize<object[]>(ridePat);
+    //    // RidePat rp = new RidePat();
+    //    //rp.setRidePat(d, func);
+    //    // return j.Serialize(rp);
+    //    var a = 0;
+    //}
 
 
-        //GetFutureRides (Date)
+    [WebMethod]
+    public int setVolunteerPrefs(int Id, List<string> PrefLocation, List<string> PrefArea,List<string> PrefTime,int AvailableSeats)
+    {
+        Volunteer v = new Volunteer();
+        return v.setVolunteerPrefs(Id, PrefLocation, PrefArea, PrefTime, AvailableSeats);
+    }
+
+    [WebMethod]
+    public void getVolunteerPrefs(int Id)
+    {
+        Volunteer v = new Volunteer();
+        v.getVolunteerPrefs(Id);
+    }
+
+    [WebMethod]
+    public int setRidePat(RidePat RidePat, string func)
+    {
+        //Dictionary<string, object> d = (Dictionary<string, object>)ridePat;
+        // d = (Dictionary<string, object>)ridePat;
+        // JavaScriptSerializer j = new JavaScriptSerializer();
+        // Object[] o = j.Deserialize<object[]>(ridePat);
+        RidePat rp = new RidePat();
+        return rp.setRidePat(RidePat, func);
+        // rp.setRidePat(d, func);
+        // return j.Serialize(rp);
+
+    }
 
 
     [WebMethod]
@@ -154,12 +195,12 @@ public class WebService : System.Web.Services.WebService
     public string GetRidePat(int ridePatNum)
     {
         RidePat rp = new RidePat();
-            rp = rp.GetRidePat(ridePatNum);
+        rp = rp.GetRidePat(ridePatNum);
         JavaScriptSerializer j = new JavaScriptSerializer();
         return j.Serialize(rp);
     }
 
-    
+
     [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     public string getMyRides(int volunteerId)
@@ -178,7 +219,7 @@ public class WebService : System.Web.Services.WebService
     {
         Ride r = new Ride();
         //List<RidePat> r = rp.GetRidePat();
-        List <Ride> rl = r.GetRidesForNotify();
+        List<Ride> rl = r.GetRidesForNotify();
         JavaScriptSerializer j = new JavaScriptSerializer();
         return j.Serialize(rl);
     }
@@ -255,10 +296,10 @@ public class WebService : System.Web.Services.WebService
 
     [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public string LeaveRidePat(int ridePatId, int rideId,int driverId)
+    public string LeaveRidePat(int ridePatId, int rideId, int driverId)
     {
         RidePat rp = new RidePat();
-        int res = rp.LeaveRidePat(ridePatId,rideId,driverId);
+        int res = rp.LeaveRidePat(ridePatId, rideId, driverId);
         JavaScriptSerializer j = new JavaScriptSerializer();
         return j.Serialize(res);
     }

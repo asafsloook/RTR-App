@@ -1430,10 +1430,10 @@ function showSavedSeats() {
 
 
 $(document).on('pagebeforeshow', '#myPreferences', function () {
-    
+
     if (localStorage.routes == null) {
         //do nothing, wait for user to change preferences (routes)
-        
+
         $('a#menuBTN').hide()
         $('#continueBTN').show();
 
@@ -1457,8 +1457,7 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
                 saveRoutes();
                 saveTimes();
                 saveSeats();
-
-
+                
                 //get all rides
                 getRidesList();
 
@@ -1467,9 +1466,11 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
 
                 $('a#menuBTN').show();
 
+                setPrefs();
+
                 $.mobile.pageContainer.pagecontainer("change", "#signMe");
             }
-           
+
         });
     }
     else {
@@ -1505,41 +1506,88 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
 
 
 $(document).ready(function () {
-    
-        $('#mypanel a[href!="#myPreferences"]').on('click', function () {
 
-            if (window.location.href.toString().indexOf('myPreferences') == -1 || localStorage.routes == null) {
-                return;
-            }
+    $('#mypanel a[href!="#myPreferences"]').on('click', function () {
 
-            if (confirm("האם ברצונך לשנות את השינויים?")) {
-                //save
-                saveRoutes();
-                saveTimes();
-                saveSeats();
+        if (window.location.href.toString().indexOf('myPreferences') == -1 || localStorage.routes == null) {
+            return;
+        }
 
-
-                //get all rides
-                getRidesList();
-
-                //getMyRides
-                getMyRidesList();
-            } else {
-
-            }
+        if (confirm("האם ברצונך לשנות את השינויים?")) {
+            //local
+            saveRoutes();
+            saveTimes();
+            saveSeats();
             
-        });
+            //get all rides
+            getRidesList();
+
+            //getMyRides
+            getMyRidesList();
+
+            //DB
+            setPrefs();
+        } else {
+
+        }
+
+    });
 });
 
 
-$(document).on('pageshow','#myPreferences',function () {
-    
-        showAreas();
+function setPrefs() {
 
-        if (!isTabActive()) {
+    var routes = JSON.parse(localStorage.routes);
+    var locations = [];
 
-            $('#prefTabs a').eq(2).click().addClass('ui-btn-active');
-        }
+    for (var i = 1; i < routes.length; i++) {
+        locations.push(routes[i]);
+    }
+
+    var areas = [];
+    if (routes[0].north) {
+        areas.push("צפון");
+    }
+    if (routes[0].center) {
+        areas.push("מרכז");
+    }
+    if (routes[0].south) {
+        areas.push("דרום");
+    }
+
+    var times = JSON.parse(localStorage.times);
+
+    var request = {
+        Id: parseInt(localStorage.userId),
+        PrefLocation: locations,
+        PrefArea: areas,
+        PrefTime: times,
+        AvailableSeats: parseInt(localStorage.availableSeats)
+    }
+
+
+    setVolunteerPrefs(request, setVolunteerPrefsSCB, setVolunteerPrefsECB);
+
+}
+
+
+function setVolunteerPrefsSCB(data) {
+
+}
+
+function setVolunteerPrefsECB(e) {
+    alert("error set user prefs: " + e);
+}
+
+
+$(document).on('pageshow', '#myPreferences', function () {
+
+    showAreas();
+
+    if (!isTabActive()) {
+
+        $('#prefTabs a').eq(2).click().addClass('ui-btn-active');
+    }
 });
 
 function isTabActive() {
@@ -1557,21 +1605,21 @@ $(document).ready(function () {
         showAreas();
 
     });
-    
+
 
 });
 
 
 function saveTimes() {
     timesArr = [];
-    
+
 
     var actives = $('#zmanim .ui-checkbox-on');
 
     for (var i = 0; i < actives.length; i++) {
         timesArr.push(actives.eq(i)[0].htmlFor);
     }
-    
+
     //save routesArr to DB
     localStorage.times = JSON.stringify(timesArr);
 }
