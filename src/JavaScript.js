@@ -751,21 +751,21 @@ function numToDayHebrew(i) {
     return day;
 }
 
-//fill the date ddl dynamicly (30 days forward)
-$(document).on('pagebeforeshow', '#signMe', function () {
-    var str = "<option>תאריך</option>";
-    for (var i = 0; i < 30; i++) {
+////fill the date ddl dynamicly (30 days forward)
+//$(document).on('pagebeforeshow', '#signMe', function () {
+//    var str = "<option>תאריך</option>";
+//    for (var i = 0; i < 30; i++) {
 
-        var nowDate = new Date();
-        var myDate = new Date(nowDate.setDate(nowDate.getDate() + i));
+//        var nowDate = new Date();
+//        var myDate = new Date(nowDate.setDate(nowDate.getDate() + i));
 
-        str += "<option>" + myDate.toLocaleDateString() + "</option>"; //myDate.getDate() + "/" + (myDate.getMonth() + 1) + "/" + myDate.getFullYear()
-    }
+//        str += "<option>" + myDate.toLocaleDateString() + "</option>"; //myDate.getDate() + "/" + (myDate.getMonth() + 1) + "/" + myDate.getFullYear()
+//    }
 
-    $('#dateDDL').html(str);
-    $("#dateDDL").selectmenu("refresh");
+//    $('#dateDDL').html(str);
+//    $("#dateDDL").selectmenu("refresh");
 
-});
+//});
 
 
 //handle the filter events
@@ -1227,7 +1227,6 @@ $(document).one('pagebeforecreate', function () {
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="preferencesTab" href="#myPreferences" data-theme="b">העדפות</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="trackRidesTab" href="#trackRides" data-theme="b">מעקב הסעות</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="trackRidesTab" href="#auction" data-theme="b">מכרז</a> </li>'
-        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="trackRidesTab" href="#auction" data-theme="b">מכרז</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-delete">'
         + '<a href="#" data-rel="close">סגירת התפריט</a>'
         + '</li>'
@@ -1407,7 +1406,7 @@ function checkUserSuccessCB(results) {
     if (localStorage.availableSeats == null) {
         setTimeout(function () {
 
-            $.mobile.pageContainer.pagecontainer("change", "#firstTimeSeats");
+            $.mobile.pageContainer.pagecontainer("change", "#myPreferences");
         }, 1000);
     }
     else {
@@ -1421,17 +1420,6 @@ function checkUserErrorCB(e) {
     alert("error in checkUser");
 }
 
-$(document).on('pagebeforeshow', '#myPreferences,#other', function () {
-
-    if (localStorage.availableSeats == null) {
-        //do nothing, wait for user to change preferences (seats)
-    }
-    else {
-        showSavedSeats();
-    }
-
-});
-
 
 function showSavedSeats() {
     var seats = localStorage.availableSeats;
@@ -1440,42 +1428,66 @@ function showSavedSeats() {
 }
 
 
-//first time seats save
-$(document).ready(function () {
-    $('#ftSeatsSave').on('click', function () {
-
-        var seats = $('#firstTimeAvailableSeats select').val();
-
-        userInfo.availableSeats = seats;
-        localStorage.availableSeats = seats;
-
-        $.mobile.pageContainer.pagecontainer("change", "#myPreferences");
-    });
-
-});
-
 
 $(document).on('pagebeforeshow', '#myPreferences', function () {
-
-
+    
     if (localStorage.routes == null) {
         //do nothing, wait for user to change preferences (routes)
+        
+        $('a#menuBTN').hide()
+        $('#continueBTN').show();
+
+        $('#continueBTN').on('click', function () {
+
+            if ($('#prefTabs a').eq(2).hasClass('ui-btn-active')) {
+
+                $('#prefTabs a').eq(1).click().addClass('ui-btn-active');
+                $('#prefTabs a').eq(2).removeClass('ui-btn-active');
+            }
+            else if ($('#prefTabs a').eq(1).hasClass('ui-btn-active')) {
+
+                $('#prefTabs a').eq(0).click().addClass('ui-btn-active');
+                $('#prefTabs a').eq(1).removeClass('ui-btn-active');
+
+                $('#continueBTN')[0].innerHTML = "שמור";
+            }
+            else {
+                //save all and end first time login
+
+                saveRoutes();
+                saveTimes();
+                saveSeats();
+
+
+                //get all rides
+                getRidesList();
+
+                //getMyRides
+                getMyRidesList();
+
+                $('a#menuBTN').show();
+
+                $.mobile.pageContainer.pagecontainer("change", "#signMe");
+            }
+           
+        });
     }
     else {
         //user have saved routes
+        $('#continueBTN').hide();
 
         var routes = $.parseJSON(localStorage.routes);
 
         if (routes[0].south && !$('#southArea').is(':checked')) {
-            $('#myPreferences #area .ui-checkbox label').eq(0).click().addClass("ui-btn-active");
+            $('#myPreferences #area .ui-checkbox label').eq(0).click();
             $('.south').show();
         }
         if (routes[0].center && !$('#centerArea').is(':checked')) {
-            $('#myPreferences #area .ui-checkbox label').eq(1).click().addClass("ui-btn-active");
+            $('#myPreferences #area .ui-checkbox label').eq(1).click();
             $('.center').show();
         }
         if (routes[0].north && !$('#northArea').is(':checked')) {
-            $('#myPreferences #area .ui-checkbox label').eq(2).click().addClass("ui-btn-active");
+            $('#myPreferences #area .ui-checkbox label').eq(2).click();
             $('.north').show();
         }
 
@@ -1492,12 +1504,52 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
 });
 
 
-$(document).on('pageshow','#myPreferences',function () {
+$(document).ready(function () {
     
-    $('#prefTabs a').eq(2).click().addClass('ui-btn-active');
-        
+        $('#mypanel a[href!="#myPreferences"]').on('click', function () {
+
+            if (window.location.href.toString().indexOf('myPreferences') == -1 || localStorage.routes == null) {
+                return;
+            }
+
+            if (confirm("האם ברצונך לשנות את השינויים?")) {
+                //save
+                saveRoutes();
+                saveTimes();
+                saveSeats();
+
+
+                //get all rides
+                getRidesList();
+
+                //getMyRides
+                getMyRidesList();
+            } else {
+
+            }
+            
+        });
 });
 
+
+$(document).on('pageshow','#myPreferences',function () {
+    
+        showAreas();
+
+        if (!isTabActive()) {
+
+            $('#prefTabs a').eq(2).click().addClass('ui-btn-active');
+        }
+});
+
+function isTabActive() {
+    for (var i = 0; i < $('#prefTabs a').length; i++) {
+        if ($('#prefTabs a').eq(i).hasClass('ui-btn-active')) {
+            return true;
+        }
+    }
+    return false;
+}
 
 $(document).ready(function () {
     $('#area input').on('change', function () {
@@ -1505,26 +1557,7 @@ $(document).ready(function () {
         showAreas();
 
     });
-
-    $('#saveRoutesBTN').on('click', function () {
-
-        //if (!$('#southArea').is(':checked') && !$('#centerArea').is(':checked') && !$('#northArea').is(':checked')) {
-        //    alert("אנא בחר איזורים והעדפות ורק לאחר מכן לחץ על שמור");
-        //    return;
-        //}
-
-        saveRoutes();
-        saveTimes();
-        saveSeats();
-        
-
-        //get all rides
-        getRidesList();
-
-        //getMyRides
-        getMyRidesList();
-        
-    });
+    
 
 });
 
@@ -1533,7 +1566,7 @@ function saveTimes() {
     timesArr = [];
     
 
-    var actives = $('#zmanim .ui-btn-active');
+    var actives = $('#zmanim .ui-checkbox-on');
 
     for (var i = 0; i < actives.length; i++) {
         timesArr.push(actives.eq(i)[0].htmlFor);
@@ -1563,7 +1596,7 @@ function saveRoutes() {
 
     routesArr.push(area);
 
-    var actives = $('#starts .ui-btn-active,#ends .ui-btn-active');
+    var actives = $('#starts .ui-checkbox-on,#ends .ui-checkbox-on');
 
     for (var i = 0; i < actives.length; i++) {
         routesArr.push(actives[i].innerHTML);
@@ -1579,9 +1612,6 @@ function saveRoutes() {
 }
 
 
-$(document).on('ready', '#myPreferences', function () {
-    showAreas();
-});
 
 
 function showSavedTimes(times) {
@@ -1597,7 +1627,7 @@ function showSavedTimes(times) {
 
                 if ($(' #zmanim .ui-checkbox label ').eq(i)[0].classList.contains("ui-checkbox-off")) {
 
-                    $(' #zmanim .ui-checkbox label ').eq(i).click().addClass("ui-btn-active");
+                    $(' #zmanim .ui-checkbox label ').eq(i).click();
                 }
 
             }
@@ -1621,7 +1651,7 @@ function showSavedRoutes(routes) {
 
                 if ($(' #kavim .ui-checkbox label ').eq(i)[0].classList.contains("ui-checkbox-off")) {
 
-                    $(' #kavim .ui-checkbox label ').eq(i).click().addClass("ui-btn-active");
+                    $(' #kavim .ui-checkbox label ').eq(i).click();
                 }
 
             }

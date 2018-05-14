@@ -1,12 +1,46 @@
-﻿#myPreferences #zmanim td {
-    padding: 1%;
+﻿#continueBTN {
+    position: fixed;
+    bottom: 1%;
+    margin: 0;
+    left: 2%;
+}
+
+#ends, #starts {
+    padding: 0 2%;
+}
+
+
+#myPreferences .ui-content {
+    padding: 0;
+}
+
+#myPreferences #zmanim td {
+    padding: 0;
+    text-align: center;
+}
+
+#myPreferences #zmanim form {
+    width: 40px;
+}
+
+#myPreferences #zmanim .ui-checkbox {
+    margin:0;
+}
+
+#myPreferences #zmanim label {
+    padding: 6px;
+    text-align: right;
 }
 
 #myPreferences #zmanim table {
     width: 100%;
-    margin-top:5%;
+    margin-top:15%;
 }
 
+
+#myPreferences #zmanim .ui-btn.ui-checkbox-off:after, #myPreferences #zmanim .ui-btn.ui-checkbox-on:after {
+    left: 0;
+}
 
 
 #myPreferences #other td {
@@ -51,8 +85,10 @@
 }
 
 #starts label, #ends label {
-    width: 100px;
-    text-align: center;
+    width: calc(37vw);
+    text-align: right;
+    padding: 5px 10px;
+    margin: 0;
 }
 
 
@@ -61,14 +97,6 @@ label, p {
 }
 
 
-#saveRoutesBTN {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 999;
-    margin: 2%;
-    padding: 2%;
-}
 
 #firstTimeSeats table {
     margin: 0 auto;
