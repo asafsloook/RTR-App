@@ -1,4 +1,6 @@
 ﻿
+//kavim tab after menu click
+
 
 //get week function
 Date.prototype.getWeek = function () {
@@ -1247,30 +1249,9 @@ $(document).ready(function () {
         printRides(rides);
 
     });
+    
 
-    $(document).on('keydown', '#signMe input[data-type="search"]', function () {
-
-        showInput = true;
-        printRides(rides);
-
-    });
-
-    $('#signMe .ui-filterable').click(function () {
-
-        showInput = true;
-        printRides(rides);
-
-    });
-
-    $('#signMe .ui-filterable').focusout(function () {
-
-        showInput = true;
-        printRides(rides);
-
-    });
-
-    $('#signMe .ui-filterable input').change(function () {
-
+    $(document).on('change', '#signMe .ui-filterable input', function () {
         showInput = true;
         printRides(rides);
 
@@ -1457,7 +1438,7 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
                 saveRoutes();
                 saveTimes();
                 saveSeats();
-                
+
                 //get all rides
                 getRidesList();
 
@@ -1513,12 +1494,12 @@ $(document).ready(function () {
             return;
         }
 
-        if (confirm("האם ברצונך לשנות את השינויים?")) {
+        if (confirm("האם ברצונך לשמור את השינויים?")) {
             //local
             saveRoutes();
             saveTimes();
             saveSeats();
-            
+
             //get all rides
             getRidesList();
 
@@ -1572,7 +1553,7 @@ function setPrefs() {
 
 
 function setVolunteerPrefsSCB(data) {
-
+    alert("ההעדפות שלך נשמרו בהצלחה!");
 }
 
 function setVolunteerPrefsECB(e) {

@@ -299,7 +299,7 @@ public class Ride
 
     public List<Ride> GetMyRides(int volunteerId)
     {
-        string query = "select * from RidePatView where MainDriver=" + volunteerId + " or secondaryDriver=" + volunteerId;
+        string query = "select * from [RidePatView - To Delete]  where MainDriver=" + volunteerId + " or secondaryDriver=" + volunteerId;
         DbService db = new DbService();
         DataSet ds = db.GetDataSetByQuery(query);
         Ride r = new Ride();
