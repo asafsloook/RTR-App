@@ -199,11 +199,15 @@ function myRideListItem(myRides, i) {
 
 
     str += '  onClick="delInfo(' + myRides[i].Id + ')">'
-        + '<p style="float:right;width:35%;">יום ' + day
-        + ' &nbsp; ' + myDate.getDate() + "/" + (myDate.getMonth() + 1)
+        + '<p style="float:right;width:20%;">יום ' + day
+        + ' <br> ' + myDate.getDate() + "/" + (myDate.getMonth() + 1)
         + '<br>' + myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1")
-        + '</p>'
-        + '<p style="float:right;margin-right:5%;width: 55%;">';
+        + '</p>';
+
+    str = RideEquipment(str, myRides, i);
+        str+=    '<p style="float:right;margin-right:5%;width: 55%;">';
+
+
 
     if (myRides[i].Status == "Primary") {
         str += '<b>הסעה</b><br>';
@@ -467,7 +471,7 @@ function ListItemRide(results, i) {
 
     str = "";
 
-    str = RideEquipment(str, i);
+    str = RideEquipment(str, results, i);
 
     str = rideStr(str, results, i);
 
@@ -520,25 +524,36 @@ function rideStr(str, results, i) {
     }
     str += '</p>';
 
-    str += '<a style="float:left;border:none;margin: 8% 3%;" id="pop' + i + '" href="#signMePage"'
-        + 'class="ui-btn ui-icon-edit ui-btn-icon-notext ui-corner-all"'
-        + '  onClick="info(' + results[i].Id + ')">' + "</a>";
+    str += '<a style="float:left;border:none;margin: 8% 3%;background: transparent;padding:0;" id="pop' + i + '" href="#signMePage"'
+        + ' class="ui-btn" '
+        + '  onClick="info(' + results[i].Id + ')">'
+        + '   <img style="width: 35px;" src="Images/reg.png"></a> '
+        + "</a>";
 
     return str;
 }
 
 
 
-function RideEquipment(str, i) {
-    //for testing user equipment print
-    str += '<p style="width:20%;float:right;">';
-    if (i % 3 == 0) {
-        str += '<img class="ridesIcons" src="Images/wheelchair.png" />';
+function RideEquipment(str, results, i) {
+    
 
+    //for user equipment print
+    str += '<p style="width:20%;float:right;">';
+
+    if (results[i].Pat.Equipment== null) {
+        str += '</p>';
+        return str;
     }
-    if (i % 2 == 0) {
+
+    if (results[i].Pat.Equipment.includes("כסא גלגלים")) {
+        str += '<img class="ridesIcons" src="Images/wheelchair.png" />';
+    }
+    if (results[i].Pat.Equipment.includes("כסא תינוק")) {
         str += '<img class="ridesIcons" src="Images/babyseat.png" />';
     }
+
+    
     str += '</p>';
     return str;
 }
@@ -679,13 +694,14 @@ function getRideStr(rideOBJ) {
         + '<p>מ' + rideOBJ.StartPoint + ' '
         + 'ל' + rideOBJ.EndPoint + ', '
         + '<br/>' + rideOBJ.Person + '</p>';
+    
     if (rideOBJ.Melave.length > 0) {
         str += '<p>מלווים: ';
 
         for (var i = 0; i < rideOBJ.Melave.length; i++) {
             str += rideOBJ.Melave[i] + "<br/>";
         }
-
+        
         str += '</p>';
     }
 

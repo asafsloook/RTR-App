@@ -293,7 +293,13 @@
 
         </div>
         <div data-role="footer" id="material">
+
             <a href="#signMe" style="border-radius:50px;background-color: #44AFEE;" class="ui-shadow ui-btn ui-corner-all ui-btn-inline ui-icon-plus ui-btn-icon-notext ui-btn-b ui-mini fab"></a>
+
+            <!--<a href="#signMe" class="ui-link ui-btn" data-role="button" role="button" style="padding: 0;border: none;background: transparent;margin: 20%;">
+
+                <img src="Images/add.png">
+            </a>-->
         </div>
     </div>
 
@@ -305,8 +311,8 @@
                     האם אתה בטוח שברצונך למחוק את שיבוצך לנסיעה זו?
                 </p>
             </div>
-            <a data-icon="check" id="deleteConfirmNOBTN"  data-rel="back" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">לא</a>
-            <a data-icon="delete" id="deleteConfirmBTN" onclick="deleteMyRide()"  data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">כן</a>
+            <a data-icon="check" id="deleteConfirmNOBTN" data-rel="back" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">לא</a>
+            <a data-icon="delete" id="deleteConfirmBTN" onclick="deleteMyRide()" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">כן</a>
         </div>
     </div>
 
@@ -318,9 +324,9 @@
                     איזו מחיקה תרצה לבצע?
                 </p>
             </div>
-            <a data-icon="check" id="deleteOptionsNOBTN"  data-rel="back" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">בטל</a>
-            <a data-icon="delete" id="deleteMy1" onclick="deleteMyRide()"  data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">נסיעה זו בלבד</a>
-            <a data-icon="delete" id="deleteMy2" onclick="deleteAllFromMyRide()"  data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">כל הנסיעות ביום ובשעה הנוכחית</a>
+            <a data-icon="check" id="deleteOptionsNOBTN" data-rel="back" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">בטל</a>
+            <a data-icon="delete" id="deleteMy1" onclick="deleteMyRide()" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">נסיעה זו בלבד</a>
+            <a data-icon="delete" id="deleteMy2" onclick="deleteAllFromMyRide()" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">כל הנסיעות ביום ובשעה הנוכחית</a>
 
         </div>
     </div>
@@ -329,8 +335,8 @@
     <div data-role="page" id="deleteMePage">
         <div role="main" class="ui-corner-bottom ui-content">
             <div id="phPopDelete"></div>
-            <a data-icon="check" id="deleteMePageNOBTN"  data-rel="back" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">סגור</a>
-            <a data-icon="delete" id="deleteokBTN"  data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">בטל את הנסיעה</a>
+            <a data-icon="check" id="deleteMePageNOBTN" data-rel="back" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">סגור</a>
+            <a data-icon="delete" id="deleteokBTN" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">בטל את הנסיעה</a>
         </div>
     </div>
 
@@ -529,7 +535,7 @@
     <div data-role="page" id="infoPastRide">
         <div role="main" class="ui-corner-bottom ui-content">
             <div id="phPopInfo"></div>
-            <a data-icon="delete" onclick="" id="closeInfoBTN" href="#"  data-role="button" data-rel="back" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">סגור</a>
+            <a data-icon="delete" onclick="" id="closeInfoBTN" href="#" data-role="button" data-rel="back" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">סגור</a>
         </div>
     </div>
 
@@ -538,7 +544,7 @@
         <div role="main" class="ui-corner-bottom ui-content">
             <div id="phPop"></div>
             <a data-icon="check" id="okBTN" href="#" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">שבץ אותי</a>
-            <a data-icon="delete" id="cancelBTN" href="#"  data-role="button" data-inline="true" data-rel="back" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">בטל</a>
+            <a data-icon="delete" id="cancelBTN" href="#" data-role="button" data-inline="true" data-rel="back" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">בטל</a>
         </div>
     </div>
 
@@ -547,8 +553,8 @@
 
         <h1 data-theme="b">suggest</h1>
         <div id="phSuggest"></div>
-        <a data-icon="check" id="suggestOkBTN"  data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">נשמע טוב</a>
-        <a data-icon="delete" id="suggestCancelBTN" href="#signConfirmation"  data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">לא מעוניין</a>
+        <a data-icon="check" id="suggestOkBTN" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">נשמע טוב</a>
+        <a data-icon="delete" id="suggestCancelBTN" href="#signConfirmation" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">לא מעוניין</a>
     </div>
 
 
