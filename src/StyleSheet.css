@@ -1,4 +1,19 @@
-﻿#continueBTN {
+﻿#prefTabs a {
+    font-size: 16px;
+}
+
+#starts .ui-checkbox label::after, #ends .ui-checkbox label::after, #zmanim .ui-checkbox label::after {
+    background-color: #94C541 !important;
+    border-color: #94C541 !important;
+    color: #fff !important;
+    text-shadow: 0 1px 0 #94C541 !important;
+}
+
+[data-role="page"], [data-role="page"] .ui-panel-wrapper, .ui-mobile-viewport {
+    background-color: #DDF1FD !important;
+}
+
+#continueBTN {
     position: fixed;
     bottom: 1%;
     margin: 0;
@@ -24,7 +39,7 @@
 }
 
 #myPreferences #zmanim .ui-checkbox {
-    margin:0;
+    margin: 0;
 }
 
 #myPreferences #zmanim label {
@@ -34,7 +49,7 @@
 
 #myPreferences #zmanim table {
     width: 100%;
-    margin-top:15%;
+    margin-top: 15%;
 }
 
 
@@ -46,14 +61,15 @@
 #myPreferences #other td {
     padding: 5%;
 }
+
 #myPreferences #other table {
     float: right;
     width: 100%;
     margin-top: 5%;
 }
 
-#other label{
-    text-align:center;
+#other label {
+    text-align: center;
 }
 
 #ends {
@@ -123,17 +139,17 @@ label, p {
     margin-top: 0;
 }
 
-#kavim1 .ui-btn-active, #myPreferences .ui-btn-active {
-    background-color: #40a551;
-    border-color: #40a551;
+#kavim1 .ui-btn-active, #myPreferences .ui-btn-active, #signMe .ui-btn-active {
+    background-color: #44Afff;
+    border-color: #44Afff;
     color: #fff;
-    text-shadow: 0 1px 0 #2a7c38;
+    text-shadow: 0 1px 0 #059;
 }
 
 
 #myPreferences #area .ui-btn-active {
-    background-color: #4189fc;
-    border-color: #4189fc;
+    background-color: #44Afff;
+    border-color: #44Afff;
 }
 
 #auction .phone {
@@ -273,6 +289,13 @@ fieldset {
     top: 50px;
 }
 
+    #myRidesTABS .ui-btn-active {
+        background-color: #44afff;
+        border-color: #44afff;
+        color: #fff;
+        text-shadow: 0 1px 0 #059;
+    }
+
 .ui-filterable {
     position: relative;
     bottom: 50px;
@@ -366,15 +389,18 @@ hr {
 
 #loginLogo {
     text-align: center;
-    margin-top: 50%;
+    padding-top: 50%;
 }
 
 #loginPreference {
-    margin-top: 50%;
+    padding-top: 50%;
     text-align: center;
 }
 
     #loginPreference a {
+        font-size: 1em;
+        background-color: #C7DE9C;
+        text-shadow: none;
     }
 
 #nextPageBTN {
@@ -431,13 +457,13 @@ hr {
         padding: 2%;
     }
 
-#signMe .primary, #myRides .primary {
-    background-color: #cef4ff;
+/*#signMe .primary, #myRides .primary {
+    background-color: #C7DE9C;
 }
 
 #signMe .backup, #myRides .backup {
     background-color: #f9ffbf;
-}
+}*/
 
 .rideIconInfo {
     float: right;
@@ -452,4 +478,23 @@ hr.weekSeperator {
 
 .rideListHeader {
     text-align: right;
+    margin-bottom:0 !important;
+}
+
+#signMe #ridesPH .ui-btn-icon-notext:after {
+    background-color: #C7DE9C;
+}
+
+#cancelBTN, #deleteokBTN, #deleteMy1, #deleteMy2, #deleteConfirmBTN, #suggestCancelBTN {
+    background-color: #ff8c8c;
+    border-color: #ff8c8c;
+    color: #111;
+    text-shadow: none;
+}
+
+#okBTN, #deleteMePageNOBTN, #deleteOptionsNOBTN, #deleteConfirmNOBTN, #closeInfoBTN, #suggestOkBTN, #signConfirmationOkBTN {
+    background-color: #c2fcc7;
+    border-color: #c2fcc7;
+    color: #111;
+    text-shadow: none;
 }

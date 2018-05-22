@@ -1,0 +1,24 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <label id="clock1"></label>
+
+    <label id="clock2"></label>
+
+    <script>
+        i = 0;
+        setInterval(function () {
+            document.getElementById('clock1').innerHTML = i++;
+        }, 1000);
+
+        j = 0;
+        setInterval(function () {
+            document.getElementById('clock2').innerHTML = j++;
+        }, 1000);
+    </script>
+</body>
+</html>

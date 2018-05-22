@@ -199,11 +199,11 @@ function myRideListItem(myRides, i) {
 
 
     str += '  onClick="delInfo(' + myRides[i].Id + ')">'
-        + '<p style="float:right;width:30%;">יום ' + day
+        + '<p style="float:right;width:35%;">יום ' + day
         + ' &nbsp; ' + myDate.getDate() + "/" + (myDate.getMonth() + 1)
         + '<br>' + myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1")
         + '</p>'
-        + '<p style="float:right;margin-right:10%;">';
+        + '<p style="float:right;margin-right:5%;width: 55%;">';
 
     if (myRides[i].Status == "Primary") {
         str += '<b>הסעה</b><br>';
@@ -454,7 +454,7 @@ function ListItemStart(myDate, startPointStr) {
 
     var day = numToDayHebrew(myDate.getDay());
 
-    str = '<li data-role="collapsible" data-theme="b"><hr style="margin:0;">'
+    str = '<li data-role="collapsible" data-theme="a"><hr style="margin:0;">'
         + ' <h2 class="rideListHeader">יום   ' + day + '  &nbsp;  '
         + myDate.getDate() + "/" + (myDate.getMonth() + 1)
         + '  ' + startPointStr + '</h2>';
@@ -1227,8 +1227,8 @@ $(document).one('pagebeforecreate', function () {
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="signMeTab" href="#signMe" data-theme="b">שבץ אותי</a></li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="myRidesTab" href="#myRides" data-theme="b">הנסיעות שלי</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="preferencesTab" href="#myPreferences" data-theme="b">העדפות</a> </li>'
-        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="trackRidesTab" href="#trackRides" data-theme="b">מעקב הסעות</a> </li>'
-        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="trackRidesTab" href="#auction" data-theme="b">מכרז</a> </li>'
+        //+ '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="trackRidesTab" href="#trackRides" data-theme="b">מעקב הסעות</a> </li>'
+        //+ '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="trackRidesTab" href="#auction" data-theme="b">מכרז</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-delete">'
         + '<a href="#" data-rel="close">סגירת התפריט</a>'
         + '</li>'
@@ -1391,7 +1391,10 @@ function checkUserSuccessCB(results) {
         }, 1000);
     }
     else {
-        $.mobile.pageContainer.pagecontainer("change", "#loginPreference");
+        setTimeout(function () {
+
+            $.mobile.pageContainer.pagecontainer("change", "#loginPreference");
+        }, 1000);
 
     }
 
@@ -1707,6 +1710,7 @@ function showAreas() {
     if ($('#northArea').is(':checked')) {
         $('.north').show();
     }
+    
 }
 
 
