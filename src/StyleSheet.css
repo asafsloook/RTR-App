@@ -1,4 +1,45 @@
-﻿#prefTabs a {
+﻿#showAllRides label {
+    padding: 3% 6%;
+    width: 78px;
+    border-radius: 25px;
+    text-align: RIGHT;
+}
+
+#showAllRides .ui-checkbox {
+    margin: 0;  
+}
+
+
+#deleteOptions {
+    text-align: center;
+}
+
+#area .ui-checkbox {
+    max-width: 30%;
+    display: inline-block;
+}
+
+#area {
+    text-align: center;
+}
+
+.fa-arrow-left {
+    color: #94C541;
+}
+
+/*regular text*/
+label, a, p, h4, h5, h6, td, span, option, input {
+    font-family: 'Assistant', sans-serif !important;
+    font-weight: 600 !important;
+}
+
+/*Headings*/
+h1, h2 {
+    font-family: 'Assistant', sans-serif !important;
+    font-weight: 700 !important;
+}
+
+#prefTabs a {
     font-size: 16px;
 }
 
@@ -29,6 +70,11 @@
     padding: 0;
 }
 
+#myPreferences #zmanim .ui-btn.ui-checkbox-off:after, #myPreferences #zmanim .ui-btn.ui-checkbox-on:after {
+    left: 20% !important;
+    top: 70% !important;
+}
+
 #myPreferences #zmanim td {
     padding: 0;
     text-align: center;
@@ -36,6 +82,7 @@
 
 #myPreferences #zmanim form {
     width: 40px;
+    margin: 0 auto;
 }
 
 #myPreferences #zmanim .ui-checkbox {
@@ -44,7 +91,8 @@
 
 #myPreferences #zmanim label {
     padding: 6px;
-    text-align: right;
+    height: 50px;
+    text-align: center;
 }
 
 #myPreferences #zmanim table {
@@ -105,6 +153,7 @@
     text-align: right;
     padding: 5px 10px;
     margin: 0;
+    font-size: 18px;
 }
 
 
@@ -144,12 +193,14 @@ label, p {
     border-color: #44Afff;
     color: #fff;
     text-shadow: 0 1px 0 #059;
+    text-shadow: 1px 1px 1px black;
 }
 
 
 #myPreferences #area .ui-btn-active {
     background-color: #44Afff;
     border-color: #44Afff;
+    text-shadow: 1px 1px 1px black;
 }
 
 #auction .phone {
@@ -164,11 +215,16 @@ label, p {
     background-color: #FF6666;
 }
 
-.ridesIcons {
-    width: 45%;
-    float: right;
-    padding: 25% 2%;
+#signMe .ridesIcons {
+    width: 40%;
+    padding: 2% 20%;
 }
+
+#myRides .ridesIcons {
+    width: 50%;
+    padding: 2% 20%;
+}
+
 
 .mihrazIcons {
     width: 10%;
@@ -253,8 +309,14 @@ option, select, span, #maslulLV, h4 {
 }
 
 #ridesPH li a, #myRidesPH li a {
-    margin-top: 5px;
+    margin-bottom: 5%;
 }
+
+#ridesPH li p, #myRidesPH li p {
+    font-size: 16px;
+}
+
+
 
 .ui-li-desc, p, h1, h2, h3 {
     text-align: center;
@@ -293,10 +355,15 @@ fieldset {
         background-color: #44afff;
         border-color: #44afff;
         color: #fff;
-        text-shadow: 0 1px 0 #059;
+        text-shadow: 1px 1px 1px black;
     }
 
-.ui-filterable {
+    #shiftTABS a, #myRidesTABS a {
+        font-size: 16px;
+    }
+
+
+#signMe .ui-filterable, #myRides .ui-filterable {
     position: relative;
     bottom: 50px;
 }
@@ -401,11 +468,14 @@ hr {
         font-size: 1em;
         background-color: #C7DE9C;
         text-shadow: none;
+        color: black;
+        margin: 3% auto;
     }
 
-#nextPageBTN {
-    margin-bottom: 20%;
-}
+    #loginPreference h2 {
+        color: black;
+    }
+
 
 #rtrInfo, #loginFailed, #volunteerRequest, #volunteerProblems {
     text-align: center;
@@ -478,8 +548,16 @@ hr.weekSeperator {
 
 .rideListHeader {
     text-align: right;
-    margin-bottom:0 !important;
+    margin-bottom: 0 !important;
 }
+
+    .rideListHeader a {
+        text-align: right;
+        margin-bottom: 0 !important;
+        font-size: 17px;
+    }
+
+
 
 #signMe #ridesPH .ui-btn-icon-notext:after {
     background-color: #C7DE9C;

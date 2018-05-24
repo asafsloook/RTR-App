@@ -1,6 +1,5 @@
 ﻿
-//kavim tab after menu click
-
+//get prefs on checkuser success (login) 
 
 //get week function
 Date.prototype.getWeek = function () {
@@ -188,7 +187,7 @@ function myRideListItem(myRides, i) {
     }
 
 
-    str += ' class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-info ui-btn-icon-left ';
+    str += ' class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-edit ui-btn-icon-left ';
 
     if (myRides[i].Status == "Primary") {
         str += 'primary"';
@@ -205,7 +204,7 @@ function myRideListItem(myRides, i) {
         + '</p>';
 
     str = RideEquipment(str, myRides, i);
-        str+=    '<p style="float:right;margin-right:5%;width: 55%;">';
+    str += '<p style="float:right;margin-right:5%;width: 55%;">';
 
 
 
@@ -314,6 +313,8 @@ function deleteAllRideErrorCB() {
 
 //success call back function for delete ride
 function deleteRideSuccessCB() {
+
+    alert("הנסיעה נמחקה בהצלחה");
 
     //for refreshing my rides after the delete
     myRidesPrint = true;
@@ -486,6 +487,9 @@ function ListItemRide(results, i) {
             str = str.replace('<a style="', '<a style="display:none;');
             str += '<hr style="margin:0;border:0">';
         }
+        else if (i+1 == results.length) {
+            str += '<hr style="margin:0;">';
+        }
         else if (results[i].RideNum == results[i + 1].RideNum) {
 
             str += '<hr style="margin:0;border:0">';
@@ -503,15 +507,19 @@ function ListItemRide(results, i) {
 
 
 function rideStr(str, results, i) {
-    str += '<p style="padding: 4%;float: right;margin-right: 5%;text-align: right;border-radius:15px;"';
+
+    var myDate = new Date(results[i].DateTime);
+    var time = myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1");
+
+    str += '<p style="padding: 4%;float: right;margin-right: 0;text-align: right;border-radius:15px;max-width: 50%;"';
 
     if (results[i].Status == "שובץ נהג") {
         str += ' class="backup" >'
-            + '<b>גיבוי</b><br>';
+            + '<b>גיבוי ' + time + '</b><br>';
     }
     else {
         str += ' class="primary" >'
-            + '<b>הסעה</b><br>';
+            + '<b>הסעה ' + time + '</b><br>';
     }
 
     str += results[i].StartPoint + ' <i class="fa fa-arrow-left"></i> ' //&#11164; &#129144;
@@ -536,24 +544,53 @@ function rideStr(str, results, i) {
 
 
 function RideEquipment(str, results, i) {
-    
 
-    //for user equipment print
-    str += '<p style="width:20%;float:right;">';
+    var EquipmentLength = results[i].Pat.Equipment.length;
+    var margin = 10;
 
-    if (results[i].Pat.Equipment== null) {
+    if (window.location.href.toString().indexOf('signMe') != -1) {
+        str += '<p style="width:20%;float:right;text-align:center;';
+
+        if (EquipmentLength == 3) {
+            margin = 4;
+        }
+        else if (EquipmentLength == 2) {
+            margin = 8;
+        }
+        else if (EquipmentLength == 1) {
+            margin = 12;
+        }
+    }
+    else if (window.location.href.toString().indexOf('myRides') != -1) {
+        str += '<p style="width:20%;float:right;text-align:center;';
+
+        if (EquipmentLength == 3) {
+            margin = 0;
+        }
+        else if (EquipmentLength == 2) {
+            margin = 4;
+        }
+    }
+
+
+    str += 'margin:' + margin + '% 0; ">';
+
+    if (results[i].Pat.Equipment == null) {
         str += '</p>';
         return str;
     }
 
     if (results[i].Pat.Equipment.includes("כסא גלגלים")) {
-        str += '<img class="ridesIcons" src="Images/wheelchair.png" />';
+        str += '<img class="ridesIcons" src="Images/wheelchair.png" /><br>';
     }
     if (results[i].Pat.Equipment.includes("כסא תינוק")) {
-        str += '<img class="ridesIcons" src="Images/babyseat.png" />';
+        str += '<img class="ridesIcons" src="Images/babyseat.png" /><br>';
+    }
+    if (results[i].Pat.Equipment.includes("בוסטר")) {
+        str += '<img class="ridesIcons" src="Images/booster.png" /><br>';
     }
 
-    
+
     str += '</p>';
     return str;
 }
@@ -694,14 +731,14 @@ function getRideStr(rideOBJ) {
         + '<p>מ' + rideOBJ.StartPoint + ' '
         + 'ל' + rideOBJ.EndPoint + ', '
         + '<br/>' + rideOBJ.Person + '</p>';
-    
+
     if (rideOBJ.Melave.length > 0) {
         str += '<p>מלווים: ';
 
         for (var i = 0; i < rideOBJ.Melave.length; i++) {
             str += rideOBJ.Melave[i] + "<br/>";
         }
-        
+
         str += '</p>';
     }
 
@@ -1011,7 +1048,7 @@ function createSuggestPage(ride) {
         //+ '<a data-icon="edit" id="updateSeatsBTN" href="#" style="background-color:#202020" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-button-inline ui-widget ui-button-a ui-link ui-btn ui-btn-b ui-icon-edit ui-btn-icon-left ui-btn-inline ui-shadow ui-corner-all" role="button">עדכן</a>'
         //+ '</p>'
 
-        + '<p>האם אתה מעוניין לצרף לנסיעה את ' + suggestedRide.Person
+        + '<p style="margin: 5% 10%;">האם אתה מעוניין לצרף לנסיעה את ' + suggestedRide.Person
         + ' +' + suggestedRide.Melave.length
         + "?</p>";
 
@@ -1265,7 +1302,7 @@ $(document).ready(function () {
         printRides(rides);
 
     });
-    
+
 
     $(document).on('change', '#signMe .ui-filterable input', function () {
         showInput = true;
@@ -1291,8 +1328,51 @@ $(document).on('pagebeforeshow', '#loginPreference', function () {
 
 
     $("#welcomeTitle").html("שלום " + userInfo.FirstNameH);
+    $("#rakazLoginBTN").hide();
+
+    if (userInfo.TypeVol == "רכז") {
+        $("#rakazLoginBTN").show();
+
+        request = {
+            active: true
+        }
+        getVolunteers(request, getVolunteersSCB, getVolunteersECB);
+    }
 
 });
+
+function getVolunteersSCB(data) {
+
+    $("#volenteersPH").empty();
+
+    var results = $.parseJSON(data.d);
+    volenteers = results;
+
+}
+
+
+$(document).on('pageshow', '#rakazLogin', function () {
+    for (var i = 0; i < volenteers.length; i++) {
+
+        $("#volenteersPH").append('<li><a href="#" id="' + volenteers[i].CellPhone.toString() + '" >' + volenteers[i].DisplayName + '</a></li>');
+    }
+
+    $("#volenteersPH").listview('refresh');
+});
+
+
+
+$(document).ready(function () {
+
+    $('#volenteersPH').on('click', 'a', function () {
+        checkUserPN(this.id);
+    });
+});
+
+
+function getVolunteersECB(e) {
+    alert("Error in getVolunteersECB: " + e);
+}
 
 $(document).ready(function () {
     $("#nextPageBTN").on('click', function () {
@@ -1391,14 +1471,28 @@ function checkUserSuccessCB(results) {
     localStorage.userId = userInfo.Id;
     //get personal info: name, photo, address etc.
     //get preferences routes and seats
+    localStorage.availableSeats = userInfo.AvailableSeats;
 
+    //var area = {};
+    //if (userInfo.PrefArea.includes('מרכז')) {
+    //    area.center = true;
+    //}
+    //if (userInfo.PrefArea.includes('צפון')) {
+    //    area.north = true;
+    //}
+    //if (userInfo.PrefArea.includes('דרום')) {
+    //    area.south = true;
+    //}
+
+    //var dbRoutes = [];
+    //dbRoutes.push(area);
+    
 
     //get all rides
     getRidesList();
 
     //getMyRides
     getMyRidesList();
-
 
     if (localStorage.availableSeats == null) {
         setTimeout(function () {
@@ -1506,8 +1600,8 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
 
 
 $(document).ready(function () {
-
-    $('#mypanel a[href!="#myPreferences"]').on('click', function () {
+    //remember to add this event to every new page
+    $('#mypanel a[href="#signMe"],#mypanel a[href="#myRides"]').on('click', function () {
 
         if (window.location.href.toString().indexOf('myPreferences') == -1 || localStorage.routes == null) {
             return;
@@ -1726,7 +1820,7 @@ function showAreas() {
     if ($('#northArea').is(':checked')) {
         $('.north').show();
     }
-    
+
 }
 
 
@@ -1743,3 +1837,4 @@ $(window).load(function () {
         definitions: { '#': { validator: "[0-9]", cardinality: 1 } }
     });
 });
+

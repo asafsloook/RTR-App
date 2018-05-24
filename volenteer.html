@@ -21,8 +21,8 @@
 
     <script src="src/JavaScript.js"></script>
 
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Assistant:600,700" rel="stylesheet">
 
     <link href="src/StyleSheet.css" rel="stylesheet" />
 
@@ -54,6 +54,8 @@
         <a id="changePrefBTN" href="#myPreferences" data-role="button" data-inline="true">שינוי ההעדפות שלי</a>
         <br />
         <a id="nextPageBTN" data-role="button" data-inline="true">המשך</a>
+        <br><br><br><br>
+        <a id="rakazLoginBTN" href="#rakazLogin" data-role="button" data-inline="true" class="ui-link ui-btn ui-btn-inline ui-shadow ui-corner-all" role="button">המשך כמשתמש אחר</a>
     </div>
 
 
@@ -242,10 +244,8 @@
 
             <div id="showAllRides">
                 <form>
-                    <fieldset data-role="controlgroup" data-type="horizontal">
-                        <input type="checkbox" id="showAllRidesBTN">
-                        <label for="showAllRidesBTN" style="padding:3% 0;width:66px;border-radius: 25px;text-align:center">הצג הכל</label>
-                    </fieldset>
+                    <input type="checkbox" id="showAllRidesBTN">
+                    <label for="showAllRidesBTN">הצג הכל</label>
                 </form>
             </div>
 
@@ -551,7 +551,7 @@
 
     <div data-role="page" id="suggest" style="text-align:center">
 
-        <h1 data-theme="b">suggest</h1>
+        <h1 data-theme="b">הצעה לשיבוץ נוסף</h1>
         <div id="phSuggest"></div>
         <a data-icon="check" id="suggestOkBTN" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">נשמע טוב</a>
         <a data-icon="delete" id="suggestCancelBTN" href="#signConfirmation" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">לא מעוניין</a>
@@ -871,14 +871,12 @@
 
                     <div id="area">
                         <form>
-                            <fieldset data-role="controlgroup" data-type="horizontal">
-                                <input type="checkbox" id="southArea">
-                                <label for="southArea">דרום</label>
-                                <input type="checkbox" id="centerArea">
-                                <label for="centerArea">מרכז</label>
-                                <input type="checkbox" id="northArea">
-                                <label for="northArea">צפון</label>
-                            </fieldset>
+                            <input type="checkbox" id="southArea">
+                            <label for="southArea">דרום</label>
+                            <input type="checkbox" id="centerArea">
+                            <label for="centerArea">מרכז</label>
+                            <input type="checkbox" id="northArea">
+                            <label for="northArea">צפון</label>
                         </form>
                     </div>
 
@@ -963,6 +961,32 @@
             </div>
 
             <a id="continueBTN" hidden="hidden" data-role="button" data-inline="true">המשך</a>
+
+        </div>
+
+
+
+    </div>
+
+
+
+    <div id="rakazLogin" data-role="page">
+
+
+        <div data-role="header">
+            <h1>דף רכז</h1>
+            <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+            </a>
+        </div>
+
+        <div data-role="content">
+
+            <form class="ui-filterable">
+                <input id="autocomplete-input" data-type="search" placeholder="חפש מתנדבים">
+            </form>
+            <ul id="volenteersPH" data-inset="true" data-role="listview" data-filter="true"  data-input="#autocomplete-input">
+              
+            </ul>
 
         </div>
 
