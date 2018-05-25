@@ -1,6 +1,4 @@
 ﻿
-//get prefs on checkuser success (login) 
-
 //get week function
 Date.prototype.getWeek = function () {
     var d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
@@ -1471,21 +1469,7 @@ function checkUserSuccessCB(results) {
     localStorage.userId = userInfo.Id;
     //get personal info: name, photo, address etc.
     //get preferences routes and seats
-    localStorage.availableSeats = userInfo.AvailableSeats;
-
-    //var area = {};
-    //if (userInfo.PrefArea.includes('מרכז')) {
-    //    area.center = true;
-    //}
-    //if (userInfo.PrefArea.includes('צפון')) {
-    //    area.north = true;
-    //}
-    //if (userInfo.PrefArea.includes('דרום')) {
-    //    area.south = true;
-    //}
-
-    //var dbRoutes = [];
-    //dbRoutes.push(area);
+    getPrefs();
     
 
     //get all rides
@@ -1508,6 +1492,76 @@ function checkUserSuccessCB(results) {
 
     }
 
+}
+
+function getPrefs() {
+
+    //get seats
+    localStorage.availableSeats = userInfo.AvailableSeats;
+
+    //get areas
+    var area = {};
+    if (userInfo.PrefArea.includes('מרכז')) {
+        area.center = true;
+    }
+    if (userInfo.PrefArea.includes('צפון')) {
+        area.north = true;
+    }
+    if (userInfo.PrefArea.includes('דרום')) {
+        area.south = true;
+    }
+
+    var dbRoutes = [];
+    dbRoutes.push(area);
+
+    //get locations
+    for (var i = 0; i < userInfo.PrefLocation.length; i++) {
+        dbRoutes.push(userInfo.PrefLocation[i]);
+    }
+
+    localStorage.routes = JSON.stringify(dbRoutes);
+
+    var times = [];
+    //get times
+    for (var i = 0; i < userInfo.PrefTime.length; i++) {
+
+        var time = "";
+
+        if (userInfo.PrefTime[i][1] == "אחהצ") {
+            time = "evening";
+        }
+        else {
+            time = "morning";
+        }
+
+        switch (userInfo.PrefTime[i][0]) {
+            case "ראשון":
+                time += "A";
+                break;
+            case "שני":
+                time += "B";
+                break;
+            case "שלישי":
+                time += "C";
+                break;
+            case "רביעי":
+                time += "D";
+                break;
+            case "חמישי":
+                time += "E";
+                break;
+            case "שישי":
+                time += "F";
+                break;
+            case "שבת":
+                time += "G";
+                break;
+        }
+
+        times.push(time);
+    }
+
+    localStorage.times = JSON.stringify(times);
 }
 
 function checkUserErrorCB(e) {
