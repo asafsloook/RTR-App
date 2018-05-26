@@ -740,6 +740,24 @@ function getRideStr(rideOBJ) {
         str += '</p>';
     }
 
+    if (rideOBJ.RideNum > 0) {
+        for (var i = 0; i < rides.length; i++) {
+            if (rides[i].RideNum == rideOBJ.RideNum && rideOBJ.Id != rides[i].Id) {
+                str += '<p>' + rides[i].Person + '</p>';
+
+                if (rides[i].Melave.length > 0) {
+                    str += '<p>מלווים: ';
+
+                    for (var j = 0; j < rides[i].Melave.length; j++) {
+                        str += rides[i].Melave[j] + "<br/>";
+                    }
+
+                    str += '</p>';
+                }
+            }
+        }
+    }
+
     return str;
 }
 
