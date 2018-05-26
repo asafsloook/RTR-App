@@ -485,7 +485,7 @@ function ListItemRide(results, i) {
             str = str.replace('<a style="', '<a style="display:none;');
             str += '<hr style="margin:0;border:0">';
         }
-        else if (i+1 == results.length) {
+        else if (i + 1 == results.length) {
             str += '<hr style="margin:0;">';
         }
         else if (results[i].RideNum == results[i + 1].RideNum) {
@@ -1296,6 +1296,7 @@ $(document).one('pagebeforecreate', function () {
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="signMeTab" href="#signMe" data-theme="a">שבץ אותי</a></li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="myRidesTab" href="#myRides" data-theme="a">הנסיעות שלי</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="preferencesTab" href="#myPreferences" data-theme="a">העדפות</a> </li>'
+        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="loginAgainTab" href="#" data-theme="a">חזור למסך הכניסה</a> </li>'
         //+ '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="trackRidesTab" href="#trackRides" data-theme="b">מעקב הסעות</a> </li>'
         //+ '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="trackRidesTab" href="#auction" data-theme="b">מכרז</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-delete">'
@@ -1488,7 +1489,7 @@ function checkUserSuccessCB(results) {
     //get personal info: name, photo, address etc.
     //get preferences routes and seats
     getPrefs();
-    
+
 
     //get all rides
     getRidesList();
@@ -1643,6 +1644,16 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
         //user have saved routes
         $('#continueBTN').hide();
 
+
+        var checkboxes = $('#myPreferences .ui-checkbox label');
+
+        for (var i = 0; i < checkboxes.length; i++) {
+            if (checkboxes.eq(i)[0].classList.contains("ui-checkbox-on")) {
+                checkboxes.eq(i).click();
+            }
+        }
+
+
         var routes = $.parseJSON(localStorage.routes);
 
         if (routes[0].south && !$('#southArea').is(':checked')) {
@@ -1673,7 +1684,7 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
 
 $(document).ready(function () {
     //remember to add this event to every new page
-    $('#mypanel a[href="#signMe"],#mypanel a[href="#myRides"]').on('click', function () {
+    $('#signMeTab , #myRidesTab , #loginAgainTab').on('click', function () {
 
         if (window.location.href.toString().indexOf('myPreferences') == -1 || localStorage.routes == null) {
             return;
@@ -1829,19 +1840,20 @@ function saveRoutes() {
 
 
 function showSavedTimes(times) {
-    var activates = $('#zmanim .ui-checkbox label');
+
+    var checkboxes = $('#zmanim .ui-checkbox label');
 
     for (var r = 0; r < times.length; r++) {
 
-        for (var i = 0; i < activates.length; i++) {
+        for (var i = 0; i < checkboxes.length; i++) {
 
-            var point = activates.eq(i)[0].htmlFor;
+            var point = checkboxes.eq(i)[0].htmlFor;
 
             if (point == times[r]) {
 
-                if ($(' #zmanim .ui-checkbox label ').eq(i)[0].classList.contains("ui-checkbox-off")) {
+                if (checkboxes.eq(i)[0].classList.contains("ui-checkbox-off")) {
 
-                    $(' #zmanim .ui-checkbox label ').eq(i).click();
+                    checkboxes.eq(i).click();
                 }
 
             }
@@ -1853,19 +1865,19 @@ function showSavedTimes(times) {
 
 function showSavedRoutes(routes) {
 
-    var activates = $('#kavim .ui-checkbox');
+    var checkboxes = $('#starts .ui-checkbox label,#ends .ui-checkbox label');
 
-    for (var r = 0; r < routes.length; r++) {
+    for (var r = 1; r < routes.length; r++) {
 
-        for (var i = 0; i < activates.length; i++) {
+        for (var i = 0; i < checkboxes.length; i++) {
 
-            var point = activates[i].children[0].innerHTML;
+            var point = checkboxes.eq(i)[0].innerHTML;
 
             if (point == routes[r]) {
 
-                if ($(' #kavim .ui-checkbox label ').eq(i)[0].classList.contains("ui-checkbox-off")) {
+                if (checkboxes.eq(i)[0].classList.contains("ui-checkbox-off")) {
 
-                    $(' #kavim .ui-checkbox label ').eq(i).click();
+                    checkboxes.eq(i).click();
                 }
 
             }
@@ -1895,6 +1907,14 @@ function showAreas() {
 
 }
 
+$(document).ready(function () {
+    $('#loginAgainTab').on('click', function () {
+
+        var cellphone = localStorage.cellphone;
+        checkUserPN(cellphone);
+
+    });
+});
 
 $(window).load(function () {
     var phones = [{ "mask": "###-#######" }];
