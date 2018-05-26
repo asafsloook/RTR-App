@@ -1,4 +1,10 @@
-﻿#showAllRides label {
+﻿#mypanel {
+    background-color: #f6f6f6;
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+}
+
+#showAllRides label {
     padding: 3% 6%;
     width: 78px;
     border-radius: 25px;

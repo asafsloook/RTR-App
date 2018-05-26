@@ -1272,12 +1272,12 @@ function getMyRideObjById(id) {
 
 //create menu - side panel
 $(document).one('pagebeforecreate', function () {
-    var panel = '<div data-role="panel" id="mypanel"  data-position="right" data-display="reveal" data-theme="b" class="ui-panel ui-panel-position-right ui-panel-display-reveal ui-body-b ui-panel-animate">'
+    var panel = '<div data-role="panel" id="mypanel"  data-position="right" data-display="reveal" data-theme="a" class="ui-panel ui-panel-position-right ui-panel-display-reveal ui-body-a ui-panel-animate">'
         + '<div class="ui-panel-inner">'
         + '<ul data-role="listview">'
-        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="signMeTab" href="#signMe" data-theme="b">שבץ אותי</a></li>'
-        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="myRidesTab" href="#myRides" data-theme="b">הנסיעות שלי</a> </li>'
-        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="preferencesTab" href="#myPreferences" data-theme="b">העדפות</a> </li>'
+        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="signMeTab" href="#signMe" data-theme="a">שבץ אותי</a></li>'
+        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="myRidesTab" href="#myRides" data-theme="a">הנסיעות שלי</a> </li>'
+        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="preferencesTab" href="#myPreferences" data-theme="a">העדפות</a> </li>'
         //+ '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="trackRidesTab" href="#trackRides" data-theme="b">מעקב הסעות</a> </li>'
         //+ '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="trackRidesTab" href="#auction" data-theme="b">מכרז</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-delete">'
@@ -1352,7 +1352,7 @@ function getVolunteersSCB(data) {
 $(document).on('pageshow', '#rakazLogin', function () {
     for (var i = 0; i < volenteers.length; i++) {
 
-        $("#volenteersPH").append('<li><a href="#" id="' + volenteers[i].CellPhone.toString() + '" >' + volenteers[i].DisplayName + '</a></li>');
+        $("#volenteersPH").append('<li><a class="ui-btn ui-btn-icon-left ui-icon-carat-l" href="#" id="' + volenteers[i].CellPhone.toString() + '" >' + volenteers[i].DisplayName + '</a></li>');
     }
 
     $("#volenteersPH").listview('refresh');
