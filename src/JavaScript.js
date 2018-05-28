@@ -1645,7 +1645,6 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
 
                 setPrefs();
 
-                $.mobile.pageContainer.pagecontainer("change", "#signMe");
             }
 
         });
@@ -1697,15 +1696,24 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
 $(document).ready(function () {
     //remember to add this event to every new page
     $('#signMeTab , #myRidesTab , #loginAgainTab').on('click', function () {
-        
+
         if (window.location.href.toString().indexOf('myPreferences') == -1) {
-            
+            if (this.id == 'signMeTab') {
+                $.mobile.pageContainer.pagecontainer("change", "#signMe");
+            }
+            else if (this.id == 'myRidesTab') {
+                $.mobile.pageContainer.pagecontainer("change", "#myRides");
+            }
+            else if (this.id == 'loginAgainTab') {
+                var cellphone = localStorage.cellphone;
+                checkUserPN(cellphone);
+            }
             return;
         }
 
         var actives = $('#starts .ui-checkbox-on,#ends .ui-checkbox-on');
         if (actives.length == 0) {
-            alert("אנא בחר נקודות מוצא ויעד");
+            alert("אנא בחר נקודות מוצא ויעד בקווי הסעה");
             $('#mypanel').panel("close");
             return;
         }
@@ -1723,16 +1731,12 @@ $(document).ready(function () {
             getMyRidesList();
 
             //DB
+            tempID = this.id;
             setPrefs();
         } else {
 
         }
-        if (this.id == 'signMeTab') {
-            $.mobile.pageContainer.pagecontainer("change", "#signMe");
-        }
-        else if (this.id == 'myRidesTab') {
-            $.mobile.pageContainer.pagecontainer("change", "#myRides");
-        }
+
 
     });
 
@@ -1785,6 +1789,23 @@ function setPrefs() {
 
 function setVolunteerPrefsSCB(data) {
     alert("ההעדפות שלך נשמרו בהצלחה!");
+
+    if (typeof tempID !== 'undefined') {
+        if (tempID == 'signMeTab') {
+            $.mobile.pageContainer.pagecontainer("change", "#signMe");
+        }
+        else if (tempID == 'myRidesTab') {
+            $.mobile.pageContainer.pagecontainer("change", "#myRides");
+        }
+        else if (tempID == 'loginAgainTab') {
+            var cellphone = localStorage.cellphone;
+            checkUserPN(cellphone);
+        }
+    }
+    else {
+        //first connect
+        $.mobile.pageContainer.pagecontainer("change", "#signMe");
+    }
 }
 
 function setVolunteerPrefsECB(e) {
@@ -1941,15 +1962,6 @@ function showAreas() {
     }
 
 }
-
-$(document).ready(function () {
-    $('#loginAgainTab').on('click', function () {
-
-        var cellphone = localStorage.cellphone;
-        checkUserPN(cellphone);
-
-    });
-});
 
 $(window).load(function () {
     var phones = [{ "mask": "###-#######" }];
