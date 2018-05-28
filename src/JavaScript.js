@@ -1293,8 +1293,8 @@ $(document).one('pagebeforecreate', function () {
     var panel = '<div data-role="panel" id="mypanel"  data-position="right" data-display="reveal" data-theme="a" class="ui-panel ui-panel-position-right ui-panel-display-reveal ui-body-a ui-panel-animate">'
         + '<div class="ui-panel-inner">'
         + '<ul data-role="listview">'
-        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="signMeTab" href="#signMe" data-theme="a">שבץ אותי</a></li>'
-        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="myRidesTab" href="#myRides" data-theme="a">הנסיעות שלי</a> </li>'
+        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="signMeTab" data-theme="a">שבץ אותי</a></li>'
+        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="myRidesTab" data-theme="a">הנסיעות שלי</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="preferencesTab" href="#myPreferences" data-theme="a">העדפות</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="loginAgainTab" href="#" data-theme="a">חזור למסך הכניסה</a> </li>'
         //+ '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="trackRidesTab" href="#trackRides" data-theme="b">מעקב הסעות</a> </li>'
@@ -1490,6 +1490,10 @@ function checkUserSuccessCB(results) {
     //get preferences routes and seats
     getPrefs();
 
+    //original identity
+    if (localStorage.cellphone == userInfo.CellPhone) {
+        localStorage.userType = userInfo.TypeVol;
+    }
 
     //get all rides
     getRidesList();
@@ -1497,7 +1501,7 @@ function checkUserSuccessCB(results) {
     //getMyRides
     getMyRidesList();
 
-    if (localStorage.availableSeats == null) {
+    if (localStorage.availableSeats == null || localStorage.availableSeats == "0") {
         setTimeout(function () {
 
             $.mobile.pageContainer.pagecontainer("change", "#myPreferences");
@@ -1598,7 +1602,7 @@ function showSavedSeats() {
 
 $(document).on('pagebeforeshow', '#myPreferences', function () {
 
-    if (localStorage.routes == null) {
+    if (localStorage.routes == null || localStorage.routes == "[{}]") {
         //do nothing, wait for user to change preferences (routes)
 
         $('a#menuBTN').hide()
@@ -1607,6 +1611,12 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
         $('#continueBTN').on('click', function () {
 
             if ($('#prefTabs a').eq(2).hasClass('ui-btn-active')) {
+
+                var actives = $('#starts .ui-checkbox-on,#ends .ui-checkbox-on');
+                if (actives.length == 0) {
+                    alert("אנא בחר נקודות מוצא ויעד ורק לאחר מכן לחץ על המשך");
+                    return;
+                }
 
                 $('#prefTabs a').eq(1).click().addClass('ui-btn-active');
                 $('#prefTabs a').eq(2).removeClass('ui-btn-active');
@@ -1682,11 +1692,21 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
 });
 
 
+
+
 $(document).ready(function () {
     //remember to add this event to every new page
     $('#signMeTab , #myRidesTab , #loginAgainTab').on('click', function () {
+        
+        if (window.location.href.toString().indexOf('myPreferences') == -1) {
+            
+            return;
+        }
 
-        if (window.location.href.toString().indexOf('myPreferences') == -1 || localStorage.routes == null) {
+        var actives = $('#starts .ui-checkbox-on,#ends .ui-checkbox-on');
+        if (actives.length == 0) {
+            alert("אנא בחר נקודות מוצא ויעד");
+            $('#mypanel').panel("close");
             return;
         }
 
@@ -1707,7 +1727,22 @@ $(document).ready(function () {
         } else {
 
         }
+        if (this.id == 'signMeTab') {
+            $.mobile.pageContainer.pagecontainer("change", "#signMe");
+        }
+        else if (this.id == 'myRidesTab') {
+            $.mobile.pageContainer.pagecontainer("change", "#myRides");
+        }
 
+    });
+
+    $('a#menuBTN').on('click', function () {
+        if (localStorage.userType == 'רכז') {
+            $('li #loginAgainTab').parent().show()
+        }
+        else {
+            $('li #loginAgainTab').parent().hide()
+        }
     });
 });
 
@@ -1827,10 +1862,10 @@ function saveRoutes() {
         routesArr.push(actives[i].innerHTML);
     }
 
-    //if (routesArr.length < 2) {
-    //    alert("אנא בחר העדפות ורק לאחר מכן לחץ על שמור");
-    //    return;
-    //}
+    if (routesArr.length == 1) {
+        alert("אנא בחר העדפות ורק לאחר מכן לחץ על שמור");
+        return;
+    }
 
     //save routesArr to DB
     localStorage.routes = JSON.stringify(routesArr);
