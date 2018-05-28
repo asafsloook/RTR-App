@@ -1602,6 +1602,14 @@ function showSavedSeats() {
 
 $(document).on('pagebeforeshow', '#myPreferences', function () {
 
+    var checkboxes = $('#myPreferences .ui-checkbox label');
+
+    for (var i = 0; i < checkboxes.length; i++) {
+        if (checkboxes.eq(i)[0].classList.contains("ui-checkbox-on")) {
+            checkboxes.eq(i).click();
+        }
+    }
+
     if (localStorage.routes == null || localStorage.routes == "[{}]") {
         //do nothing, wait for user to change preferences (routes)
 
@@ -1652,17 +1660,7 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
     else {
         //user have saved routes
         $('#continueBTN').hide();
-
-
-        var checkboxes = $('#myPreferences .ui-checkbox label');
-
-        for (var i = 0; i < checkboxes.length; i++) {
-            if (checkboxes.eq(i)[0].classList.contains("ui-checkbox-on")) {
-                checkboxes.eq(i).click();
-            }
-        }
-
-
+        
         var routes = $.parseJSON(localStorage.routes);
 
         if (routes[0].south && !$('#southArea').is(':checked')) {
