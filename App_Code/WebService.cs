@@ -50,6 +50,7 @@ public class WebService : System.Web.Services.WebService
 
 
     [WebMethod]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     public string getVolunteerPrefs(int Id)
     {
         Volunteer v = new Volunteer();
@@ -336,6 +337,7 @@ public class WebService : System.Web.Services.WebService
     }
 
     [WebMethod]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     public string getVolunteers(bool active)
     {
         JavaScriptSerializer j = new JavaScriptSerializer();
