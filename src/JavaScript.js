@@ -1,4 +1,17 @@
 ﻿
+//DONE
+// add to kavim+times explain text
+// disable/hide tabs in first login
+// check all when choosing area first login
+// add haifa to south
+// alef-hey checked
+// space before () headers
+// daf rakaz text (my acc)
+// get week (if fix)
+// match (shift fix)
+
+
+
 //get week function
 Date.prototype.getWeek = function () {
     var d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
@@ -416,10 +429,10 @@ function doRideHeader(results, i) {
         if ((new Date(results[i].DateTime)).toLocaleDateString() == (new Date(results[s].DateTime)).toLocaleDateString()) {
 
             if (startPointStr.indexOf(results[s].StartPoint) == -1) {
-                startPointStr += results[s].StartPoint + '(1) , ';
+                startPointStr += results[s].StartPoint + ' (1) , ';
             }
             else {
-                startPointStr = startPointStr.replace(results[s].StartPoint + '(' + (ridesInDayCounter) + ')', results[s].StartPoint + '(' + (++ridesInDayCounter) + ')');
+                startPointStr = startPointStr.replace(results[s].StartPoint + ' (' + (ridesInDayCounter) + ')', results[s].StartPoint + ' (' + (++ridesInDayCounter) + ')');
             }
         }
         else {
@@ -440,7 +453,7 @@ function doRideHeader(results, i) {
 //decide if week spacer: <hr>, is required
 function weekSpace(results, i) {
     str = "";
-    if (i < results.length - 1 && i != 0) {
+    if (i <= results.length - 1 && i != 0) {
 
         var dateThis = new Date(results[i].DateTime);
         var dateBefore = new Date(results[i - 1].DateTime);
@@ -901,9 +914,9 @@ function checkRides() {
         if (results[i].Id == id) {
             continue;
         }
-        if (ride.Shift != results[i].Shift) {
-            continue;
-        }
+        //if (ride.Shift != results[i].Shift) {
+        //    continue;
+        //}
         if (ride.StartPoint != results[i].StartPoint) {
             continue;
         }
@@ -1296,7 +1309,7 @@ $(document).one('pagebeforecreate', function () {
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="signMeTab" data-theme="a">שבץ אותי</a></li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="myRidesTab" data-theme="a">הנסיעות שלי</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="preferencesTab" href="#myPreferences" data-theme="a">העדפות</a> </li>'
-        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="loginAgainTab" href="#" data-theme="a">חזור לדף רכז</a> </li>'
+        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="loginAgainTab" href="#" data-theme="a">חזור לחשבון שלי</a> </li>'
         //+ '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="trackRidesTab" href="#trackRides" data-theme="b">מעקב הסעות</a> </li>'
         //+ '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="trackRidesTab" href="#auction" data-theme="b">מכרז</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-delete">'
@@ -1449,7 +1462,9 @@ $(document).ready(function () {
 
     $('#userPnBTN').on('click', function () {
 
-        var cellphone = $('#userPnTB').val();
+        var cellphone = $('#userPnTB').val().toString();
+        var temp = cellphone.substring(0, 3) + "-" + cellphone.substring(3, 10);
+        cellphone = temp;
         localStorage.cellphone = cellphone;
 
         var request = {
@@ -1479,6 +1494,7 @@ function checkUserSuccessCB(results) {
         //send request for volunteer
         setTimeout(function () {
             alert("מספר הטלפון שהוכנס אינו רשום למשתמש במערכת");
+            $.mobile.pageContainer.pagecontainer("change", "#loginFailed");
         }, 100);
         return;
     }
@@ -1601,7 +1617,7 @@ function showSavedSeats() {
 
 
 $(document).on('pagebeforeshow', '#myPreferences', function () {
-
+    $('#prefTabs li').show();
     var checkboxes = $('#myPreferences .ui-checkbox label');
 
     for (var i = 0; i < checkboxes.length; i++) {
@@ -1613,10 +1629,27 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
     if (localStorage.routes == null || localStorage.routes == "[{}]") {
         //do nothing, wait for user to change preferences (routes)
 
+
+
+        for (var i = 0; i < 6; i++) {
+            $('.morning .ui-checkbox label').eq(i + 2).click();
+            $('.evening .ui-checkbox label').eq(i + 2).click();
+        }
+
+        for (var i = 0; i < $('#starts .ui-checkbox label, #ends .ui-checkbox label').length; i++) {
+            $('#starts .ui-checkbox label, #ends .ui-checkbox label').eq(i).click();
+        }
+
+        $('#prefTabs li').hide();
         $('a#menuBTN').hide()
         $('#continueBTN').show();
 
         $('#continueBTN').on('click', function () {
+
+            if ($('#area .ui-checkbox-on').length == 0) {
+                alert('אנא בחר איזור אחד לפחות');
+                return;
+            }
 
             if ($('#prefTabs a').eq(2).hasClass('ui-btn-active')) {
 
@@ -1660,7 +1693,7 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
     else {
         //user have saved routes
         $('#continueBTN').hide();
-        
+
         var routes = $.parseJSON(localStorage.routes);
 
         if (routes[0].south && !$('#southArea').is(':checked')) {
@@ -1960,18 +1993,4 @@ function showAreas() {
     }
 
 }
-
-$(window).load(function () {
-    var phones = [{ "mask": "###-#######" }];
-    $('#phoneTB').inputmask({
-        mask: phones,
-        greedy: false,
-        definitions: { '#': { validator: "[0-9]", cardinality: 1 } }
-    });
-    $('#userPnTB').inputmask({
-        mask: phones,
-        greedy: false,
-        definitions: { '#': { validator: "[0-9]", cardinality: 1 } }
-    });
-});
 
