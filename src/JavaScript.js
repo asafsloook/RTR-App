@@ -7,8 +7,11 @@
 // alef-hey checked
 // space before () headers
 // daf rakaz text (my acc)
+// adding some green
+
 // get week (if fix)
 // match (shift fix)
+
 
 
 
@@ -66,8 +69,13 @@ function ridesToClientStructure(before) {
         results[i].StartPoint = results[i].Origin.Name;
         results[i].EndPoint = results[i].Destination.Name;
 
-        if (results[i].Shift == "אחר צהריים") {
+        var rideTime = (new Date(results[i].DateTime)).toLocaleTimeString();
+
+        if (rideTime.indexOf('PM') != -1) {
             results[i].Shift = "אחהצ";
+        }
+        else {
+            results[i].Shift = "בוקר";
         }
 
         results[i].Person = results[i].Pat.DisplayName;
@@ -131,8 +139,13 @@ function myRidesToClientStructure(before) {
             ridePat.StartPoint = ridePat.Origin.Name;
             ridePat.EndPoint = ridePat.Destination.Name;
 
-            if (ridePat.Shift == "אחר צהריים") {
+            var rideTime = (new Date(ridePat.DateTime)).toLocaleTimeString();
+
+            if (rideTime.indexOf('PM') != -1) {
                 ridePat.Shift = "אחהצ";
+            }
+            else {
+                ridePat.Shift = "בוקר";
             }
 
             ridePat.Person = ridePat.Pat.DisplayName;
@@ -358,21 +371,9 @@ function filterRides(rides) {
         else if ($('#shiftDDL').val() != "משמרת" && $('#shiftDDL').val() != rides[i].Shift) {
 
         }
-        //else if ($('#dayDDL').val() != "יום" && $('#dayDDL').val() != numToDayHebrew(rideDate.getDay())) {
+        else if (!checkTime(rides[i])) {
 
-        //}
-        //else if ($('#dateDDL').val() != "תאריך" && $('#dateDDL').val() != rideDate.toLocaleDateString()) {
-
-        //}
-        //else if ($('#areaDDL').val() != "איזור" && $('#areaDDL').val() != rides[i].Area) {
-
-        //}
-        //else if ($('#startDDL').val() != "מוצא" && $('#startDDL').val() != rides[i].StartPoint) {
-
-        //}
-        //else if ($('#endDDL').val() != "יעד" && $('#endDDL').val() != rides[i].EndPoint) {
-
-        //}
+        }
         else if (typeof showAll !== 'undefined') {
             filteredRides.push(rides[i]);
         }
@@ -390,6 +391,29 @@ function filterRides(rides) {
     return filteredRides;
 }
 
+//for filtering rides that conflict with active myRide of volunteer
+function checkTime(ride) {
+
+    var rideTime = (new Date(ride.DateTime)).toLocaleTimeString();
+    var rideDate = (new Date(ride.DateTime)).toLocaleDateString();
+
+    for (var i = 0; i < myRides.length; i++) {
+
+        var myRideTime = (new Date(myRides[i].DateTime)).toLocaleTimeString();
+        var myRideDate = (new Date(myRides[i].DateTime)).toLocaleDateString();
+
+        if (rideDate == myRideDate) {
+            if (myRides[i].Shift == ride.Shift) {
+                if (myRideTime == rideTime && myRides[i].EndPoint == ride.EndPoint && myRides[i].StartPoint == ride.StartPoint) {
+                    return true;
+                }
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
 
 //for filtering rides with prefered volunteer routes
 function checkMyRoutes(ride) {
@@ -908,6 +932,12 @@ function checkRides() {
         var rideDate = new Date(results[i].DateTime);
         var chooseRideDate = new Date(ride.DateTime);
 
+        var rideTime = (new Date(results[i].DateTime)).toLocaleTimeString();
+        var chooseRideTime = (new Date(ride.DateTime)).toLocaleTimeString();
+
+        if (chooseRideTime != rideTime) {
+            continue;
+        }
         if (rideDate.toDateString() != chooseRideDate.toDateString()) {
             continue;
         }
@@ -960,14 +990,14 @@ $(document).ready(function () {
             CombineRideRidePat(idChoose, localStorage.myRideTemp);
         }
 
-        //handle case that rise is already taken
+        //handle case that rise if already taken
 
 
     });
 });
 
 
-//check how many seats are available in a specific day and shift
+//check how many seats are available in a specific day and time
 function checkAvailabilty(lastRide) {
 
     var ride = lastRide;
@@ -978,7 +1008,10 @@ function checkAvailabilty(lastRide) {
         var rideDate = (new Date(ride.DateTime)).toLocaleDateString();
         var myRideDate = (new Date(myRides[i].DateTime)).toLocaleDateString();
 
-        if (ride.Shift == myRides[i].Shift && rideDate == myRideDate) {
+        var rideTime = (new Date(ride.DateTime)).toLocaleTimeString();
+        var myRideTime = (new Date(myRides[i].DateTime)).toLocaleTimeString();
+
+        if (myRideTime == rideTime && rideDate == myRideDate) {
             sum += (myRides[i].Melave.length + 1);
             localStorage.myRideTemp = myRides[i].rideId;
         }

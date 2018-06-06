@@ -1,4 +1,8 @@
-﻿#mypanel {
+﻿.ui-btn-icon-left:after {
+    background-color: #94C541 !important;
+}
+
+#mypanel {
     background-color: #f6f6f6;
     box-shadow: none !important;
     -webkit-box-shadow: none !important;
@@ -49,7 +53,7 @@ h1, h2 {
     font-size: 16px;
 }
 
-#starts .ui-checkbox label::after, #ends .ui-checkbox label::after, #zmanim .ui-checkbox label::after {
+ .ui-checkbox label::after {
     background-color: #94C541 !important;
     border-color: #94C541 !important;
     color: #fff !important;
