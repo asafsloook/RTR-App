@@ -1391,18 +1391,38 @@ $(document).on('pagebeforeshow', '#loginPreference', function () {
 
 
     $("#welcomeTitle").html("שלום " + userInfo.FirstNameH);
-    $("#rakazLoginBTN").hide();
+    $("#rakazBTNS").hide();
 
     if (userInfo.TypeVol == "רכז") {
-        $("#rakazLoginBTN").show();
+        $("#rakazBTNS").show();
 
         request = {
             active: true
         }
         getVolunteers(request, getVolunteersSCB, getVolunteersECB);
+
+        request = {
+            active: true
+        }
+        getPatients(request, getPatientsSCB, getPatientsECB);
     }
 
 });
+
+
+function getPatientsSCB(data) {
+
+    $("#allPatientsPH").empty();
+
+    var results = $.parseJSON(data.d);
+    Patients = results;
+
+}
+
+function getPatientsECB(e) {
+    alert("Error in getPatientsECB: " + e);
+}
+
 
 function getVolunteersSCB(data) {
 
@@ -1411,6 +1431,10 @@ function getVolunteersSCB(data) {
     var results = $.parseJSON(data.d);
     volenteers = results;
 
+}
+
+function getVolunteersECB(e) {
+    alert("Error in getVolunteersECB: " + e);
 }
 
 
@@ -1424,18 +1448,41 @@ $(document).on('pageshow', '#rakazLogin', function () {
 });
 
 
+$(document).on('pageshow', '#allVolunteers', function () {
+    for (var i = 0; i < volenteers.length; i++) {
+
+        $("#allVolunteersPH").append('<li><a class="ui-btn ui-btn-icon-left ui-icon-phone" href="#" id="' + volenteers[i].CellPhone.toString() + '" >' + volenteers[i].DisplayName + '</a></li>');
+    }
+
+    $("#allVolunteersPH").listview('refresh');
+});
+
+
+$(document).on('pageshow', '#allPatients', function () {
+    for (var i = 0; i < Patients.length; i++) {
+
+        $("#allPatientsPH").append('<li><a class="ui-btn ui-btn-icon-left ui-icon-phone" href="#" id="' + Patients[i].CellPhone.toString() + '" >' + Patients[i].DisplayName + '</a></li>');
+    }
+
+    $("#allPatientsPH").listview('refresh');
+});
+
 
 $(document).ready(function () {
 
     $('#volenteersPH').on('click', 'a', function () {
         checkUserPN(this.id);
     });
+
+    $('#allVolunteersPH').on('click', 'a', function () {
+        alert(this.id);
+    });
+
+    $('#allPatientsPH').on('click', 'a', function () {
+        alert(this.id);
+    });
 });
 
-
-function getVolunteersECB(e) {
-    alert("Error in getVolunteersECB: " + e);
-}
 
 $(document).ready(function () {
     $("#nextPageBTN").on('click', function () {

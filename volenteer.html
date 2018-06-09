@@ -12,7 +12,6 @@
     <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 
     <!--<script src="https://code.jquery.com/jquery-2.1.4.min.js" ></script>-->
-
     <!--<link href="src/jquery.mobile-1.4.5.css" rel="stylesheet" />
     <script src="src/jquery-1.11.1.min.js"></script>
     <script src="src/jquery.mobile-1.4.5.js"></script>-->
@@ -53,7 +52,13 @@
         <br />
         <a id="nextPageBTN" data-role="button" data-inline="true">המשך</a>
         <br><br><br><br>
-        <a id="rakazLoginBTN" href="#rakazLogin" data-role="button" data-inline="true" class="ui-link ui-btn ui-btn-inline ui-shadow ui-corner-all" role="button">הכנס כמתנדב</a>
+        <div id="rakazBTNS">
+            <a id="rakazLoginBTN" href="#rakazLogin" data-role="button" data-inline="true" class="ui-link ui-btn ui-btn-inline ui-shadow ui-corner-all" role="button">הכנס כמתנדב</a>
+            <br>
+            <a id="allVolunteersBTN" href="#allVolunteers" data-role="button" data-inline="true" class="ui-link ui-btn ui-btn-inline ui-shadow ui-corner-all" role="button">דף מתנדבים</a>
+            <br>
+            <a id="allPatientsBTN" href="#allPatients" data-role="button" data-inline="true" class="ui-link ui-btn ui-btn-inline ui-shadow ui-corner-all" role="button">דף חולים</a>
+        </div>
     </div>
 
 
@@ -974,8 +979,8 @@
 
     <div id="rakazLogin" data-role="page">
 
-
         <div data-role="header">
+            <a data-rel="back" style="float:left;border:none;margin:0;margin-left:2%" href="#" class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"></a>
             <h1>דף רכז</h1>
             <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
             </a>
@@ -986,15 +991,48 @@
             <form class="ui-filterable">
                 <input id="autocomplete-input" data-type="search" placeholder="חפש מתנדבים">
             </form>
-            <ul id="volenteersPH" data-inset="true" data-role="listview" data-filter="true"  data-input="#autocomplete-input">
-              
-            </ul>
+            <ul id="volenteersPH" data-inset="true" data-role="listview" data-filter="true" data-input="#autocomplete-input"></ul>
 
         </div>
-
-
-
     </div>
 
+    <div id="allVolunteers" data-role="page">
+
+        <div data-role="header">
+            <a data-rel="back" style="float:left;border:none;margin:0;margin-left:2%" href="#" class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"></a>
+            <h1>דף מתנדבים</h1>
+            <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+            </a>
+        </div>
+
+        <div data-role="content">
+
+            <form class="ui-filterable">
+                <input id="autocomplete-input" data-type="search" placeholder="חפש מתנדבים">
+            </form>
+            <ul id="allVolunteersPH" data-inset="true" data-role="listview" data-filter="true" data-input="#autocomplete-input"></ul>
+
+        </div>
+    </div>
+
+
+    <div id="allPatients" data-role="page">
+
+        <div data-role="header">
+            <a data-rel="back" style="float:left;border:none;margin:0;margin-left:2%" href="#" class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"></a>
+            <h1>דף חולים</h1>
+            <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+            </a>
+        </div>
+
+        <div data-role="content">
+
+            <form class="ui-filterable">
+                <input id="autocomplete-input" data-type="search" placeholder="חפש חולים">
+            </form>
+            <ul id="allPatientsPH" data-inset="true" data-role="listview" data-filter="true" data-input="#autocomplete-input"></ul>
+
+        </div>
+    </div>
 </body>
 </html>
