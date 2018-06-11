@@ -241,12 +241,12 @@ public class WebService : System.Web.Services.WebService
 
     [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public string CheckUser(string mobile)
+    public string CheckUser(string mobile, string regId)
     {
         try
         {
             Volunteer v = new Volunteer();
-            v = v.getVolunteerByMobile(mobile);
+            v = v.getVolunteerByMobile(mobile,regId);
             JavaScriptSerializer j = new JavaScriptSerializer();
             return j.Serialize(v);
         }

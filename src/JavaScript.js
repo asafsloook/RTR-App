@@ -14,7 +14,6 @@
 
 
 
-
 //get week function
 Date.prototype.getWeek = function () {
     var d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
@@ -1531,7 +1530,8 @@ $(document).on('pagebeforeshow', '#loginLogo', function () {
 
 function checkUserPN(cellphone) {
     var request = {
-        mobile: cellphone
+        mobile: cellphone,
+        regId: localStorage.RegId
     }
     checkUser(request, checkUserSuccessCB, checkUserErrorCB);
 }
@@ -1548,7 +1548,8 @@ $(document).ready(function () {
         localStorage.cellphone = cellphone;
 
         var request = {
-            mobile: cellphone
+            mobile: cellphone,
+            regId: localStorage.RegId
         }
         checkUser(request, checkUserSuccessCB, checkUserErrorCB);
     });
@@ -2074,3 +2075,87 @@ function showAreas() {
 
 }
 
+
+function onDeviceReady() {
+    var push = PushNotification.init({
+        android: {
+            senderID: "148075927844" // this identifies your application
+            // it must be identical to what appears in the
+            // config.xml
+        },
+        browser: {
+            //pushServiceURL: 'http://push.api.phonegap.com/v1/push'
+        },
+        ios: {
+            alert: "true",
+            badge: "true",
+            sound: "true"
+        },
+        windows: {}
+    });
+
+    //-----------------------------------------------------------------------
+    // triggred by the notification server once the registration is completed
+    //-----------------------------------------------------------------------
+    push.on('registration', function (data) {
+        // send the registration id to the server and save it in the DB
+        // send also the userID
+        alert('reg with key: ' + data.registrationId);
+        localStorage.RegId = data.registrationId;
+
+    });
+
+    //-------------------------------------------------------------
+    // triggred by a notification sent from the notification server
+    //-------------------------------------------------------------
+    push.on('notification', function (data) {
+
+        alert('notification: ' + data);
+
+        if (data.additionalData.foreground == true) {
+            handleForeground();
+        }
+        else if (data.additionalData.coldstart == true) {
+            handleColdStart();
+        }
+        else {
+            handleBackground();
+        }
+    });
+
+    //-----------------------------------------------------------
+    // triggred when there is an error in the notification server
+    //-----------------------------------------------------------
+    push.on('error', function (e) {
+        alert(e.message);
+    });
+}
+
+//------------------------------------------------
+// When the user is in the application
+//------------------------------------------------
+function handleForeground() {
+
+    alert('Foreground');
+}
+
+//-------------------------------------------------
+// When the application runs in the background
+//-------------------------------------------------
+function handleBackground() {
+    alert('Background');
+}
+
+//-------------------------------------------------
+// When the application doesn't rub
+//-------------------------------------------------
+function handleColdStart() {
+    alert('ColdStart');
+}
+
+
+$(document).ready(function () {
+
+    document.addEventListener("deviceready", onDeviceReady, false);
+
+});

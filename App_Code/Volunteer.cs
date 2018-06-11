@@ -566,11 +566,12 @@ public class Volunteer
     }
 
 
-    public Volunteer getVolunteerByMobile(string mobile)
+    public Volunteer getVolunteerByMobile(string mobile,string regId)
     {
         DbService db = new DbService();
         string query = "select * from VolunteerTypeView where cellPhone = '" + mobile + "'";
         DataSet ds = db.GetDataSetByQuery(query);
+        
         Volunteer v = new Volunteer();
         foreach (DataRow dr in ds.Tables[0].Rows)
         {
@@ -606,6 +607,19 @@ public class Volunteer
             v.PrefTime = v2.PrefTime;
             v.PrefLocation = v2.PrefLocation;
         }
+
+        db = new DbService();
+        var updateRegid = "update Volunteer set pnRegId=@REGID where Id=@ID";
+
+        SqlCommand cmd = new SqlCommand();
+        cmd.CommandType = CommandType.Text;
+
+        SqlParameter[] cmdParams = new SqlParameter[2];
+        cmdParams[0] = cmd.Parameters.AddWithValue("@REGID", regId);
+        cmdParams[1] = cmd.Parameters.AddWithValue("@ID", v.Id);
+
+        int result = db.ExecuteQuery(updateRegid, cmd.CommandType, cmdParams);
+
         return v;
 
     }
