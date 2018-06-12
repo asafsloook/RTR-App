@@ -791,6 +791,7 @@ public class Volunteer
             v.Address = dr["Address"].ToString();
             v.TypeVol = dr["VolunTypeType"].ToString();
             v.Email = dr["Email"].ToString();
+            v.RegId = dr["pnRegId"].ToString(); 
             //v.Day1 = dr["preferDay1"].ToString();
             //v.Hour1 = dr["preferHour1"].ToString();
             //v.Day2 = dr["preferDay2"].ToString();

@@ -2113,7 +2113,23 @@ function onDeviceReady() {
         //-------------------------------------------------------------
         push.on('notification', function (data) {
 
-            alert('notification: ' + data);
+            var message = '';
+            for (x in data) {
+                message += "data." + x + " :" + data[x] + " , ";
+
+                if (x == "additionalData") {
+                    for (y in data.additionalData) {
+                        message += "data.additionalData." + y + " :" + data.additionalData[y] + " , ";
+
+                        if (y == "PayloadString") {
+                            for (z in data.additionalData.PayloadString) {
+                                message += "data.additionalData.PayloadString." + z + " :" + data.additionalData.PayloadString[z] + " , ";
+                            }
+                        }
+                    }
+                }
+            }
+            alert('notification: ' + message);
 
             if (data.additionalData.foreground == true) {
                 handleForeground();
@@ -2139,22 +2155,21 @@ function onDeviceReady() {
 // When the user is in the application
 //------------------------------------------------
 function handleForeground() {
-
-    alert('Foreground');
+    //
 }
 
 //-------------------------------------------------
 // When the application runs in the background
 //-------------------------------------------------
 function handleBackground() {
-    alert('Background');
+    //
 }
 
 //-------------------------------------------------
 // When the application doesn't rub
 //-------------------------------------------------
 function handleColdStart() {
-    alert('ColdStart');
+    //
 }
 
 

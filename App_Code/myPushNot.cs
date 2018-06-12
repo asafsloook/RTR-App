@@ -91,40 +91,60 @@ public class myPushNot
 
         foreach (var item in userList)
         {
-            registrationIDs.Add(item.RegId);
-        }
-
-        
-        //registrationIDs.Add("ejuGwkyol70:APA91bHbIzoj87i0YxrtEIt5kisubNBKK-eGGZYuUqdMZlL-2CyuJs_bWaPDiJrv0_MPzZq8tFGv6XNUxEYl1j0bRWRz7HS7L00H5wulc-TC6uZodEWjMfWIbpgWP1ZZ6dUz4ZkdayUz");
-
-
-        var config = new GcmConfiguration("AIzaSyDQfirNkIkUKNy9B2irYhb8CV6pYpIVBOQ");
-        var broker = new GcmServiceBroker(config);
-
-
-        broker.OnNotificationFailed += (GcmNotification notification, AggregateException exception) => {
-            exception.Handle(ex => {
-                /*Ex handling*/
-
-                return true;
-            });
-        };
-
-        broker.OnNotificationSucceeded += (notification) => {
-            Console.WriteLine("Notification Sent!");
-        };
-        broker.Start();
-        string message = "";
-        while (message != "quit")
-        {
-            broker.QueueNotification(new GcmNotification()
+            if (item.RegId != "")
             {
-                RegistrationIds = registrationIDs,
-                Notification = JObject.Parse("{\"alert\":\"" + message + "\",\"badge\":7}")
+                registrationIDs.Add(item.RegId);
+            }
+
+        }
+
+
+        // Configuration
+        var config = new GcmConfiguration("AIzaSyDQfirNkIkUKNy9B2irYhb8CV6pYpIVBOQ");
+
+        // Create a new broker
+        var gcmBroker = new GcmServiceBroker(config);
+
+        // Wire up events
+        gcmBroker.OnNotificationFailed += (notification, aggregateEx) =>
+        {
+            //Console.WriteLine("GCM Notification Failed!");
+        };
+
+        gcmBroker.OnNotificationSucceeded += (notification) =>
+        {
+            //Console.WriteLine("GCM Notification Sent!");
+        };
+
+        // Start the broker
+        gcmBroker.Start();
+
+        foreach (var regId in registrationIDs)
+        {
+            // Queue a notification to send
+            gcmBroker.QueueNotification(new GcmNotification
+            {
+                RegistrationIds = new List<string> {
+            regId
+        },
+                Notification = JObject.Parse(
+                        "{" +
+                            "\"title\" : \"" + pushNot.Title + "\"," +
+                            "\"body\" : \"" + pushNot.message + "\"," +
+                            "\"sound\" : \"mySound.caf\"" +
+                        "}"),
+                Data = JObject.Parse(
+                        "{" +
+                            "\"payload\" : \"" + "payload1" + "\"" + 
+                        "}")
             });
         }
-        broker.Stop();
+
+        // Stop the broker, wait for it to finish   
+        // This isn't done after every message, but after you're
+        // done with the broker
+        gcmBroker.Stop();
     }
-    
+
 
 }
