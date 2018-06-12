@@ -38,6 +38,9 @@ public class Volunteer
     string joinDate;//תאריך הצטרפות
     string status;//סטטוס
     int id;
+    int regId;
+
+    public string RegId { get; set; }
 
     public string Remarks { get; set; }
 

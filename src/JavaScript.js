@@ -2077,58 +2077,62 @@ function showAreas() {
 
 
 function onDeviceReady() {
-    var push = PushNotification.init({
-        android: {
-            senderID: "148075927844" // this identifies your application
-            // it must be identical to what appears in the
-            // config.xml
-        },
-        browser: {
-            //pushServiceURL: 'http://push.api.phonegap.com/v1/push'
-        },
-        ios: {
-            alert: "true",
-            badge: "true",
-            sound: "true"
-        },
-        windows: {}
-    });
+    
+    if (typeof PushNotification !== 'undefined') {
 
-    //-----------------------------------------------------------------------
-    // triggred by the notification server once the registration is completed
-    //-----------------------------------------------------------------------
-    push.on('registration', function (data) {
-        // send the registration id to the server and save it in the DB
-        // send also the userID
-        alert('reg with key: ' + data.registrationId);
-        localStorage.RegId = data.registrationId;
+        var push = PushNotification.init({
+            android: {
+                senderID: "148075927844" // this identifies your application
+                // it must be identical to what appears in the
+                // config.xml
+            },
+            browser: {
+                //pushServiceURL: 'http://push.api.phonegap.com/v1/push'
+            },
+            ios: {
+                alert: "true",
+                badge: "true",
+                sound: "true"
+            },
+            windows: {}
+        });
 
-    });
+        //-----------------------------------------------------------------------
+        // triggred by the notification server once the registration is completed
+        //-----------------------------------------------------------------------
+        push.on('registration', function (data) {
+            // send the registration id to the server and save it in the DB
+            // send also the userID
+            alert('reg with key: ' + data.registrationId);
+            localStorage.RegId = data.registrationId;
 
-    //-------------------------------------------------------------
-    // triggred by a notification sent from the notification server
-    //-------------------------------------------------------------
-    push.on('notification', function (data) {
+        });
 
-        alert('notification: ' + data);
+        //-------------------------------------------------------------
+        // triggred by a notification sent from the notification server
+        //-------------------------------------------------------------
+        push.on('notification', function (data) {
 
-        if (data.additionalData.foreground == true) {
-            handleForeground();
-        }
-        else if (data.additionalData.coldstart == true) {
-            handleColdStart();
-        }
-        else {
-            handleBackground();
-        }
-    });
+            alert('notification: ' + data);
 
-    //-----------------------------------------------------------
-    // triggred when there is an error in the notification server
-    //-----------------------------------------------------------
-    push.on('error', function (e) {
-        alert(e.message);
-    });
+            if (data.additionalData.foreground == true) {
+                handleForeground();
+            }
+            else if (data.additionalData.coldstart == true) {
+                handleColdStart();
+            }
+            else {
+                handleBackground();
+            }
+        });
+
+        //-----------------------------------------------------------
+        // triggred when there is an error in the notification server
+        //-----------------------------------------------------------
+        push.on('error', function (e) {
+            alert(e.message);
+        });
+    }
 }
 
 //------------------------------------------------
