@@ -31,7 +31,6 @@ public partial class _Default : System.Web.UI.Page
         pushNot.PayloadString = str;
 
         pushNot.RunPushNotification(volunteersList, pushNot);
-
         
         
         //pushNot.msgcnt = "1"; //message id - 

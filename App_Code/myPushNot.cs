@@ -97,10 +97,11 @@ public class myPushNot
             }
 
         }
-
+        
 
         // Configuration
         var config = new GcmConfiguration("AIzaSyDQfirNkIkUKNy9B2irYhb8CV6pYpIVBOQ");
+        config.GcmUrl = "https://fcm.googleapis.com/fcm/send";
 
         // Create a new broker
         var gcmBroker = new GcmServiceBroker(config);
@@ -124,21 +125,20 @@ public class myPushNot
             // Queue a notification to send
             gcmBroker.QueueNotification(new GcmNotification
             {
+
                 RegistrationIds = new List<string> {
             regId
         },
-                Notification = JObject.Parse(
-                        "{" +
-                            "\"title\" : \"" + pushNot.Title + "\"," +
-                            "\"body\" : \"" + pushNot.message + "\"," +
-                            "\"sound\" : \"mySound.caf\"" +
-                        "}"),
                 Data = JObject.Parse(
                         "{" +
-                            "\"payload\" : \"" + "payload1" + "\"" + 
+                               "\"title\" : \"" + pushNot.Title + "\"," +
+                               "\"message\" : \"" + "somadata" + "\"," +
+                                "\"info\" : \"" + "somadata" + "\"," +
+                            "\"content-available\" : \"" + "1" + "\"" +
                         "}")
             });
         }
+
 
         // Stop the broker, wait for it to finish   
         // This isn't done after every message, but after you're

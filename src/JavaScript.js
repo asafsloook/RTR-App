@@ -2077,7 +2077,7 @@ function showAreas() {
 
 
 function onDeviceReady() {
-    
+
     if (typeof PushNotification !== 'undefined') {
 
         var push = PushNotification.init({
@@ -2113,32 +2113,16 @@ function onDeviceReady() {
         //-------------------------------------------------------------
         push.on('notification', function (data) {
 
-            var message = '';
-            for (x in data) {
-                message += "data." + x + " :" + data[x] + " , ";
 
-                if (x == "additionalData") {
-                    for (y in data.additionalData) {
-                        message += "data.additionalData." + y + " :" + data.additionalData[y] + " , ";
-
-                        if (y == "PayloadString") {
-                            for (z in data.additionalData.PayloadString) {
-                                message += "data.additionalData.PayloadString." + z + " :" + data.additionalData.PayloadString[z] + " , ";
-                            }
-                        }
-                    }
-                }
-            }
-            alert('notification: ' + message);
 
             if (data.additionalData.foreground == true) {
-                handleForeground();
+                handleForeground(data);
             }
             else if (data.additionalData.coldstart == true) {
-                handleColdStart();
+                handleColdStart(data);
             }
             else {
-                handleBackground();
+                handleBackground(data);
             }
         });
 
@@ -2149,32 +2133,53 @@ function onDeviceReady() {
             alert(e.message);
         });
     }
+
 }
 
 //------------------------------------------------
 // When the user is in the application
 //------------------------------------------------
-function handleForeground() {
+function handleForeground(data) {
     //
+    alertPushMsg(data);
 }
 
 //-------------------------------------------------
 // When the application runs in the background
 //-------------------------------------------------
-function handleBackground() {
+function handleBackground(data) {
     //
+    alertPushMsg(data);
 }
 
 //-------------------------------------------------
 // When the application doesn't rub
 //-------------------------------------------------
-function handleColdStart() {
+function handleColdStart(data) {
     //
+    alertPushMsg(data);
 }
 
 
-$(document).ready(function () {
+function alertPushMsg(data) {
+    var message = '';
+    for (x in data) {
+        message += "data." + x + " :" + data[x] + " , ";
 
-    document.addEventListener("deviceready", onDeviceReady, false);
+        if (x == "additionalData") {
+            for (y in data.additionalData) {
+                message += "data.additionalData." + y + " :" + data.additionalData[y] + " , ";
 
-});
+                if (y == "PayloadString") {
+                    for (z in data.additionalData.PayloadString) {
+                        message += "data.additionalData.PayloadString." + z + " :" + data.additionalData.PayloadString[z] + " , ";
+                    }
+                }
+            }
+        }
+    }
+    alert('notification: ' + message);
+}
+
+
+document.addEventListener("deviceready", onDeviceReady, false);
