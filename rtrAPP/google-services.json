@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "148075927844",
+    "firebase_url": "https://road2recovery-6e497.firebaseio.com",
+    "project_id": "road2recovery-6e497",
+    "storage_bucket": "road2recovery-6e497.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:148075927844:android:df6a13692f0d004a",
+        "android_client_info": {
+          "package_name": "il.Road.to.Recovery"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "148075927844-pb3675sg0equ2v2rj6k9l035hpp2utv2.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "148075927844-pb3675sg0equ2v2rj6k9l035hpp2utv2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcDJSPCRxTk1kHlDEVnhZZ8vjzojU-8Es"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
