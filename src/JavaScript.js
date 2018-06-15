@@ -1474,11 +1474,11 @@ $(document).ready(function () {
     });
 
     $('#allVolunteersPH').on('click', 'a', function () {
-        alert(this.id);
+        window.open("tel:" + this.id);
     });
 
     $('#allPatientsPH').on('click', 'a', function () {
-        alert(this.id);
+        window.open("tel:" + this.id);
     });
 });
 
@@ -1519,6 +1519,11 @@ $(document).on('pagebeforeshow', '#loginLogo', function () {
 
 
 function checkUserPN(cellphone) {
+
+    if (localStorage.RegId == null) {
+        localStorage.RegId = "errorKey"
+    }
+
     var request = {
         mobile: cellphone,
         regId: localStorage.RegId
@@ -1564,7 +1569,7 @@ function checkUserSuccessCB(results) {
     if (results.Id == 0) {
         //send request for volunteer
         setTimeout(function () {
-            alert("מספר הטלפון שהוכנס אינו רשום למשתמש במערכת");
+            alert("הודעת שגיאה - מספר הטלפון אינו ידוע, אנא בדקו ונסו בשנית.");
             $.mobile.pageContainer.pagecontainer("change", "#loginFailed");
         }, 100);
         return;
@@ -2072,7 +2077,8 @@ function onDeviceReady() {
 
         var push = PushNotification.init({
             android: {
-                senderID: "148075927844" // this identifies your application
+                senderID: "148075927844",
+                forceShow: true // this identifies your application
                 // it must be identical to what appears in the
                 // config.xml
             },
@@ -2129,6 +2135,7 @@ function onDeviceReady() {
         //-----------------------------------------------------------
         push.on('error', function (e) {
             alert(e.message);
+            
         });
     }
 
