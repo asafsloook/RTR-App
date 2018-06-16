@@ -1816,7 +1816,6 @@ function goMenu(id) {
         var cellphone = localStorage.cellphone;
         checkUserPN(cellphone);
     }
-    return;
 }
 
 
@@ -1826,6 +1825,7 @@ $(document).ready(function () {
 
         if (window.location.href.toString().indexOf('myPreferences') == -1) {
             goMenu(this.id);
+            return;
         }
 
         var actives = $('#starts .ui-checkbox-on,#ends .ui-checkbox-on');
@@ -1852,6 +1852,7 @@ $(document).ready(function () {
             setPrefs();
         } else {
             goMenu(this.id);
+            return;
         }
 
 
@@ -2200,6 +2201,12 @@ function alertPushMsg(data) {
 if (window.location.href.toString().indexOf('http') == -1) {
 
     document.addEventListener("deviceready", onDeviceReady, false);
+
+    document.addEventListener("backbutton", onBackKeyDown, false);
+
+    function onBackKeyDown() {
+        return;
+    }
 }
 else {
 
