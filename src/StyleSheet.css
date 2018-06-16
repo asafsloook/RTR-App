@@ -1,4 +1,21 @@
-﻿.ui-btn-icon-left:after {
+﻿a, p, span, label, td, #volunteerRequest label, #volunteerProblems label{
+    font-size: 20px;
+}
+
+#userPnBTN {
+    background-color: #C7DE9C;
+}
+
+    #loginLogo p, #loginFailed a, #loginFailed p, #loginFailed input, #loginFailed .ui-btn, #loginPreference, #mypanel a {
+    font-size: 25px !important;
+}
+
+#myPreferences .ui-select {
+    width: 40%;
+    margin: 0 auto;
+}
+
+#myRides .ui-btn-icon-left:after, #mypanel .ui-btn-icon-left:after, #signMe .ui-btn-icon-left:after, #myPreferences .ui-btn-icon-left:after, #allPatients .ui-btn-icon-left:after, #allVolunteers .ui-btn-icon-left:after, #rakazLogin .ui-btn-icon-left:after {
     background-color: #94C541 !important;
 }
 
@@ -87,7 +104,7 @@ h1, h2 {
 
 #myPreferences #zmanim td {
     padding: 0;
-    text-align: center;
+    text-align: right;
 }
 
 #myPreferences #zmanim form {
@@ -107,7 +124,7 @@ h1, h2 {
 
 #myPreferences #zmanim table {
     width: 100%;
-    margin-top: 15%;
+    margin-top: 10%;
 }
 
 
@@ -154,8 +171,8 @@ h1, h2 {
 
 
 #signMe .ui-filterable {
-    width: 70%;
-    margin-left: 30%;
+    width: 65%;
+    margin-left: 35%;
 }
 
 #starts label, #ends label {
@@ -386,7 +403,7 @@ hr {
     width: 100%;
 }
 
-#deleteMePage, #signMePage, #suggest, #infoPastRide, #deleteConfirm, #signConfirmation {
+#deleteMePage, #signMePage, #suggest, #infoPastRide, #deleteConfirm, #signConfirmation, #deleteConfirmation {
     text-align: center;
     padding: 30% 0px;
 }
@@ -470,7 +487,7 @@ hr {
 }
 
 #loginPreference {
-    padding-top: 25%;
+    /*padding-top: 25%;*/
     text-align: center;
 }
 
@@ -515,6 +532,7 @@ hr {
         width: 20%;
         margin: 0 auto;
         margin-top: 7%;
+        padding: 3%;
     }
 
     #loginFailed p, #volunteerRequest p, #volunteerProblems p {
@@ -580,7 +598,7 @@ hr.weekSeperator {
     text-shadow: none;
 }
 
-#okBTN, #deleteMePageNOBTN, #deleteOptionsNOBTN, #deleteConfirmNOBTN, #closeInfoBTN, #suggestOkBTN, #signConfirmationOkBTN {
+#okBTN, #deleteMePageNOBTN, #deleteOptionsNOBTN, #deleteConfirmNOBTN, #closeInfoBTN, #suggestOkBTN, #signConfirmationOkBTN, #deleteConfirmationBTN {
     background-color: #c2fcc7;
     border-color: #c2fcc7;
     color: #111;

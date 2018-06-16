@@ -337,15 +337,13 @@ function deleteAllRideErrorCB() {
 //success call back function for delete ride
 function deleteRideSuccessCB() {
 
-    alert("הנסיעה נמחקה בהצלחה");
-
     //for refreshing my rides after the delete
     myRidesPrint = true;
     getMyRidesList();
 
     getRidesList();
 
-    $.mobile.pageContainer.pagecontainer("change", "#myRides");
+    $.mobile.pageContainer.pagecontainer("change", "#deleteConfirmation");
 }
 
 //error call back function for delete ride
@@ -1258,6 +1256,7 @@ $(document).on('pagebeforeshow', '#myRides', function () {
     }
     else {
         $('#planTAB').addClass("ui-btn-active");
+        $('#planTAB').click();
         printMyRides(myRides);
     }
 
@@ -1410,9 +1409,7 @@ $(document).on('pagebeforeshow', '#loginPreference', function () {
 
 
 function getPatientsSCB(data) {
-
-    $("#allPatientsPH").empty();
-
+    
     var results = $.parseJSON(data.d);
     Patients = results;
 
@@ -1424,9 +1421,7 @@ function getPatientsECB(e) {
 
 
 function getVolunteersSCB(data) {
-
-    $("#volenteersPH").empty();
-
+    
     var results = $.parseJSON(data.d);
     volenteers = results;
 
@@ -1438,6 +1433,9 @@ function getVolunteersECB(e) {
 
 
 $(document).on('pageshow', '#rakazLogin', function () {
+
+    $("#volenteersPH").empty();
+
     for (var i = 0; i < volenteers.length; i++) {
 
         $("#volenteersPH").append('<li><a class="ui-btn ui-btn-icon-left ui-icon-carat-l" href="#" id="' + volenteers[i].CellPhone.toString() + '" >' + volenteers[i].DisplayName + '</a></li>');
@@ -1448,6 +1446,9 @@ $(document).on('pageshow', '#rakazLogin', function () {
 
 
 $(document).on('pageshow', '#allVolunteers', function () {
+
+    $("#allVolunteersPH").empty();
+
     for (var i = 0; i < volenteers.length; i++) {
 
         $("#allVolunteersPH").append('<li><a class="ui-btn ui-btn-icon-left ui-icon-phone" href="#" id="' + volenteers[i].CellPhone.toString() + '" >' + volenteers[i].DisplayName + '</a></li>');
@@ -1458,6 +1459,9 @@ $(document).on('pageshow', '#allVolunteers', function () {
 
 
 $(document).on('pageshow', '#allPatients', function () {
+
+    $("#allPatientsPH").empty();
+
     for (var i = 0; i < Patients.length; i++) {
 
         $("#allPatientsPH").append('<li><a class="ui-btn ui-btn-icon-left ui-icon-phone" href="#" id="' + Patients[i].CellPhone.toString() + '" >' + Patients[i].DisplayName + '</a></li>');
@@ -1541,6 +1545,10 @@ $(document).ready(function () {
         var temp = cellphone.substring(0, 3) + "-" + cellphone.substring(3, 10);
         cellphone = temp;
         localStorage.cellphone = cellphone;
+
+        if (localStorage.RegId == null) {
+            localStorage.RegId = "errorKey"
+        }
 
         var request = {
             mobile: cellphone,
@@ -1797,7 +1805,19 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
 
 });
 
-
+function goMenu(id) {
+    if (id == 'signMeTab') {
+        $.mobile.pageContainer.pagecontainer("change", "#signMe");
+    }
+    else if (id == 'myRidesTab') {
+        $.mobile.pageContainer.pagecontainer("change", "#myRides");
+    }
+    else if (id == 'loginAgainTab') {
+        var cellphone = localStorage.cellphone;
+        checkUserPN(cellphone);
+    }
+    return;
+}
 
 
 $(document).ready(function () {
@@ -1805,17 +1825,7 @@ $(document).ready(function () {
     $('#signMeTab , #myRidesTab , #loginAgainTab').on('click', function () {
 
         if (window.location.href.toString().indexOf('myPreferences') == -1) {
-            if (this.id == 'signMeTab') {
-                $.mobile.pageContainer.pagecontainer("change", "#signMe");
-            }
-            else if (this.id == 'myRidesTab') {
-                $.mobile.pageContainer.pagecontainer("change", "#myRides");
-            }
-            else if (this.id == 'loginAgainTab') {
-                var cellphone = localStorage.cellphone;
-                checkUserPN(cellphone);
-            }
-            return;
+            goMenu(this.id);
         }
 
         var actives = $('#starts .ui-checkbox-on,#ends .ui-checkbox-on');
@@ -1841,7 +1851,7 @@ $(document).ready(function () {
             tempID = this.id;
             setPrefs();
         } else {
-
+            goMenu(this.id);
         }
 
 
@@ -2187,4 +2197,19 @@ function alertPushMsg(data) {
 }
 
 
-document.addEventListener("deviceready", onDeviceReady, false);
+if (window.location.href.toString().indexOf('http') == -1) {
+
+    document.addEventListener("deviceready", onDeviceReady, false);
+}
+else {
+
+    if (localStorage.cellphone == null) {
+
+        manualLogin();
+
+    }
+    else {
+        var cellphone = localStorage.cellphone;
+        checkUserPN(cellphone);
+    }
+}

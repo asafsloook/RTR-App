@@ -44,7 +44,7 @@
         <input id="userPnTB" type="tel" />
         <a id="userPnBTN" data-role="button">חיבור</a>
         <br /><br />
-              <a href="#volunteerProblems">לפתרון בעיות בהתחברות</a>
+        <a href="#volunteerProblems">לפתרון בעיות בהתחברות</a>
         <br /><br />
         <a href="#volunteerRequest">להרשמה</a>
     </div>
@@ -54,8 +54,8 @@
         <h2 id="welcomeTitle"></h2>
         <a id="changePrefBTN" href="#myPreferences" data-role="button" data-inline="true">שינוי ההעדפות שלי</a>
         <br />
-        <a id="nextPageBTN" data-role="button" data-inline="true">המשך</a>
-        <br><br><br><br>
+        <a id="nextPageBTN" data-role="button" data-inline="true">המשך לשיבוץ</a>
+        <br>
         <div id="rakazBTNS">
             <a id="rakazLoginBTN" href="#rakazLogin" data-role="button" data-inline="true" class="ui-link ui-btn ui-btn-inline ui-shadow ui-corner-all" role="button">הכנס/י כמתנדב/ת</a>
             <br>
@@ -117,7 +117,7 @@
             <tr>
                 <td colspan="2">
                     <br />
-                    <a href="#" style="margin:0" class="ui-btn ui-btn-inline ui-icon-check ui-btn-icon-right">שלח</a>
+                    <a href="#" style="background-color: #C7DE9C;margin:0" class="ui-btn ui-btn-inline ui-icon-check ui-btn-icon-right">שלח</a>
                 </td>
             </tr>
         </table>
@@ -134,8 +134,9 @@
 
         <img src="Images/logo.png" />
 
-        <p style="margin:10% 15%;">
+        <p style="margin:5% 15%;">
             בירור סטטוס ההרשמה מול העמותה בטלפון
+            <br>
             <a href="tel:052-5555555">052-5555555</a>
         </p>
         <table>
@@ -144,7 +145,7 @@
                     <input type="text" id="nameTB" />
                 </td>
                 <td>
-                    <label>שם מלא</label>
+                    שם מלא
                 </td>
             </tr>
             <tr>
@@ -152,13 +153,12 @@
                     <input type="text" id="phoneTB" />
                 </td>
                 <td>
-                    <label>מספר טלפון נייד</label>
+                    מספר טלפון נייד
                 </td>
             </tr>
             <tr>
                 <td colspan="2">
-                    <br />
-                    <label>תיאור הבעיה</label>
+                    תיאור הבעיה
                 </td>
             </tr>
 
@@ -171,8 +171,7 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    <br>
-                    <a href="#" style="margin:0" class="ui-btn ui-btn-inline ui-icon-check ui-btn-icon-right">שלח</a>
+                    <a href="#" style="background-color: #C7DE9C;margin:0" class="ui-btn ui-btn-inline ui-icon-check ui-btn-icon-right">שלח</a>
                 </td>
             </tr>
         </table>
@@ -570,6 +569,12 @@
         <a data-icon="check" id="signConfirmationOkBTN" href="#myRides" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">חזור לנסיעות שלי</a>
     </div>
 
+    <div data-role="page" id="deleteConfirmation" style="text-align:center">
+        <h1 data-theme="b">הנסיעה בוטלה בהצלחה</h1>
+        <div id="phDelConfirmation"></div>
+        <a data-icon="check" id="deleteConfirmationBTN" href="#myRides" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">חזור לנסיעות שלי</a>
+    </div>
+
 
     <!--<div id="myRoutes" data-role="page">
 
@@ -727,6 +732,10 @@
                     <table>
                         <tr>
 
+                            
+                            <td><p>מספר הנוסעים המקסימלי שבד"כ תוכלו לקחת</p></td>
+                        </tr>
+                        <tr>
                             <td>
                                 <select id="mySeats">
                                     <option>1</option>
@@ -741,16 +750,14 @@
                                     <option>10</option>
                                 </select>
                             </td>
-                            <td><label>מושבים פנויים</label></td>
                         </tr>
-
                     </table>
 
 
 
                 </div>
                 <div id="zmanim">
-                    <p>אנא בחר את הימים והזמנים המועדפים עליך</p>
+                    <p>ציינו את הזמנים שבד"כ מתאים לכם להסיע</p>
                     <table>
                         <tr>
                             <td colspan="7" style="padding:10px">
