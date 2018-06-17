@@ -544,6 +544,7 @@ hr {
         text-shadow: none;
         color: black;
         margin: 3% auto;
+        width: 65%;
     }
 
     #loginPreference h2 {

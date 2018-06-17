@@ -203,14 +203,12 @@ function myRideListItem(myRides, i) {
     var str = '<li data-theme="a">';
 
     if ($('#doneTAB').prop("class").indexOf("ui-btn-active") != -1) {
-        str += '<a id="popINFO' + i + '" href="#infoPastRide"';
+        str += '<a id="popINFO' + i + '" href="#infoPastRide" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-info ui-btn-icon-left ';
     }
     else {
-        str += '<a id="popDEL' + i + '" href="#deleteMePage"';
+        str += '<a id="popDEL' + i + '" href="#deleteMePage" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-edit ui-btn-icon-left ';
     }
-
-
-    str += ' class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-edit ui-btn-icon-left ';
+    
 
     if (myRides[i].Status == "Primary") {
         str += 'primary"';
@@ -1998,7 +1996,7 @@ function saveRoutes() {
     var actives = $('#starts .ui-checkbox-on,#ends .ui-checkbox-on');
 
     for (var i = 0; i < actives.length; i++) {
-        routesArr.push(actives[i].innerHTML);
+        routesArr.push(actives[i].innerHTML.replace('"',''));
     }
 
     if (routesArr.length == 1) {
