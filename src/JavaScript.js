@@ -208,7 +208,7 @@ function myRideListItem(myRides, i) {
     else {
         str += '<a id="popDEL' + i + '" href="#deleteMePage" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-edit ui-btn-icon-left ';
     }
-    
+
 
     if (myRides[i].Status == "Primary") {
         str += 'primary"';
@@ -220,9 +220,16 @@ function myRideListItem(myRides, i) {
 
     str += '  onClick="delInfo(' + myRides[i].Id + ')">'
         + '<p style="float:right;width:20%;">יום ' + day
-        + ' <br> ' + myDate.getDate() + "/" + (myDate.getMonth() + 1)
-        + '<br>' + myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1")
-        + '</p>';
+        + ' <br> ' + myDate.getDate() + "/" + (myDate.getMonth() + 1);
+
+    var hour = myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1");
+    if (parseInt(hour.substring(0, 2)) <= 12) {
+        str += '<br>' + hour + '</p>';
+    }
+    else {
+        str += '<br>אחה"צ</p>';
+    }
+
 
     str = RideEquipment(str, myRides, i);
     str += '<p style="float:right;margin-right:5%;width: 55%;">';
@@ -756,9 +763,18 @@ function getRideStr(rideOBJ) {
     }
 
     str += 'יום ' + day
-        + ', ' + myDate.getDate() + "/" + (myDate.getMonth() + 1) + "/" + myDate.getFullYear()
-        + ', ' + myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1") + '</p>'
-        + '<p>מ' + rideOBJ.StartPoint + ' '
+        + ', ' + myDate.getDate() + "/" + (myDate.getMonth() + 1) + "/" + myDate.getFullYear() + ', ';
+
+    //if page is myRides show afternoon and not excact time
+    var hour = myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1");
+    if (parseInt(hour.substring(0, 2)) <= 12 && window.location.href.toString().indexOf('signMe') != -1 ) {
+        str += hour + '</p>';
+    }
+    else {
+        str += 'אחה"צ</p>';
+    }
+
+    str += '<p>מ' + rideOBJ.StartPoint + ' '
         + 'ל' + rideOBJ.EndPoint + ', '
         + '<br/>' + rideOBJ.Person + '</p>';
 
@@ -1407,7 +1423,7 @@ $(document).on('pagebeforeshow', '#loginPreference', function () {
 
 
 function getPatientsSCB(data) {
-    
+
     var results = $.parseJSON(data.d);
     Patients = results;
 
@@ -1419,7 +1435,7 @@ function getPatientsECB(e) {
 
 
 function getVolunteersSCB(data) {
-    
+
     var results = $.parseJSON(data.d);
     volenteers = results;
 
@@ -1516,7 +1532,7 @@ $(document).on('pagebeforeshow', '#loginLogo', function () {
 
     //for testing first time process
     //localStorage.clear();
-    
+
 });
 
 
@@ -1996,7 +2012,7 @@ function saveRoutes() {
     var actives = $('#starts .ui-checkbox-on,#ends .ui-checkbox-on');
 
     for (var i = 0; i < actives.length; i++) {
-        routesArr.push(actives[i].innerHTML.replace('"',''));
+        routesArr.push(actives[i].innerHTML.replace('"', ''));
     }
 
     if (routesArr.length == 1) {
@@ -2127,7 +2143,7 @@ function onDeviceReady() {
         // triggred by a notification sent from the notification server
         //-------------------------------------------------------------
         push.on('notification', function (data) {
-            
+
             if (data.additionalData.foreground == true) {
                 handleForeground(data);
             }
@@ -2144,7 +2160,7 @@ function onDeviceReady() {
         //-----------------------------------------------------------
         push.on('error', function (e) {
             alert(e.message);
-            
+
         });
     }
 
