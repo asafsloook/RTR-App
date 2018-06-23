@@ -1,4 +1,6 @@
-﻿.spinner {
+﻿
+
+.spinner {
     width: 40px;
     height: 40px;
     position: relative;
@@ -651,4 +653,8 @@ hr.weekSeperator {
     border-color: #c2fcc7;
     color: #111;
     text-shadow: none;
+}
+
+#myRidesPH li {
+  height:100px;
 }

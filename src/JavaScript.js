@@ -194,32 +194,52 @@ function printMyRides(myRides) {
     //$("#myRidesCounterPH").html(counterStr);
 }
 
+$(document).ready(function () {
+    
+    $(document.body).on('click', 'li.popINFO', function () {
+
+        var id_ = this.id.replace("popINFO", "");
+        delInfo(parseInt(id_));
+
+        //change page to infoPastRide 
+        $.mobile.pageContainer.pagecontainer("change", "#infoPastRide");
+    });
+
+    $(document.body).on('click', 'li.popDEL', function () {
+
+        var id_ = this.id.replace("popDEL", "");
+        delInfo(parseInt(id_));
+
+        //change page to deleteMePage
+        $.mobile.pageContainer.pagecontainer("change", "#deleteMePage");
+    });
+});
+
 //print my ride
 function myRideListItem(myRides, i) {
 
     var myDate = new Date(myRides[i].DateTime);
     var day = numToDayHebrew(myDate.getDay());
 
-    var str = '<li data-theme="a">';
+    var str = '<li data-theme="a" ';
 
     if ($('#doneTAB').prop("class").indexOf("ui-btn-active") != -1) {
-        str += '<a id="popINFO' + i + '" href="#infoPastRide" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-info ui-btn-icon-left ';
+        str += ' id="popINFO' + myRides[i].Id + '" class="';
     }
     else {
-        str += '<a id="popDEL' + i + '" href="#deleteMePage" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-edit ui-btn-icon-left ';
+        str += ' id="popDEL' + myRides[i].Id + '" class="';
     }
 
 
     if (myRides[i].Status == "Primary") {
-        str += 'primary"';
+        str += 'primary popINFO">';
     }
     else {
-        str += 'backup"';
+        str += 'backup popDEL">';
     }
 
 
-    str += '  onClick="delInfo(' + myRides[i].Id + ')">'
-        + '<p style="float:right;width:20%;">יום ' + day
+    str += '<p style="float:right;width:20%;">יום ' + day
         + ' <br> ' + myDate.getDate() + "/" + (myDate.getMonth() + 1);
 
     var hour = myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1");
@@ -232,7 +252,7 @@ function myRideListItem(myRides, i) {
 
 
     str = RideEquipment(str, myRides, i);
-    str += '<p style="float:right;margin-right:5%;width: 55%;">';
+    str += '<p style="float:right;margin-right:5%;width: 40%;">';
 
 
 
@@ -252,8 +272,10 @@ function myRideListItem(myRides, i) {
         str += " +" + (myRides[i].Melave.length)
     }
 
-    str += '</p>' + "</a>" + "</li> ";
+    str += '</p>'
 
+        + '<a style="float:left;border:none;margin:0" href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all deleteokBTN"></a>'
+        + "</li> ";
 
     return str;
 }
@@ -767,7 +789,7 @@ function getRideStr(rideOBJ) {
 
     //if page is myRides show afternoon and not excact time
     var hour = myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1");
-    if (parseInt(hour.substring(0, 2)) <= 12 && window.location.href.toString().indexOf('signMe') != -1 ) {
+    if (parseInt(hour.substring(0, 2)) <= 12 && window.location.href.toString().indexOf('signMe') != -1) {
         str += hour + '</p>';
     }
     else {
@@ -1310,10 +1332,13 @@ $(document).on('pagebeforeshow', '#deleteMePage', function () {
 
 });
 
-$(document).ready(function () {
-    $("#deleteokBTN").on('click', function () {
 
-        if (myRideHasMultipulePats(idDeleteChoose)) {
+$(document).ready(function () {
+    $(document.body).on('click', 'a.deleteokBTN', function () {
+
+        var id = parseInt($(this).parent()[0].id.replace("popDEL", "").replace("popINFO", ""));
+
+        if (myRideHasMultipulePats(id)) {
             $.mobile.pageContainer.pagecontainer("change", "#deleteOptions");
 
         }
