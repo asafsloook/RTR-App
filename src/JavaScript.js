@@ -8,10 +8,8 @@
 // space before () headers
 // daf rakaz text (my acc)
 // adding some green
-
 // get week (if fix)
 // match (shift fix)
-
 
 
 //get week function
@@ -194,26 +192,6 @@ function printMyRides(myRides) {
     //$("#myRidesCounterPH").html(counterStr);
 }
 
-$(document).ready(function () {
-    
-    $(document.body).on('click', 'li.popINFO', function () {
-
-        var id_ = this.id.replace("popINFO", "");
-        delInfo(parseInt(id_));
-
-        //change page to infoPastRide 
-        $.mobile.pageContainer.pagecontainer("change", "#infoPastRide");
-    });
-
-    $(document.body).on('click', 'li.popDEL', function () {
-
-        var id_ = this.id.replace("popDEL", "");
-        delInfo(parseInt(id_));
-
-        //change page to deleteMePage
-        $.mobile.pageContainer.pagecontainer("change", "#deleteMePage");
-    });
-});
 
 //print my ride
 function myRideListItem(myRides, i) {
@@ -221,7 +199,7 @@ function myRideListItem(myRides, i) {
     var myDate = new Date(myRides[i].DateTime);
     var day = numToDayHebrew(myDate.getDay());
 
-    var str = '<li data-theme="a" ';
+    var str = '<li style="border: 1px solid rgba(200,200,200,0.5);" data-theme="a" ';
 
     if ($('#doneTAB').prop("class").indexOf("ui-btn-active") != -1) {
         str += ' id="popINFO' + myRides[i].Id + '" class="';
@@ -239,7 +217,7 @@ function myRideListItem(myRides, i) {
     }
 
 
-    str += '<p style="float:right;width:20%;">יום ' + day
+    str += '<p style="float:right;width:20%;margin-right: 1%;">יום ' + day
         + ' <br> ' + myDate.getDate() + "/" + (myDate.getMonth() + 1);
 
     var hour = myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1");
@@ -274,12 +252,47 @@ function myRideListItem(myRides, i) {
 
     str += '</p>'
 
-        + '<a style="float:left;border:none;margin:0" href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all deleteokBTN"></a>'
+        + '<a style="float:left;border:none;margin:0;border-radius:25px" href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all deleteokBTN"></a>'
         + "</li> ";
 
     return str;
 }
 
+
+$(document).ready(function () {
+
+
+    $(document.body).on('click', '#myRides li', function (event) {
+
+        if (event.target.classList.contains('deleteokBTN')) {
+            var id = parseInt($(this)[0].id.replace("popDEL", "").replace("popINFO", ""));
+
+            if (myRideHasMultipulePats(id)) {
+                $.mobile.pageContainer.pagecontainer("change", "#deleteOptions");
+
+            }
+            else {
+                $.mobile.pageContainer.pagecontainer("change", "#deleteConfirm");
+            }
+            return;
+        }
+
+        if (this.id.includes("INFO")) {
+            var id_ = this.id.replace("popINFO", "");
+            delInfo(parseInt(id_));
+
+            $.mobile.pageContainer.pagecontainer("change", "#infoPastRide");
+        }
+        else {
+            var id_ = this.id.replace("popDEL", "");
+            delInfo(parseInt(id_));
+
+            $.mobile.pageContainer.pagecontainer("change", "#deleteMePage");
+        }
+
+    });
+
+});
 
 //filter past/plan rides from myRides list
 function filterMyRides(myRide) {
@@ -1332,22 +1345,6 @@ $(document).on('pagebeforeshow', '#deleteMePage', function () {
 
 });
 
-
-$(document).ready(function () {
-    $(document.body).on('click', 'a.deleteokBTN', function () {
-
-        var id = parseInt($(this).parent()[0].id.replace("popDEL", "").replace("popINFO", ""));
-
-        if (myRideHasMultipulePats(id)) {
-            $.mobile.pageContainer.pagecontainer("change", "#deleteOptions");
-
-        }
-        else {
-            $.mobile.pageContainer.pagecontainer("change", "#deleteConfirm");
-
-        }
-    });
-});
 
 function myRideHasMultipulePats(ridePatId) {
     var thisRide = getMyRideObjById(ridePatId);

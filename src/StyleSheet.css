@@ -384,9 +384,10 @@ option, select, span, #maslulLV, h4 {
     font-size: 20px;
 }
 
-#ridesPH li a, #myRidesPH li a {
+#ridesPH li a  {
     margin-bottom: 5%;
 }
+
 
 #ridesPH li p, #myRidesPH li p {
     font-size: 16px;
@@ -656,5 +657,5 @@ hr.weekSeperator {
 }
 
 #myRidesPH li {
-  height:100px;
+    height: 100px;
 }
