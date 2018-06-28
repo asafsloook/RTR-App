@@ -12,6 +12,9 @@
 // match (shift fix)
 
 
+//kavim
+
+
 //get week function
 Date.prototype.getWeek = function () {
     var d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
@@ -225,7 +228,7 @@ function myRideListItem(myRides, i) {
         str += '<br>' + hour + '</p>';
     }
     else {
-        str += '<br>אחה"צ</p>';
+        str += '<br> אחה"צ </p>';
     }
 
 
@@ -250,10 +253,13 @@ function myRideListItem(myRides, i) {
         str += " +" + (myRides[i].Melave.length)
     }
 
-    str += '</p>'
+    str += '</p>';
 
-        + '<a style="float:left;border:none;margin:0;border-radius:25px" href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all deleteokBTN"></a>'
-        + "</li> ";
+    if ($('#doneTAB').prop("class").indexOf("ui-btn-active") == -1) {
+        str += '<a style="float:left;border:none;margin:0;border-radius:25px" href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all deleteokBTN"></a>';
+    }
+    
+    str += "</li> ";
 
     return str;
 }
@@ -263,6 +269,10 @@ $(document).ready(function () {
 
 
     $(document.body).on('click', '#myRides li', function (event) {
+
+        if (this.id == "") {
+            return;
+        }
 
         if (event.target.classList.contains('deleteokBTN')) {
             var id = parseInt($(this)[0].id.replace("popDEL", "").replace("popINFO", ""));
