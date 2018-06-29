@@ -38,7 +38,7 @@ public class Volunteer
     string joinDate;//תאריך הצטרפות
     string status;//סטטוס
     int id;
-    int regId;
+    string regId;
 
     public string RegId { get; set; }
 
@@ -518,7 +518,7 @@ public class Volunteer
 
     internal List<Volunteer> getCoorList()
     {
-        string query = "select * from VolunteerTypeView where VolunTypeType='רכז' and IsActive='true'";
+        string query = "select * from VolunteerTypeView where VolunTypeType='רכז' or VolunTypeType='מנהל' and IsActive='true'";
         DbService db = new DbService();
         DataSet ds = db.GetDataSetByQuery(query);
         List<Volunteer> vl = new List<Volunteer>();
@@ -527,7 +527,7 @@ public class Volunteer
             Volunteer v = new Volunteer();
             v.DisplayName = dr["DisplayName"].ToString();
             v.CellPhone = dr["CellPhone"].ToString();
-            v.TypeVol = "רכז";
+            v.TypeVol =dr["VolunTypeType"].ToString();
             v.UserName = dr["UserName"].ToString();
             vl.Add(v);
         }
@@ -569,12 +569,11 @@ public class Volunteer
     }
 
 
-    public Volunteer getVolunteerByMobile(string mobile,string regId)
+    public Volunteer getVolunteerByMobile(string mobile, string regId)
     {
         DbService db = new DbService();
         string query = "select * from VolunteerTypeView where cellPhone = '" + mobile + "'";
         DataSet ds = db.GetDataSetByQuery(query);
-        
         Volunteer v = new Volunteer();
         foreach (DataRow dr in ds.Tables[0].Rows)
         {
@@ -622,6 +621,7 @@ public class Volunteer
         cmdParams[1] = cmd.Parameters.AddWithValue("@ID", v.Id);
 
         int result = db.ExecuteQuery(updateRegid, cmd.CommandType, cmdParams);
+
 
         return v;
 
@@ -791,7 +791,6 @@ public class Volunteer
             v.Address = dr["Address"].ToString();
             v.TypeVol = dr["VolunTypeType"].ToString();
             v.Email = dr["Email"].ToString();
-            v.RegId = dr["pnRegId"].ToString(); 
             //v.Day1 = dr["preferDay1"].ToString();
             //v.Hour1 = dr["preferHour1"].ToString();
             //v.Day2 = dr["preferDay2"].ToString();
@@ -881,39 +880,41 @@ public class Volunteer
         DbService db = new DbService();
         SqlCommand cmd = new SqlCommand();
         cmd.CommandType = CommandType.Text;
-        SqlParameter[] cmdParams = new SqlParameter[18];
+        SqlParameter[] cmdParams = new SqlParameter[17];
 
-        cmdParams[0] = cmd.Parameters.AddWithValue("@address", v.Address);
-        cmdParams[1] = cmd.Parameters.AddWithValue("@bDay", v.BirthDate);
-        cmdParams[2] = cmd.Parameters.AddWithValue("@cell", v.CellPhone);
-        cmdParams[3] = cmd.Parameters.AddWithValue("@cell2", v.CellPhone2);
-        cmdParams[4] = cmd.Parameters.AddWithValue("@city", v.City);
-        cmdParams[5] = cmd.Parameters.AddWithValue("@email", v.Email);
-        cmdParams[6] = cmd.Parameters.AddWithValue("@firstNameA", v.FirstNameA);
-        cmdParams[7] = cmd.Parameters.AddWithValue("@firstNameH", v.FirstNameH);
-        cmdParams[8] = cmd.Parameters.AddWithValue("@gender", v.Gender);
-        cmdParams[9] = cmd.Parameters.AddWithValue("@phone", v.HomePhone);
-        cmdParams[10] = cmd.Parameters.AddWithValue("@IsActive", v.IsActive);
-        cmdParams[11] = cmd.Parameters.AddWithValue("@jDate", v.JoinDate);
-        cmdParams[12] = cmd.Parameters.AddWithValue("@knowsArabic", v.KnowsArabic);
-        cmdParams[13] = cmd.Parameters.AddWithValue("@lastNameA", v.LastNameA);
-        cmdParams[14] = cmd.Parameters.AddWithValue("@lastNameH", v.LastNameH);
-        cmdParams[15] = cmd.Parameters.AddWithValue("@volType", v.TypeVol);
-        cmdParams[16] = cmd.Parameters.AddWithValue("@remarks", v.Remarks);
-        cmdParams[17] = cmd.Parameters.AddWithValue("@displayName", v.DisplayName);
-
+        cmdParams[0] = cmd.Parameters.AddWithValue("@address", v.Address);        
+        cmdParams[1] = cmd.Parameters.AddWithValue("@cell", v.CellPhone);
+        cmdParams[2] = cmd.Parameters.AddWithValue("@cell2", v.CellPhone2);
+        cmdParams[3] = cmd.Parameters.AddWithValue("@city", v.City);
+        cmdParams[4] = cmd.Parameters.AddWithValue("@email", v.Email);
+        cmdParams[5] = cmd.Parameters.AddWithValue("@firstNameA", v.FirstNameA);
+        cmdParams[6] = cmd.Parameters.AddWithValue("@firstNameH", v.FirstNameH);
+        cmdParams[7] = cmd.Parameters.AddWithValue("@gender", v.Gender);
+        cmdParams[8] = cmd.Parameters.AddWithValue("@phone", v.HomePhone);
+        cmdParams[9] = cmd.Parameters.AddWithValue("@IsActive", v.IsActive);
+        cmdParams[10] = cmd.Parameters.AddWithValue("@jDate", v.JoinDate);
+        cmdParams[11] = cmd.Parameters.AddWithValue("@knowsArabic", v.KnowsArabic);
+        cmdParams[12] = cmd.Parameters.AddWithValue("@lastNameA", v.LastNameA);
+        cmdParams[13] = cmd.Parameters.AddWithValue("@lastNameH", v.LastNameH);
+        cmdParams[14] = cmd.Parameters.AddWithValue("@volType", v.TypeVol);
+        cmdParams[15] = cmd.Parameters.AddWithValue("@remarks", v.Remarks);
+        cmdParams[16] = cmd.Parameters.AddWithValue("@displayName", v.DisplayName);
+        //cmdParams[1] = cmd.Parameters.AddWithValue("@bDay", v.BirthDate);
 
         string query = "";
         if (func == "edit")
         {
-            query = "update Volunteer set Address=@address, BirthDate=@bDay, CellPhone=@cell,";
+            query = "update Volunteer set Address=@address, CellPhone=@cell,";
             query += "CellPhone2=@cell2, CityCityName=@city, Email=@email, FirstNameA=@firstNameA, FirstNameH=@firstNameH, ";
             query += "Gender=@gender, HomePhone=@phone, IsActive=@IsActive, JoinDate=@jDate, KnowsArabic=@knowsArabic, LastNameA=@lastNameA, ";
-            query += "LastNameH=@lastNameH, Remarks=@remarks where DisplayName=@displayName";
+            query += "LastNameH=@lastNameH, Remarks=@remarks where DisplayName=@displayName"; //, BirthDate=@bDay
 
             res = db.ExecuteQuery(query, cmd.CommandType, cmdParams);
 
-
+            if (res==0)
+            {
+                throw new Exception();
+            }
             db = new DbService();
             query = "select Id from Volunteer where DisplayName='" + DisplayName + "'";
             Id = int.Parse(db.GetObjectScalarByQuery(query).ToString());
@@ -921,7 +922,10 @@ public class Volunteer
             db = new DbService();
             query = "update VolunType_Volunteer set VolunTypeType=@volType where VolunteerId=" + Id;
             res += db.ExecuteQuery(query, cmd.CommandType, cmdParams);
-
+            if (res == 0)
+            {
+                throw new Exception();
+            }
         }
         else if (func == "new")
         {

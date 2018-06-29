@@ -23,7 +23,7 @@ public class WebService : System.Web.Services.WebService
         //InitializeComponent(); 
     }
 
-    //----------------------Road to decovery-----------------------------------------------
+    //----------------------Road to Recovery-----------------------------------------------
     //[WebMethod]
     //[ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     //public void test(Class1 c)
@@ -50,7 +50,6 @@ public class WebService : System.Web.Services.WebService
 
 
     [WebMethod]
-    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     public string getVolunteerPrefs(int Id)
     {
         Volunteer v = new Volunteer();
@@ -114,17 +113,17 @@ public class WebService : System.Web.Services.WebService
     public string getPatientEscorted(string displayName)
     {
         JavaScriptSerializer j = new JavaScriptSerializer();
-        Patient c = new Patient();
-        List<Escorted> escortedsList = c.getescortedsList(displayName);
+        Patient p = new Patient();
+        List<Escorted> escortedsList = p.getescortedsList(displayName);
         return j.Serialize(escortedsList);
     }
 
     [WebMethod]
-    public void deactivateEscorted(string displayName, string active)// change name to SetStatus
+    public void setEscortedStatus(string displayName, string active)// change name to SetStatus
     {
         Escorted c = new Escorted();
         c.DisplayName = displayName;
-        c.deactivateEscorted(active);
+        c.setEscortedStatus(active);
     }
 
     [WebMethod]
@@ -152,12 +151,12 @@ public class WebService : System.Web.Services.WebService
     }
 
     [WebMethod]
-    public string getEscorted(string displayName)
+    public string getEscorted(string displayName, string patientName)
     {
         JavaScriptSerializer j = new JavaScriptSerializer();
         Escorted p = new Escorted();
         p.DisplayName = displayName;
-        Escorted escorted = p.getEscorted();
+        Escorted escorted = p.getEscorted(patientName);
         return j.Serialize(escorted);
     }
 
@@ -169,6 +168,15 @@ public class WebService : System.Web.Services.WebService
         p.DisplayName = displayName;
         Patient patient = p.getPatient();
         return j.Serialize(patient);
+    }
+
+    [WebMethod]
+    public string getContactType()
+    {
+        JavaScriptSerializer j = new JavaScriptSerializer();
+        Escorted e = new Escorted();
+        List<string> cl = e.getContactType();
+        return j.Serialize(cl);
     }
 
 
@@ -184,10 +192,12 @@ public class WebService : System.Web.Services.WebService
     //}
 
     //This method is used for שבץ אותי
-    [WebMethod]
+    [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     public string GetRidePatView(int volunteerId)
     {
+        string test = (string)HttpContext.Current.Session["userSession"];
+
         RidePat rp = new RidePat();
         List<RidePat> r = rp.GetRidePatView(volunteerId);
         JavaScriptSerializer j = new JavaScriptSerializer();
@@ -246,13 +256,13 @@ public class WebService : System.Web.Services.WebService
         try
         {
             Volunteer v = new Volunteer();
-            v = v.getVolunteerByMobile(mobile,regId);
+            v = v.getVolunteerByMobile(mobile, regId);
             JavaScriptSerializer j = new JavaScriptSerializer();
             return j.Serialize(v);
         }
         catch (Exception e)
         {
-            throw new Exception("Error in CheckUser; " + e.Message);
+            throw new Exception("Error in CheckUser: " + e.Message);
         }
 
 
@@ -319,6 +329,16 @@ public class WebService : System.Web.Services.WebService
         return j.Serialize(sl);
     }
 
+    [WebMethod]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public string getAllEquipment()
+    {
+        Patient p = new Patient();
+        List<string> el= p.getAllEquipment();
+        JavaScriptSerializer j = new JavaScriptSerializer();
+        return j.Serialize(el);
+    }
+
     #region volunteers functions
     [WebMethod]
     public void deactivateVolunteer(string displayName, string active)
@@ -337,7 +357,6 @@ public class WebService : System.Web.Services.WebService
     }
 
     [WebMethod]
-    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     public string getVolunteers(bool active)
     {
         JavaScriptSerializer j = new JavaScriptSerializer();
@@ -397,17 +416,30 @@ public class WebService : System.Web.Services.WebService
     #endregion
 
 
-    ///--------------------finish Road to decovery----------------------------------------
+    ///--------------------finish Road to Recovery----------------------------------------
 
     #region login functions
-    [WebMethod]
+    [WebMethod(EnableSession =true)]
     public string loginUser(string uName, string password)
     {
+        HttpContext.Current.Session["userSession"] = uName;
         JavaScriptSerializer j = new JavaScriptSerializer();
         User u = new User(uName, password);
         bool userInDB = u.CheckLoginDetails();
         return j.Serialize(userInDB);
     }
+
+    //[WebMethod]
+    //public string getUserType(string user)
+    //{
+    //    JavaScriptSerializer j = new JavaScriptSerializer();
+    //    User u = new User();
+    //    u.UserName = user;
+    //    u.UserType = u.getUserType(u.UserName);
+    //    return j.Serialize(u.UserType);
+    //}
+
+
 
     [WebMethod]
     public string loginDriver(string uName, string password)

@@ -275,9 +275,10 @@ $(document).ready(function () {
         }
 
         if (event.target.classList.contains('deleteokBTN')) {
-            var id = parseInt($(this)[0].id.replace("popDEL", "").replace("popINFO", ""));
+            var id_ = parseInt($(this)[0].id.replace("popDEL", "").replace("popINFO", ""));
+            delInfo(parseInt(id_));
 
-            if (myRideHasMultipulePats(id)) {
+            if (myRideHasMultipulePats(id_)) {
                 $.mobile.pageContainer.pagecontainer("change", "#deleteOptions");
 
             }
