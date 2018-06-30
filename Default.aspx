@@ -12,7 +12,7 @@
         Enter a Title: <asp:TextBox ID="titleTB" runat="server"></asp:TextBox> <br />
         Enter a Message: <asp:TextBox ID="messageTB" runat="server"></asp:TextBox> <br />
         
-         <asp:Button ID="submitBtn" runat="server" Text="Button" OnClick="submitBtn_click" />
+        <asp:Button ID="submitBtn" runat="server" Text="Button" OnClick="submitBtn_click" />
     </div>
     </form>
 </body>

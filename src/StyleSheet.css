@@ -657,5 +657,12 @@ hr.weekSeperator {
 }
 
 #myRidesPH li {
-    height: 100px;
+    height: 80px;
+    padding: 4%;
+    background-color: #fff;
+}
+
+#deleteOptions a, #signMePage a {
+    margin: 5% auto;
+    width: 80%;
 }

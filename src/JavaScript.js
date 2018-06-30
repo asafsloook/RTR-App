@@ -221,10 +221,14 @@ function myRideListItem(myRides, i) {
 
 
     str += '<p style="float:right;width:20%;margin-right: 1%;">יום ' + day
-        + ' <br> ' + myDate.getDate() + "/" + (myDate.getMonth() + 1);
+        + ' <br> ' + myDate.getDate() + "." + (myDate.getMonth() + 1);
 
     var hour = myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1");
+    
     if (parseInt(hour.substring(0, 2)) <= 12) {
+        if (hour.startsWith("0")) {
+            hour = hour.substring(1, hour.length);
+        }
         str += '<br>' + hour + '</p>';
     }
     else {
@@ -256,7 +260,7 @@ function myRideListItem(myRides, i) {
     str += '</p>';
 
     if ($('#doneTAB').prop("class").indexOf("ui-btn-active") == -1) {
-        str += '<a style="float:left;border:none;margin:0;border-radius:25px" href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all deleteokBTN"></a>';
+        str += '<a style="background-color: #ff8c8c;float:left;border:none;margin:0;border-radius:25px" href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all deleteokBTN"></a>';
     }
     
     str += "</li> ";
@@ -543,8 +547,8 @@ function ListItemStart(myDate, startPointStr) {
     var day = numToDayHebrew(myDate.getDay());
 
     str = '<li data-role="collapsible" data-theme="a"><hr style="margin:0;">'
-        + ' <h2 class="rideListHeader">יום   ' + day + '  &nbsp;  '
-        + myDate.getDate() + "/" + (myDate.getMonth() + 1)
+        + ' <h2 class="rideListHeader">יום   ' + day + "  &nbsp;  "
+        + myDate.getDate() + "." + (myDate.getMonth() + 1)
         + '  ' + startPointStr + '</h2>';
 
     return str;
@@ -588,11 +592,14 @@ function ListItemRide(results, i) {
 }
 
 
-
 function rideStr(str, results, i) {
 
     var myDate = new Date(results[i].DateTime);
     var time = myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1");
+
+    if (time.startsWith("0")) {
+        time = time.substring(1, time.length);
+    }
 
     str += '<p style="padding: 4%;float: right;margin-right: 0;text-align: right;border-radius:15px;max-width: 50%;"';
 
@@ -809,11 +816,15 @@ function getRideStr(rideOBJ) {
     }
 
     str += 'יום ' + day
-        + ', ' + myDate.getDate() + "/" + (myDate.getMonth() + 1) + "/" + myDate.getFullYear() + ', ';
+        + ', ' + myDate.getDate() + "." + (myDate.getMonth() + 1) + "." + myDate.getFullYear() + ', ';
 
     //if page is myRides show afternoon and not excact time
     var hour = myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1");
-    if (parseInt(hour.substring(0, 2)) <= 12 && window.location.href.toString().indexOf('signMe') != -1) {
+    
+    if (parseInt(hour.substring(0, 2)) <= 12) {
+        if (hour.startsWith("0")) {
+            hour = hour.substring(1, hour.length);
+        }
         str += hour + '</p>';
     }
     else {
@@ -913,7 +924,7 @@ function numToDayHebrew(i) {
         case 6:
             day = "ש";
     }
-    return day;
+    return day + "'";
 }
 
 ////fill the date ddl dynamicly (30 days forward)
@@ -924,7 +935,7 @@ function numToDayHebrew(i) {
 //        var nowDate = new Date();
 //        var myDate = new Date(nowDate.setDate(nowDate.getDate() + i));
 
-//        str += "<option>" + myDate.toLocaleDateString() + "</option>"; //myDate.getDate() + "/" + (myDate.getMonth() + 1) + "/" + myDate.getFullYear()
+//        str += "<option>" + myDate.toLocaleDateString() + "</option>"; //myDate.getDate() + "." + (myDate.getMonth() + 1) + "." + myDate.getFullYear()
 //    }
 
 //    $('#dateDDL').html(str);
@@ -1159,7 +1170,7 @@ function createSuggestPage(ride) {
     var day = numToDayHebrew(myDate.getDay());
 
     str += '<p>ביום ' + day
-        + ', ' + myDate.getDate() + "/" + (myDate.getMonth() + 1) + "/" + myDate.getFullYear()
+        + ', ' + myDate.getDate() + "." + (myDate.getMonth() + 1) + "." + myDate.getFullYear()
         + ', בשעה ' + myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1") + '</p>'
         + '<p>מ' + ride.StartPoint + ' ' + 'ל' + ride.EndPoint + '.</p>'
 
@@ -1184,7 +1195,7 @@ function createConfirmationPage(ride) {
     var day = numToDayHebrew(myDate.getDay());
 
     str += '<p>ביום ' + day
-        + ', ' + myDate.getDate() + "/" + (myDate.getMonth() + 1) + "/" + myDate.getFullYear()
+        + ', ' + myDate.getDate() + "." + (myDate.getMonth() + 1) + "." + myDate.getFullYear()
         + ', בשעה ' + myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1") + '</p>'
         + '<p>מ' + ride.StartPoint + ' ' + 'ל' + ride.EndPoint
         + '<br>' + ride.Person + " ו-" + ride.Melave.length + " מלווים";
@@ -1362,7 +1373,7 @@ function myRideHasMultipulePats(ridePatId) {
     var rideId = thisRide.rideId;
 
     for (var i = 0; i < myRides.length; i++) {
-        if (myRides[i].Id != ridePatId && myRides[i].rideId == rideId) {
+        if (myRides[i].Id != ridePatId && myRides[i].rideId == rideId && myRides[i].Status == "Primary") {
             return true;
         }
     }
@@ -1882,6 +1893,11 @@ $(document).ready(function () {
             return;
         }
 
+        if ($('#area .ui-checkbox-on').length == 0) {
+            alert("אנא בחר איזורים");
+            return;
+        }
+
         if (confirm("האם ברצונך לשמור את השינויים?")) {
             //local
             saveRoutes();
@@ -2038,8 +2054,7 @@ function saveRoutes() {
     area.south = $('#southArea').is(':checked');
     area.center = $('#centerArea').is(':checked');
     area.north = $('#northArea').is(':checked');
-
-
+    
     routesArr.push(area);
 
     var actives = $('#starts .ui-checkbox-on,#ends .ui-checkbox-on');
