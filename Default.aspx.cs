@@ -20,11 +20,13 @@ public partial class _Default : System.Web.UI.Page
         string message = messageTB.Text;
         string title = titleTB.Text;
 
-        myPushNot pushNot = new myPushNot(message, title, "1", 7, "default");
+        myPushNot pushNot = new myPushNot(message, title, "1", 0, "default");
         
         Payload p = new Payload();
         p.code = "benny";
         p.year = 52;
+
+        pushNot.data = p;
 
         string str = JsonConvert.SerializeObject(p);
 

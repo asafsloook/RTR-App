@@ -91,6 +91,11 @@ public class myPushNot
 
         foreach (var item in userList)
         {
+            if (item.Id != 7)
+            {
+                continue;
+            }
+
             if (item.RegId != "")
             {
                 registrationIDs.Add(item.RegId);
@@ -122,6 +127,7 @@ public class myPushNot
 
         foreach (var regId in registrationIDs)
         {
+            
             // Queue a notification to send
             gcmBroker.QueueNotification(new GcmNotification
             {
@@ -132,8 +138,8 @@ public class myPushNot
                 Data = JObject.Parse(
                         "{" +
                                "\"title\" : \"" + pushNot.Title + "\"," +
-                               "\"message\" : \"" + "somadata" + "\"," +
-                                "\"info\" : \"" + "somadata" + "\"," +
+                               "\"message\" : \"" + pushNot.Message + "\"," +
+                                "\"data\" : \"" + pushNot.data + "\"," +
                             "\"content-available\" : \"" + "1" + "\"" +
                         "}")
             });

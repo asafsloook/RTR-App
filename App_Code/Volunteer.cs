@@ -799,7 +799,7 @@ public class Volunteer
             //v.Hour3 = dr["preferHour3"].ToString();
             //v.PreferRoute1 = dr["preferRoute1"].ToString();
             //v.preferRoute2 = dr["preferRoute2"].ToString();
-            //v.PreferRoute3 = dr["preferRoute3"].ToString();
+            v.RegId = dr["pnRegId"].ToString();
             v.JoinDate = Convert.ToDateTime(dr["JoinDate"].ToString());
             v.IsActive = Convert.ToBoolean(dr["IsActive"].ToString());
             v.KnowsArabic = Convert.ToBoolean(dr["KnowsArabic"].ToString());
