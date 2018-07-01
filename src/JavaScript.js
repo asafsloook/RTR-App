@@ -2264,12 +2264,6 @@ function alertPushMsg(data) {
         if (x == "additionalData") {
             for (y in data.additionalData) {
                 message += "data.additionalData." + y + " :" + data.additionalData[y] + " , ";
-
-                if (y == "PayloadString") {
-                    for (z in data.additionalData.PayloadString) {
-                        message += "data.additionalData.PayloadString." + z + " :" + data.additionalData.PayloadString[z] + " , ";
-                    }
-                }
             }
         }
     }

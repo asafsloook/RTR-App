@@ -139,7 +139,8 @@ public class myPushNot
                         "{" +
                                "\"title\" : \"" + pushNot.Title + "\"," +
                                "\"message\" : \"" + pushNot.Message + "\"," +
-                                "\"data\" : \"" + pushNot.data + "\"," +
+                                "\"rideId\" : \"" + 195 + "\"," +
+                                "\"info\" : \" cancel \"," +
                             "\"content-available\" : \"" + "1" + "\"" +
                         "}")
             });

@@ -20,17 +20,15 @@ public partial class _Default : System.Web.UI.Page
         string message = messageTB.Text;
         string title = titleTB.Text;
 
-        myPushNot pushNot = new myPushNot(message, title, "1", 0, "default");
+        myPushNot pushNot = new myPushNot(message, title, "1", 1, "default");
         
-        Payload p = new Payload();
-        p.code = "benny";
-        p.year = 52;
+        //Payload p = new Payload();
+        //p.code = "benny";
+        //p.year = 52;
+        //pushNot.data = p;
 
-        pushNot.data = p;
-
-        string str = JsonConvert.SerializeObject(p);
-
-        pushNot.PayloadString = str;
+        //string str = JsonConvert.SerializeObject(p);
+        //pushNot.PayloadString = str;
 
         pushNot.RunPushNotification(volunteersList, pushNot);
         
