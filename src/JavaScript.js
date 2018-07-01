@@ -380,7 +380,7 @@ function deleteAllRideSuccessCB() {
 
     getRidesList();
 
-    $.mobile.pageContainer.pagecontainer("change", "#myRides");
+    $.mobile.pageContainer.pagecontainer("change", "#deleteConfirmation");
 }
 
 function deleteAllRideErrorCB() {
@@ -1895,6 +1895,7 @@ $(document).ready(function () {
 
         if ($('#area .ui-checkbox-on').length == 0) {
             alert("אנא בחר איזורים");
+            $('#mypanel').panel("close");
             return;
         }
 
@@ -1997,12 +1998,28 @@ function setVolunteerPrefsECB(e) {
 $(document).on('pageshow', '#myPreferences', function () {
 
     showAreas();
-
+    
     if (!isTabActive()) {
 
         $('#prefTabs a').eq(2).click().addClass('ui-btn-active');
     }
 });
+
+
+$(document).ready(function () {
+    $('#prefTabs a').on('click', function () {
+        localStorage.lastPrefTab = this.id;
+    }); 
+});
+
+
+$(document).ready(function () {
+    $('#mypanel').on('panelclose', function () {
+        var selector = "#"+localStorage.lastPrefTab;
+        $(selector).click();
+    });
+});
+
 
 function isTabActive() {
     for (var i = 0; i < $('#prefTabs a').length; i++) {
