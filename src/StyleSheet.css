@@ -666,3 +666,15 @@ hr.weekSeperator {
     margin: 5% auto;
     width: 80%;
 }
+
+#menuBTN::after {
+    width: 30px;
+    height: 30px;
+    margin-left: -15px;
+    margin-top: -15px;
+}
+
+#menuBTN {
+    width: 32px;
+    height: 32px;
+}  
