@@ -11,33 +11,50 @@ public partial class _Default : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
 
+
     }
-    protected void submitBtn_click(object sender, EventArgs e)
+
+
+    protected void cancelRide(int rideID, int userID)
     {
+        var p = new myPushNot();
+
+        var v = new Volunteer();
+        List<Volunteer> volunteersList = v.getVolunteersList(true);
+
+        foreach (var user in volunteersList)
+        {
+            if (user.Id == userID)
+            {
+                p.cancelRide(rideID, user);
+            }
+        }
+    }
+
+
+    protected void sendGlobal()
+    {
+
+    }
+
+    protected void cancelBTN_Click(object sender, EventArgs e)
+    {
+        int rideID = int.Parse(RideTB.Text);
+        int userID = int.Parse(UserTB.Text);
+
+        cancelRide(rideID, userID);
+    }
+
+    protected void globalBTN_Click(object sender, EventArgs e)
+    {
+        string title = TextBox1.Text;
+        string message = TextBox2.Text;
+
         Volunteer v = new Volunteer();
         List<Volunteer> volunteersList = v.getVolunteersList(true);
 
-        string message = messageTB.Text;
-        string title = titleTB.Text;
-
         myPushNot pushNot = new myPushNot(message, title, "1", 1, "default");
-        
-        //Payload p = new Payload();
-        //p.code = "benny";
-        //p.year = 52;
-        //pushNot.data = p;
 
-        //string str = JsonConvert.SerializeObject(p);
-        //pushNot.PayloadString = str;
-
-        pushNot.RunPushNotification(volunteersList, pushNot);
-        
-        
-        //pushNot.msgcnt = "1"; //message id - 
-        //pushNot.badge = 7; //count of messages - field name in the client is count
-        
+        pushNot.RunPushNotificationAll(volunteersList, pushNot);
     }
-
-
-   
 }

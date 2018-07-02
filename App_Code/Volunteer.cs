@@ -803,7 +803,7 @@ public class Volunteer
             v.JoinDate = Convert.ToDateTime(dr["JoinDate"].ToString());
             v.IsActive = Convert.ToBoolean(dr["IsActive"].ToString());
             v.KnowsArabic = Convert.ToBoolean(dr["KnowsArabic"].ToString());
-            v.BirthDate = Convert.ToDateTime(dr["BirthDate"].ToString());
+            //v.BirthDate = Convert.ToDateTime(dr["BirthDate"].ToString());
             v.Gender = dr["Gender"].ToString();
 
 

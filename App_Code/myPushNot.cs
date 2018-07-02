@@ -69,12 +69,12 @@ public class myPushNot
         set { Sound = "default"; }
     }
 
-    private Payload payload1;
+    private JObject data;
 
-    public Payload data
+    public JObject Data
     {
-        get { return payload1; }
-        set { payload1 = value; }
+        get { return data; }
+        set { data = value; }
     }
 
     public myPushNot(string _message, string _title, string _msgcnt, int _badge, string _sound)
@@ -85,24 +85,22 @@ public class myPushNot
         badge = _badge;
         sound = _sound;
     }
-    public void RunPushNotification(List<Volunteer> userList, myPushNot pushNot)
+
+    public void RunPushNotificationAll(List<Volunteer> userList, myPushNot pushNot)
     {
         List<string> registrationIDs = new List<string>();
 
         foreach (var item in userList)
         {
-            if (item.Id != 7)
-            {
-                continue;
-            }
 
+            //ignore nulls
             if (item.RegId != "")
             {
                 registrationIDs.Add(item.RegId);
             }
 
         }
-        
+
 
         // Configuration
         var config = new GcmConfiguration("AIzaSyDQfirNkIkUKNy9B2irYhb8CV6pYpIVBOQ");
@@ -127,7 +125,7 @@ public class myPushNot
 
         foreach (var regId in registrationIDs)
         {
-            
+
             // Queue a notification to send
             gcmBroker.QueueNotification(new GcmNotification
             {
@@ -139,8 +137,7 @@ public class myPushNot
                         "{" +
                                "\"title\" : \"" + pushNot.Title + "\"," +
                                "\"message\" : \"" + pushNot.Message + "\"," +
-                                "\"rideId\" : \"" + 195 + "\"," +
-                                "\"info\" : \" cancel \"," +
+                                "\"info\" : \" Optional \"," +
                             "\"content-available\" : \"" + "1" + "\"" +
                         "}")
             });
@@ -153,5 +150,61 @@ public class myPushNot
         gcmBroker.Stop();
     }
 
+    public void RunPushNotificationOne(Volunteer user, JObject data)
+    {
 
+        // Configuration
+        var config = new GcmConfiguration("AIzaSyDQfirNkIkUKNy9B2irYhb8CV6pYpIVBOQ");
+        config.GcmUrl = "https://fcm.googleapis.com/fcm/send";
+
+        // Create a new broker
+        var gcmBroker = new GcmServiceBroker(config);
+
+        // Wire up events
+        gcmBroker.OnNotificationFailed += (notification, aggregateEx) =>
+        {
+            //Console.WriteLine("GCM Notification Failed!");
+        };
+
+        gcmBroker.OnNotificationSucceeded += (notification) =>
+        {
+            //Console.WriteLine("GCM Notification Sent!");
+        };
+
+        // Start the broker
+        gcmBroker.Start();
+
+        // Queue a notification to send
+        gcmBroker.QueueNotification(new GcmNotification
+        {
+
+            RegistrationIds = new List<string> {
+            user.RegId
+        },
+            Data = data
+        });
+
+
+
+        // Stop the broker, wait for it to finish   
+        // This isn't done after every message, but after you're
+        // done with the broker
+        gcmBroker.Stop();
+    }
+    
+    public void cancelRide(int rideID, Volunteer user)
+    {
+        var x = new JObject();
+        
+        x.Add("title","נסיעה בוטלה");
+
+        //modify by import ride from db by rideID
+        x.Add("message", "ביום 26.8 מהדסה לירושלים");
+
+        x.Add("rideID",rideID);
+        x.Add("info", "Canceled");
+        x.Add("content-available", 1);
+      
+        RunPushNotificationOne(user, x);
+    }
 }

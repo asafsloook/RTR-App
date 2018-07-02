@@ -12,7 +12,7 @@
 // match (shift fix)
 
 
-//kavim
+//add manager to rakaz permisions
 
 
 //get week function
@@ -2267,16 +2267,20 @@ function alertPushMsg(data) {
             }
         }
     }
-    alert('notification: ' + message);
+
+    if (confirm('notification: ' + message)) {
+
+        //send to server to proceed
+    }
 }
 
 
 if (window.location.href.toString().indexOf('http') == -1) {
 
     document.addEventListener("deviceready", onDeviceReady, false);
-
+    
+    //ignore backbutton
     document.addEventListener("backbutton", onBackKeyDown, false);
-
     function onBackKeyDown() {
         return;
     }
