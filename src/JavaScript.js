@@ -14,6 +14,13 @@
 
 //add manager to rakaz permisions
 
+domain = '';
+if (!window.location.href.includes('http')) {
+    domain = 'https://proj.ruppin.ac.il/igroup91/test2/tar2';
+}
+else {
+    domain = '..';
+}
 
 //get week function
 Date.prototype.getWeek = function () {
@@ -2192,15 +2199,7 @@ function onDeviceReady() {
             //alert('reg with key: ' + data.registrationId);
             localStorage.RegId = data.registrationId;
 
-            if (localStorage.cellphone == null) {
-
-                manualLogin();
-
-            }
-            else {
-                var cellphone = localStorage.cellphone;
-                checkUserPN(cellphone);
-            }
+            login();
 
         });
 
@@ -2228,7 +2227,9 @@ function onDeviceReady() {
 
         });
     }
-
+    else {
+        login();
+    }
 }
 
 //------------------------------------------------
@@ -2257,6 +2258,17 @@ function handleColdStart(data) {
 
 
 function alertPushMsg(data) {
+
+    //var pushObj = data;
+    //pushObj.message;
+    //pushObj.title;
+    //pushObj.additionalData.coldstart;
+    //pushObj.additionalData.foreground;
+    //pushObj.additionalData.info;
+    //pushObj.additionalData.rideID;
+
+    //decide kind of messege
+
     var message = '';
     for (x in data) {
         message += "data." + x + " :" + data[x] + " , ";
@@ -2271,7 +2283,19 @@ function alertPushMsg(data) {
     if (confirm('notification: ' + message)) {
 
         //send to server to proceed
+        var request = {
+            userId: parseInt(localStorage.userId)
+        };
+        confirmPush(request, confirmPushSCB, confirmPushECB);
     }
+}
+
+function confirmPushSCB(data) {
+
+}
+
+function confirmPushECB(e) {
+
 }
 
 
@@ -2286,7 +2310,10 @@ if (window.location.href.toString().indexOf('http') == -1) {
     }
 }
 else {
+    login();
+}
 
+function login() {
     if (localStorage.cellphone == null) {
 
         manualLogin();

@@ -6,6 +6,8 @@ using System.Web.Script.Serialization;
 using System.Web.Services;
 using System.Globalization;
 using System.Web.Script.Services;
+using System.Text;
+using System.IO;
 
 /// <summary>
 /// Summary description for WebService
@@ -90,6 +92,19 @@ public class WebService : System.Web.Services.WebService
         p.Equipment = p.getEquipmentForPatient(patient);
         return j.Serialize(p.Equipment);
     }
+
+    [WebMethod]
+    public string confirmPush(int userId)
+    {
+        StringBuilder sb = new  StringBuilder();
+        sb.Append("user " + userId + " confirm push: " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + Environment.NewLine);
+        
+        File.AppendAllText(Server.MapPath(".") +  "\\loger.txt", sb.ToString());
+
+        JavaScriptSerializer j = new JavaScriptSerializer();
+        return j.Serialize("ok");
+    }
+
 
     [WebMethod]
     public string getCoorList()

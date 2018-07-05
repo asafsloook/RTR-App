@@ -7,7 +7,7 @@ function GetRides(request, GetRidesSuccessCB, GetRidesErrorCB) {
     var dataString = JSON.stringify(request);
 
     $.ajax({ // ajax call starts
-        url: '../WebService.asmx/GetRidePatView',
+        url: domain + '/WebService.asmx/GetRidePatView',
         data: dataString,                          // the parameters sent to the server
         type: 'POST',                              // can be also GET
         dataType: 'json',                          // expecting JSON datatype from the server
@@ -24,7 +24,7 @@ function GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB) {
     var dataString = JSON.stringify(request);
 
     $.ajax({ // ajax call starts
-        url: '../WebService.asmx/getMyRides',   // server side web service method
+        url: domain + '/WebService.asmx/getMyRides',   // server side web service method
         data: dataString,                          // the parameters sent to the server
         type: 'POST',                              // can be also GET
         dataType: 'json',                          // expecting JSON datatype from the server
@@ -42,7 +42,7 @@ function signDriver(request, signDriverSuccessCB, signDriverErrorCB) {
     var dataString = JSON.stringify(request);
 
     $.ajax({ // ajax call starts
-        url: '../WebService.asmx/AssignRideToRidePat',   // server side web service method
+        url: domain + '/WebService.asmx/AssignRideToRidePat',   // server side web service method
         data: dataString,                          // the parameters sent to the server
         type: 'POST',                              // can be also GET
         dataType: 'json',                          // expecting JSON datatype from the server
@@ -58,7 +58,7 @@ function CombineRideRidePatAjax(request, signDriverSuccessCB, signDriverErrorCB)
     var dataString = JSON.stringify(request);
 
     $.ajax({ // ajax call starts
-        url: '../WebService.asmx/CombineRideRidePat',   // server side web service method
+        url: domain + '/WebService.asmx/CombineRideRidePat',   // server side web service method
         data: dataString,                          // the parameters sent to the server
         type: 'POST',                              // can be also GET
         dataType: 'json',                          // expecting JSON datatype from the server
@@ -75,7 +75,7 @@ function deleteRide(request, deleteRideSuccessCB, deleteRideErrorCB) {
     var dataString = JSON.stringify(request);
 
     $.ajax({ // ajax call starts
-        url: '../WebService.asmx/LeaveRidePat',   // server side web service method
+        url: domain + '/WebService.asmx/LeaveRidePat',   // server side web service method
         data: dataString,                          // the parameters sent to the server
         type: 'POST',                              // can be also GET
         dataType: 'json',                          // expecting JSON datatype from the server
@@ -92,7 +92,7 @@ function deleteAllRide(request, deleteRideSuccessCB, deleteRideErrorCB) {
     var dataString = JSON.stringify(request);
 
     $.ajax({ // ajax call starts
-        url: '../WebService.asmx/DeleteDriver',   // server side web service method
+        url: domain + '/WebService.asmx/DeleteDriver',   // server side web service method
         data: dataString,                          // the parameters sent to the server
         type: 'POST',                              // can be also GET
         dataType: 'json',                          // expecting JSON datatype from the server
@@ -109,7 +109,7 @@ function checkUser(request, checkUserSuccessCB, checkUserErrorCB) {
     var dataString = JSON.stringify(request);
 
     $.ajax({ // ajax call starts
-        url: '../WebService.asmx/CheckUser',   // server side web service method
+        url: domain + '/WebService.asmx/CheckUser',   // server side web service method
         data: dataString,                          // the parameters sent to the server
         type: 'POST',                              // can be also GET
         dataType: 'json',                          // expecting JSON datatype from the server
@@ -126,7 +126,7 @@ function setVolunteerPrefs(request, setVolunteerPrefsSCB, setVolunteerPrefsECB) 
     var dataString = JSON.stringify(request);
 
     $.ajax({ // ajax call starts
-        url: '../WebService.asmx/setVolunteerPrefs',   // server side web service method
+        url: domain + '/WebService.asmx/setVolunteerPrefs',   // server side web service method
         data: dataString,                          // the parameters sent to the server
         type: 'POST',                              // can be also GET
         dataType: 'json',                          // expecting JSON datatype from the server
@@ -143,7 +143,7 @@ function getVolunteers(request, getVolunteersSCB, getVolunteersECB) {
     var dataString = JSON.stringify(request);
 
     $.ajax({ // ajax call starts
-        url: '../WebService.asmx/getVolunteers',   // server side web service method
+        url: domain + '/WebService.asmx/getVolunteers',   // server side web service method
         data: dataString,                          // the parameters sent to the server
         type: 'POST',                              // can be also GET
         dataType: 'json',                          // expecting JSON datatype from the server
@@ -159,12 +159,29 @@ function getPatients(request, getPatientsSCB, getPatientsECB) {
     var dataString = JSON.stringify(request);
 
     $.ajax({ // ajax call starts
-        url: '../WebService.asmx/getPatients',   // server side web service method
+        url: domain + '/WebService.asmx/getPatients',   // server side web service method
         data: dataString,                          // the parameters sent to the server
         type: 'POST',                              // can be also GET
         dataType: 'json',                          // expecting JSON datatype from the server
         contentType: 'application/json; charset = utf-8', // sent to the server
         success: getPatientsSCB,                // data.d id the Variable data contains the data we get from serverside
         error: getPatientsECB
+    }) // end of ajax call
+}
+
+
+function confirmPush(request, confirmPushSCB, confirmPushECB) {
+
+    // serialize the object to JSON string
+    var dataString = JSON.stringify(request);
+
+    $.ajax({ // ajax call starts
+        url: domain + '/WebService.asmx/confirmPush',   // server side web service method
+        data: dataString,                          // the parameters sent to the server
+        type: 'POST',                              // can be also GET
+        dataType: 'json',                          // expecting JSON datatype from the server
+        contentType: 'application/json; charset = utf-8', // sent to the server
+        success: confirmPushSCB,                // data.d id the Variable data contains the data we get from serverside
+        error: confirmPushECB
     }) // end of ajax call
 }
