@@ -1,11 +1,43 @@
 ﻿
 
+    .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba( 255, 255, 255, .8 );
+}
+
+/* When the body has the loading class, we turn
+   the scrollbar off with overflow:hidden */
+body.loading .modal {
+    overflow: hidden;
+}
+
+/* Anytime the body has the loading class, our
+   modal element will be visible */
+body.loading .modal {
+    display: block;
+}
+
+
 .spinner {
     width: 40px;
     height: 40px;
     position: relative;
     margin: 100px auto;
 }
+
+.modal .spinner {
+    margin: 0;
+    left: calc(50% - 20px) !important;
+    top: calc(50% - 20px) !important;
+}
+
+
 
 .double-bounce1, .double-bounce2 {
     width: 100%;
@@ -47,7 +79,7 @@
     }
 }
 
-a, p, span, label, td, #volunteerRequest label, #volunteerProblems label{
+a, p, span, label, td, #volunteerRequest label, #volunteerProblems label {
     font-size: 20px;
 }
 
@@ -55,7 +87,7 @@ a, p, span, label, td, #volunteerRequest label, #volunteerProblems label{
     background-color: #C7DE9C;
 }
 
-    #loginLogo p, #loginFailed a, #loginFailed p, #loginFailed input, #loginFailed .ui-btn, #loginPreference, #mypanel a {
+#loginLogo p, #loginFailed a, #loginFailed p, #loginFailed input, #loginFailed .ui-btn, #loginPreference, #mypanel a {
     font-size: 25px !important;
 }
 
@@ -66,6 +98,9 @@ a, p, span, label, td, #volunteerRequest label, #volunteerProblems label{
 
 #myRides .ui-btn-icon-left:after, #mypanel .ui-btn-icon-left:after, #signMe .ui-btn-icon-left:after, #myPreferences .ui-btn-icon-left:after, #allPatients .ui-btn-icon-left:after, #allVolunteers .ui-btn-icon-left:after, #rakazLogin .ui-btn-icon-left:after {
     background-color: #94C541 !important;
+}
+
+#mypanel .ui-btn-icon-left:after {
 }
 
 #mypanel {
@@ -82,7 +117,7 @@ a, p, span, label, td, #volunteerRequest label, #volunteerProblems label{
 }
 
 #showAllRides .ui-checkbox {
-    margin: 0;  
+    margin: 0;
 }
 
 
@@ -119,7 +154,7 @@ h1, h2 {
     font-size: 16px;
 }
 
- .ui-checkbox label::after {
+.ui-checkbox label::after {
     background-color: #94C541 !important;
     border-color: #94C541 !important;
     color: #fff !important;
@@ -384,7 +419,7 @@ option, select, span, #maslulLV, h4 {
     font-size: 20px;
 }
 
-#ridesPH li a  {
+#ridesPH li a {
     margin-bottom: 5%;
 }
 
@@ -677,4 +712,4 @@ hr.weekSeperator {
 #menuBTN {
     width: 32px;
     height: 32px;
-}  
+}

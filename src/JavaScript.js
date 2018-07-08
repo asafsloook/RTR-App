@@ -182,17 +182,22 @@ function printMyRides(myRides) {
         return a.DateTime.toString().localeCompare(b.DateTime.toString());
     });
 
-    str = "";
+    var myRideStr = "";
     for (var i = 0; i < myRides.length; i++) {
 
         if (filterMyRides(myRides[i])) {
-            str += myRideListItem(myRides, i);
+
+            var temp = myRideListItem(myRides, i);
+            if (typeof temp !== 'undefined') {
+                myRideStr += temp;
+            }
         }
     }
 
     //var counterStr = '<p style="margin:0px;">מספר הנסיעות: ' + myRides.length + '</p>';
+    
 
-    $("#myRidesPH").html(str);
+    $("#myRidesPH").html(myRideStr);
     $("#myRidesPH").listview("refresh");
 
     if ($('#myRidesPH li').length == 0) {
@@ -208,6 +213,11 @@ function myRideListItem(myRides, i) {
 
     var myDate = new Date(myRides[i].DateTime);
     var day = numToDayHebrew(myDate.getDay());
+
+    //dont show past rides as backup driver (not a actual ride)
+    if (myRides[i].Status != "Primary" && $('#doneTAB').prop("class").indexOf("ui-btn-active") != -1) {
+        return;
+    }
 
     var str = '<li style="border: 1px solid rgba(200,200,200,0.5);" data-theme="a" ';
 
@@ -231,7 +241,7 @@ function myRideListItem(myRides, i) {
         + ' <br> ' + myDate.getDate() + "." + (myDate.getMonth() + 1);
 
     var hour = myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1");
-    
+
     if (parseInt(hour.substring(0, 2)) <= 12) {
         if (hour.startsWith("0")) {
             hour = hour.substring(1, hour.length);
@@ -269,7 +279,7 @@ function myRideListItem(myRides, i) {
     if ($('#doneTAB').prop("class").indexOf("ui-btn-active") == -1) {
         str += '<a style="background-color: #ff8c8c;float:left;border:none;margin:0;border-radius:25px" href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all deleteokBTN"></a>';
     }
-    
+
     str += "</li> ";
 
     return str;
@@ -827,7 +837,7 @@ function getRideStr(rideOBJ) {
 
     //if page is myRides show afternoon and not excact time
     var hour = myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1");
-    
+
     if (parseInt(hour.substring(0, 2)) <= 12) {
         if (hour.startsWith("0")) {
             hour = hour.substring(1, hour.length);
@@ -2005,7 +2015,7 @@ function setVolunteerPrefsECB(e) {
 $(document).on('pageshow', '#myPreferences', function () {
 
     showAreas();
-    
+
     if (!isTabActive()) {
 
         $('#prefTabs a').eq(2).click().addClass('ui-btn-active');
@@ -2016,13 +2026,13 @@ $(document).on('pageshow', '#myPreferences', function () {
 $(document).ready(function () {
     $('#prefTabs a').on('click', function () {
         localStorage.lastPrefTab = this.id;
-    }); 
+    });
 });
 
 
 $(document).ready(function () {
     $('#mypanel').on('panelclose', function () {
-        var selector = "#"+localStorage.lastPrefTab;
+        var selector = "#" + localStorage.lastPrefTab;
         $(selector).click();
     });
 });
@@ -2078,7 +2088,7 @@ function saveRoutes() {
     area.south = $('#southArea').is(':checked');
     area.center = $('#centerArea').is(':checked');
     area.north = $('#northArea').is(':checked');
-    
+
     routesArr.push(area);
 
     var actives = $('#starts .ui-checkbox-on,#ends .ui-checkbox-on');
@@ -2302,7 +2312,7 @@ function confirmPushECB(e) {
 if (window.location.href.toString().indexOf('http') == -1) {
 
     document.addEventListener("deviceready", onDeviceReady, false);
-    
+
     //ignore backbutton
     document.addEventListener("backbutton", onBackKeyDown, false);
     function onBackKeyDown() {
@@ -2324,3 +2334,13 @@ function login() {
         checkUserPN(cellphone);
     }
 }
+
+
+$(document).ajaxStart(function () {
+    $("body").addClass("loading");
+});
+
+$(document).ajaxStop(function () {
+    $("body").removeClass("loading");
+});
+
