@@ -94,7 +94,7 @@ public class myPushNot
         {
 
             //ignore nulls
-            if (item.RegId != "")
+            if (item.RegId != "" && item.RegId != "errorKey")
             {
                 registrationIDs.Add(item.RegId);
             }
@@ -135,8 +135,8 @@ public class myPushNot
         },
                 Data = JObject.Parse(
                         "{" +
-                               "\"title\" : \"" + pushNot.Title + "\"," +
-                               "\"message\" : \"" + pushNot.Message + "\"," +
+                               "\"title\" : \"" + Title + "\"," +
+                               "\"message\" : \"" + Message + "\"," +
                                 "\"info\" : \" Optional \"," +
                             "\"content-available\" : \"" + "1" + "\"" +
                         "}")

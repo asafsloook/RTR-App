@@ -195,7 +195,7 @@ function printMyRides(myRides) {
     }
 
     //var counterStr = '<p style="margin:0px;">מספר הנסיעות: ' + myRides.length + '</p>';
-    
+
 
     $("#myRidesPH").html(myRideStr);
     $("#myRidesPH").listview("refresh");
@@ -1466,7 +1466,7 @@ $(document).on('pagebeforeshow', '#loginPreference', function () {
     $("#welcomeTitle").html("שלום " + userInfo.FirstNameH);
     $("#rakazBTNS").hide();
 
-    if (userInfo.TypeVol == "רכז") {
+    if (userInfo.TypeVol == "רכז" || userInfo.TypeVol == 'מנהל') {
         $("#rakazBTNS").show();
 
         request = {
@@ -1940,7 +1940,7 @@ $(document).ready(function () {
     });
 
     $('a#menuBTN').on('click', function () {
-        if (localStorage.userType == 'רכז') {
+        if (localStorage.userType == 'רכז' || localStorage.userType == 'מנהל') {
             $('li #loginAgainTab').parent().show()
         }
         else {
@@ -2316,7 +2316,7 @@ if (window.location.href.toString().indexOf('http') == -1) {
     //ignore backbutton
     document.addEventListener("backbutton", onBackKeyDown, false);
     function onBackKeyDown() {
-        return;
+            return;
     }
 }
 else {

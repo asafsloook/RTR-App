@@ -589,7 +589,10 @@ public class Volunteer
             v.City = dr["CityCityName"].ToString();
             v.Address = dr["Address"].ToString();
             v.Email = dr["Email"].ToString();
-            v.BirthDate = Convert.ToDateTime(dr["BirthDate"].ToString());
+            if (dr["BirthDate"].ToString() != "")
+            {
+                v.BirthDate = Convert.ToDateTime(dr["BirthDate"].ToString());
+            }
             v.JoinDate = Convert.ToDateTime(dr["JoinDate"].ToString());
             v.Status = dr["IsActive"].ToString();
             v.Gender = dr["Gender"].ToString();
