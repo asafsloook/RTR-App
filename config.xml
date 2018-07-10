@@ -10,7 +10,9 @@
     </description>
     <author href="http://phonegap.com" email="r2r@phonegap.com">
         R2R
-    </author>        
+    </author>
+
+  <icon src="icon.png" />
 
   <preference name="phonegap-version" value="cli-6.5.0"/>
 
