@@ -173,8 +173,18 @@ function GetMyRidesErrorCB(e) {
     alert("I caught the exception : failed in GetRidesErrorCB \n The exception message is : " + e.responseText);
 }
 
+
+function managePlusBTN() {
+    if ($('#doneTAB').prop("class").indexOf("ui-btn-active") != -1) {
+
+    }
+}
+
 //print my rides
 function printMyRides(myRides) {
+
+    managePlusBTN();
+
     $("#myRidesPH").empty();
 
     //sort result by datetime
@@ -1353,6 +1363,14 @@ $(document).on('pagebeforeshow', '#myRides', function () {
 
 $(document).ready(function () {
     $(document).on('click', '#doneTAB,#planTAB', function () {
+
+        if (this.id == "planTAB") {
+            $('#plusSignMe').show();
+        }
+        else {
+            $('#plusSignMe').hide();    
+        }
+
         printMyRides(myRides);
     });
 });
