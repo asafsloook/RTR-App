@@ -1434,8 +1434,8 @@ $(document).one('pagebeforecreate', function () {
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="myRidesTab" data-theme="a">הנסיעות שלי</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="preferencesTab" href="#myPreferences" data-theme="a">העדפות</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="loginAgainTab" href="#" data-theme="a">חזור לחשבון שלי</a> </li>'
-        //+ '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="trackRidesTab" href="#trackRides" data-theme="b">מעקב הסעות</a> </li>'
-        //+ '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="trackRidesTab" href="#auction" data-theme="b">מכרז</a> </li>'
+        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="trackRidesTab" href="#trackRides" data-theme="b">מעקב הסעות</a> </li>'
+        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="auctionTab" href="#auction" data-theme="b">מכרז</a> </li>' 
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-delete">'
         + '<a href="#" data-rel="close">סגירת התפריט</a>'
         + '</li>'
@@ -1909,12 +1909,18 @@ function goMenu(id) {
         var cellphone = localStorage.cellphone;
         checkUserPN(cellphone);
     }
+    else if (id == 'auctionTab') {
+        $.mobile.pageContainer.pagecontainer("change", "#auction");
+    }
+    else if (id == 'trackRidesTab') {
+        $.mobile.pageContainer.pagecontainer("change", "#trackRides");
+    }
 }
 
 
 $(document).ready(function () {
     //remember to add this event to every new page
-    $('#signMeTab , #myRidesTab , #loginAgainTab').on('click', function () {
+    $('#signMeTab , #myRidesTab , #loginAgainTab, #auctionTab, #trackRidesTab').on('click', function () {
 
         if (window.location.href.toString().indexOf('myPreferences') == -1) {
             goMenu(this.id);
@@ -1959,10 +1965,10 @@ $(document).ready(function () {
 
     $('a#menuBTN').on('click', function () {
         if (localStorage.userType == 'רכז' || localStorage.userType == 'מנהל') {
-            $('li #loginAgainTab').parent().show()
+            $('li #loginAgainTab,li #auctionTab,li #trackRidesTab').parent().show()
         }
         else {
-            $('li #loginAgainTab').parent().hide()
+            $('li #loginAgainTab,li #auctionTab,li #trackRidesTab').parent().hide()
         }
     });
 });
@@ -2008,16 +2014,7 @@ function setVolunteerPrefsSCB(data) {
     alert("ההעדפות שלך נשמרו בהצלחה!");
 
     if (typeof tempID !== 'undefined') {
-        if (tempID == 'signMeTab') {
-            $.mobile.pageContainer.pagecontainer("change", "#signMe");
-        }
-        else if (tempID == 'myRidesTab') {
-            $.mobile.pageContainer.pagecontainer("change", "#myRides");
-        }
-        else if (tempID == 'loginAgainTab') {
-            var cellphone = localStorage.cellphone;
-            checkUserPN(cellphone);
-        }
+        goMenu(tempID);
     }
     else {
         //first connect
@@ -2315,6 +2312,7 @@ function alertPushMsg(data) {
             userId: parseInt(localStorage.userId)
         };
         confirmPush(request, confirmPushSCB, confirmPushECB);
+        
     }
 }
 
