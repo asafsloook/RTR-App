@@ -488,7 +488,7 @@ hr {
     width: 100%;
 }
 
-#deleteMePage, #signMePage, #suggest, #infoPastRide, #deleteConfirm, #signConfirmation, #deleteConfirmation {
+#deleteMePage, #signMePage, #suggest, #infoPastRide, #deleteConfirm, #signConfirmation, #deleteConfirmation, #infoPage {
     text-align: center;
     padding: 30% 0px;
 }
@@ -684,7 +684,7 @@ hr.weekSeperator {
     text-shadow: none;
 }
 
-#okBTN, #deleteMePageNOBTN, #deleteOptionsNOBTN, #deleteConfirmNOBTN, #closeInfoBTN, #suggestOkBTN, #signConfirmationOkBTN, #deleteConfirmationBTN {
+#okBTN, #backToSignMe, #deleteMePageNOBTN, #deleteOptionsNOBTN, #deleteConfirmNOBTN, #closeInfoBTN, #suggestOkBTN, #signConfirmationOkBTN, #deleteConfirmationBTN {
     background-color: #c2fcc7;
     border-color: #c2fcc7;
     color: #111;

@@ -10,9 +10,12 @@
 // adding some green
 // get week (if fix)
 // match (shift fix)
-
-
 //add manager to rakaz permisions
+
+
+//add info btn to signme lists
+//save prefs by all ctrl change
+
 
 domain = '';
 if (!window.location.href.includes('http')) {
@@ -619,6 +622,31 @@ function ListItemRide(results, i) {
 }
 
 
+$(document).ready(function () {
+    $(document.body).on('click', '#ridesPH p.backup, #ridesPH p.primary ', function (event) {
+
+        var id = parseInt(this.nextSibling.name);
+        var ride = getRideById(id);
+
+        printInfo(ride);
+
+        $.mobile.pageContainer.pagecontainer("change", "#infoPage");
+    });
+});
+
+
+function printInfo(ride) {
+
+    $('#infoPagePH').empty();
+
+    var str = getRideStr(ride);
+    str += '<i class="fa fa-phone-square" style="font-size: 30px;"></i><br><br>'
+    //call
+    //window.open("tel:" + this.id);
+    
+    $('#infoPagePH').html(str);
+}
+
 function rideStr(str, results, i) {
 
     var myDate = new Date(results[i].DateTime);
@@ -628,16 +656,17 @@ function rideStr(str, results, i) {
         time = time.substring(1, time.length);
     }
 
-    str += '<p style="padding: 4%;float: right;margin-right: 0;text-align: right;border-radius:15px;max-width: 50%;"';
+    str += '<p style="padding: 4%;float: right;margin-right: 0;text-align: right;border-radius:15px;max-width: 50%;border: 1px #ddd solid;"';
 
     if (results[i].Status == "שובץ נהג") {
         str += ' class="backup" >'
-            + '<b>גיבוי ' + time + '</b><br>';
+            + '<b>גיבוי ' + time + '</b>';
     }
     else {
         str += ' class="primary" >'
-            + '<b>הסעה ' + time + '</b><br>';
+            + '<b>הסעה ' + time + '</b>';
     }
+    str += '<i class="fa fa-info-circle" style="float: left;"></i><br>';
 
     str += results[i].StartPoint + ' <i class="fa fa-arrow-left"></i> ' //&#11164; &#129144;
         + '' + results[i].EndPoint
@@ -651,7 +680,7 @@ function rideStr(str, results, i) {
 
     str += '<a style="float:left;border:none;margin: 8% 3%;background: transparent;padding:0;" id="pop' + i + '" href="#signMePage"'
         + ' class="ui-btn" '
-        + '  onClick="info(' + results[i].Id + ')">'
+        + ' name="' + results[i].Id + '" onClick="info(' + results[i].Id + ')">'
         + '   <img style="width: 35px;" src="Images/reg.png"></a> '
         + "</a>";
 
@@ -830,7 +859,7 @@ function printRides(results) {
 function getRideStr(rideOBJ) {
 
     var myDate = new Date(rideOBJ.DateTime);
-
+    
     var day = numToDayHebrew(myDate.getDay());
 
     var str = '<p>';
