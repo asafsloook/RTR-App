@@ -643,7 +643,7 @@ function printInfo(ride) {
     str += '<i class="fa fa-phone-square" style="font-size: 30px;"></i><br><br>'
     //call
     //window.open("tel:" + this.id);
-    
+
     $('#infoPagePH').html(str);
 }
 
@@ -859,7 +859,7 @@ function printRides(results) {
 function getRideStr(rideOBJ) {
 
     var myDate = new Date(rideOBJ.DateTime);
-    
+
     var day = numToDayHebrew(myDate.getDay());
 
     var str = '<p>';
@@ -1397,7 +1397,7 @@ $(document).ready(function () {
             $('#plusSignMe').show();
         }
         else {
-            $('#plusSignMe').hide();    
+            $('#plusSignMe').hide();
         }
 
         printMyRides(myRides);
@@ -1464,7 +1464,7 @@ $(document).one('pagebeforecreate', function () {
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="preferencesTab" href="#myPreferences" data-theme="a">העדפות</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="loginAgainTab" href="#" data-theme="a">חזור לחשבון שלי</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="trackRidesTab" href="#trackRides" data-theme="b">מעקב הסעות</a> </li>'
-        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="auctionTab" href="#auction" data-theme="b">מכרז</a> </li>' 
+        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="auctionTab" href="#auction" data-theme="b">מכרז</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-delete">'
         + '<a href="#" data-rel="close">סגירת התפריט</a>'
         + '</li>'
@@ -1823,26 +1823,29 @@ function showSavedSeats() {
 
 
 $(document).on('pagebeforeshow', '#myPreferences', function () {
+    autoClicks = true;
+
     $('#prefTabs li').show();
     var checkboxes = $('#myPreferences .ui-checkbox label');
 
     for (var i = 0; i < checkboxes.length; i++) {
         if (checkboxes.eq(i)[0].classList.contains("ui-checkbox-on")) {
+            
             checkboxes.eq(i).click();
         }
     }
 
     if (localStorage.routes == null || localStorage.routes == "[{}]") {
         //do nothing, wait for user to change preferences (routes)
-
-
-
+        
         for (var i = 0; i < 6; i++) {
+            
             $('.morning .ui-checkbox label').eq(i + 2).click();
             $('.evening .ui-checkbox label').eq(i + 2).click();
         }
 
         for (var i = 0; i < $('#starts .ui-checkbox label, #ends .ui-checkbox label').length; i++) {
+            
             $('#starts .ui-checkbox label, #ends .ui-checkbox label').eq(i).click();
         }
 
@@ -1864,12 +1867,12 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
                     alert("אנא בחר נקודות מוצא ויעד ורק לאחר מכן לחץ על המשך");
                     return;
                 }
-
+                
                 $('#prefTabs a').eq(1).click().addClass('ui-btn-active');
                 $('#prefTabs a').eq(2).removeClass('ui-btn-active');
             }
             else if ($('#prefTabs a').eq(1).hasClass('ui-btn-active')) {
-
+                
                 $('#prefTabs a').eq(0).click().addClass('ui-btn-active');
                 $('#prefTabs a').eq(1).removeClass('ui-btn-active');
 
@@ -1891,7 +1894,7 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
                 $('a#menuBTN').show();
 
                 setPrefs();
-
+                autoClicks = false;
             }
 
         });
@@ -1903,18 +1906,21 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
         var routes = $.parseJSON(localStorage.routes);
 
         if (routes[0].south && !$('#southArea').is(':checked')) {
+            
             $('#myPreferences #area .ui-checkbox label').eq(0).click();
             $('.south').show();
         }
         if (routes[0].center && !$('#centerArea').is(':checked')) {
+            
             $('#myPreferences #area .ui-checkbox label').eq(1).click();
             $('.center').show();
         }
         if (routes[0].north && !$('#northArea').is(':checked')) {
+            
             $('#myPreferences #area .ui-checkbox label').eq(2).click();
             $('.north').show();
         }
-
+        
 
         showSavedRoutes(routes);
 
@@ -1923,9 +1929,31 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
         showSavedTimes(times);
 
         showSavedSeats();
-    }
 
+        setTimeout(function() {
+            autoClicks = false;
+        },500);
+    }
 });
+
+
+$(document).ready(function() {
+    $('#kavim input, #zmanim input').on('click', function () {
+
+        if (autoClicks) return;
+
+        justSavePrefs = true;
+        saveAllPrefs();
+    });
+    $('#other select').on('change', function () {
+
+        if (autoClicks) return;
+
+        justSavePrefs = true;
+        saveAllPrefs();
+    });
+});
+
 
 function goMenu(id) {
     if (id == 'signMeTab') {
@@ -2003,6 +2031,18 @@ $(document).ready(function () {
 });
 
 
+function saveAllPrefs() {
+    //local
+    saveRoutes();
+    saveTimes();
+    saveSeats();
+
+    //DB
+    tempID = this.id;
+    setPrefs();
+}
+
+
 function setPrefs() {
 
     var routes = JSON.parse(localStorage.routes);
@@ -2032,14 +2072,19 @@ function setPrefs() {
         PrefTime: times,
         AvailableSeats: parseInt(localStorage.availableSeats)
     }
-
-
+    
     setVolunteerPrefs(request, setVolunteerPrefsSCB, setVolunteerPrefsECB);
 
 }
 
 
 function setVolunteerPrefsSCB(data) {
+
+    if (typeof justSavePrefs !== 'undefined' && justSavePrefs) {
+        justSavePrefs = false;
+        return;
+    }
+
     alert("ההעדפות שלך נשמרו בהצלחה!");
 
     if (typeof tempID !== 'undefined') {
@@ -2061,7 +2106,7 @@ $(document).on('pageshow', '#myPreferences', function () {
     showAreas();
 
     if (!isTabActive()) {
-
+        
         $('#prefTabs a').eq(2).click().addClass('ui-btn-active');
     }
 });
@@ -2105,7 +2150,6 @@ $(document).ready(function () {
 function saveTimes() {
     timesArr = [];
 
-
     var actives = $('#zmanim .ui-checkbox-on');
 
     for (var i = 0; i < actives.length; i++) {
@@ -2135,20 +2179,25 @@ function saveRoutes() {
 
     routesArr.push(area);
 
-    var actives = $('#starts .ui-checkbox-on,#ends .ui-checkbox-on');
+    var actives = $('#starts .ui-checkbox-on , #ends  .ui-checkbox-on');
 
     for (var i = 0; i < actives.length; i++) {
-        routesArr.push(actives[i].innerHTML.replace('"', ''));
+
+        var areaId = actives[i].nextSibling.id.replace(/\d+/g, '');
+        if (area[areaId]) {
+            routesArr.push(actives[i].innerHTML.replace('"', ''));
+        }
     }
 
-    if (routesArr.length == 1) {
-        alert("אנא בחר העדפות ורק לאחר מכן לחץ על שמור");
-        return;
-    }
+    //if (routesArr.length == 1) {
+    //    alert("אנא בחר העדפות ורק לאחר מכן לחץ על שמור");
+    //    return;
+    //}
 
     //save routesArr to DB
     localStorage.routes = JSON.stringify(routesArr);
 }
+
 
 
 
@@ -2167,6 +2216,7 @@ function showSavedTimes(times) {
 
                 if (checkboxes.eq(i)[0].classList.contains("ui-checkbox-off")) {
 
+                    
                     checkboxes.eq(i).click();
                 }
 
@@ -2191,6 +2241,7 @@ function showSavedRoutes(routes) {
 
                 if (checkboxes.eq(i)[0].classList.contains("ui-checkbox-off")) {
 
+                    
                     checkboxes.eq(i).click();
                 }
 
@@ -2341,7 +2392,7 @@ function alertPushMsg(data) {
             userId: parseInt(localStorage.userId)
         };
         confirmPush(request, confirmPushSCB, confirmPushECB);
-        
+
     }
 }
 
@@ -2361,7 +2412,7 @@ if (window.location.href.toString().indexOf('http') == -1) {
     //ignore backbutton
     document.addEventListener("backbutton", onBackKeyDown, false);
     function onBackKeyDown() {
-            return;
+        return;
     }
 }
 else {
