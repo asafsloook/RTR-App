@@ -12,10 +12,16 @@
 // match (shift fix)
 //add manager to rakaz permisions
 
-
+//NEEDED
 //add info btn to signme lists
 //save prefs by all ctrl change
 
+//NEEDING
+//notes show on all rides
+//matan
+//get more info for ridepat
+//reg id to check user web service
+//
 
 domain = '';
 if (!window.location.href.includes('http')) {
@@ -1830,22 +1836,22 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
 
     for (var i = 0; i < checkboxes.length; i++) {
         if (checkboxes.eq(i)[0].classList.contains("ui-checkbox-on")) {
-            
+
             checkboxes.eq(i).click();
         }
     }
 
     if (localStorage.routes == null || localStorage.routes == "[{}]") {
         //do nothing, wait for user to change preferences (routes)
-        
+
         for (var i = 0; i < 6; i++) {
-            
+
             $('.morning .ui-checkbox label').eq(i + 2).click();
             $('.evening .ui-checkbox label').eq(i + 2).click();
         }
 
         for (var i = 0; i < $('#starts .ui-checkbox label, #ends .ui-checkbox label').length; i++) {
-            
+
             $('#starts .ui-checkbox label, #ends .ui-checkbox label').eq(i).click();
         }
 
@@ -1867,12 +1873,12 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
                     alert("אנא בחר נקודות מוצא ויעד ורק לאחר מכן לחץ על המשך");
                     return;
                 }
-                
+
                 $('#prefTabs a').eq(1).click().addClass('ui-btn-active');
                 $('#prefTabs a').eq(2).removeClass('ui-btn-active');
             }
             else if ($('#prefTabs a').eq(1).hasClass('ui-btn-active')) {
-                
+
                 $('#prefTabs a').eq(0).click().addClass('ui-btn-active');
                 $('#prefTabs a').eq(1).removeClass('ui-btn-active');
 
@@ -1906,21 +1912,21 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
         var routes = $.parseJSON(localStorage.routes);
 
         if (routes[0].south && !$('#southArea').is(':checked')) {
-            
+
             $('#myPreferences #area .ui-checkbox label').eq(0).click();
             $('.south').show();
         }
         if (routes[0].center && !$('#centerArea').is(':checked')) {
-            
+
             $('#myPreferences #area .ui-checkbox label').eq(1).click();
             $('.center').show();
         }
         if (routes[0].north && !$('#northArea').is(':checked')) {
-            
+
             $('#myPreferences #area .ui-checkbox label').eq(2).click();
             $('.north').show();
         }
-        
+
 
         showSavedRoutes(routes);
 
@@ -1930,29 +1936,34 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
 
         showSavedSeats();
 
-        setTimeout(function() {
+        setTimeout(function () {
             autoClicks = false;
-        },500);
+        }, 500);
     }
 });
 
 
-$(document).ready(function() {
+$(document).ready(function () {
     $('#kavim input, #zmanim input').on('click', function () {
 
-        if (autoClicks) return;
-
-        justSavePrefs = true;
-        saveAllPrefs();
+        autoSavePref();
     });
     $('#other select').on('change', function () {
 
-        if (autoClicks) return;
-
-        justSavePrefs = true;
-        saveAllPrefs();
+        autoSavePref();
     });
 });
+
+
+function autoSavePref(el) {
+    
+    if (autoClicks) return;
+
+    setTimeout(function() {
+        justSavePrefs = true;
+        saveAllPrefs();
+    },100);
+}
 
 
 function goMenu(id) {
@@ -1997,25 +2008,25 @@ $(document).ready(function () {
             return;
         }
 
-        if (confirm("האם ברצונך לשמור את השינויים?")) {
-            //local
-            saveRoutes();
-            saveTimes();
-            saveSeats();
+        //if (confirm("האם ברצונך לשמור את השינויים?")) {
+        //local
+        saveRoutes();
+        saveTimes();
+        saveSeats();
 
-            //get all rides
-            getRidesList();
+        //get all rides
+        getRidesList();
 
-            //getMyRides
-            getMyRidesList();
+        //getMyRides
+        getMyRidesList();
 
-            //DB
-            tempID = this.id;
-            setPrefs();
-        } else {
-            goMenu(this.id);
-            return;
-        }
+        //DB
+        tempID = this.id;
+        setPrefs();
+        //} else {
+        goMenu(this.id);
+        return;
+        //}
 
 
     });
@@ -2072,7 +2083,7 @@ function setPrefs() {
         PrefTime: times,
         AvailableSeats: parseInt(localStorage.availableSeats)
     }
-    
+
     setVolunteerPrefs(request, setVolunteerPrefsSCB, setVolunteerPrefsECB);
 
 }
@@ -2085,7 +2096,7 @@ function setVolunteerPrefsSCB(data) {
         return;
     }
 
-    alert("ההעדפות שלך נשמרו בהצלחה!");
+    //alert("ההעדפות שלך נשמרו בהצלחה!");
 
     if (typeof tempID !== 'undefined') {
         goMenu(tempID);
@@ -2106,7 +2117,7 @@ $(document).on('pageshow', '#myPreferences', function () {
     showAreas();
 
     if (!isTabActive()) {
-        
+
         $('#prefTabs a').eq(2).click().addClass('ui-btn-active');
     }
 });
@@ -2183,12 +2194,19 @@ function saveRoutes() {
 
     for (var i = 0; i < actives.length; i++) {
 
-        var areaId = actives[i].nextSibling.id.replace(/\d+/g, '');
-        if (area[areaId]) {
-            routesArr.push(actives[i].innerHTML.replace('"', ''));
-        }
-    }
+        for (var j = 0; j < actives[i].parentElement.parentElement.classList.length; j++) {
+            var areaId = actives[i].parentElement.parentElement.classList[j];
+            if (area[areaId]) {
+                var a = actives[i].innerHTML;
 
+                if (!routesArr.includes(a)) {
+                    routesArr.push(a);
+                }
+            }
+        }
+
+    }
+    
     //if (routesArr.length == 1) {
     //    alert("אנא בחר העדפות ורק לאחר מכן לחץ על שמור");
     //    return;
@@ -2216,7 +2234,7 @@ function showSavedTimes(times) {
 
                 if (checkboxes.eq(i)[0].classList.contains("ui-checkbox-off")) {
 
-                    
+
                     checkboxes.eq(i).click();
                 }
 
@@ -2241,7 +2259,6 @@ function showSavedRoutes(routes) {
 
                 if (checkboxes.eq(i)[0].classList.contains("ui-checkbox-off")) {
 
-                    
                     checkboxes.eq(i).click();
                 }
 
