@@ -11,7 +11,8 @@ public partial class _Default : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
 
-
+        Message m = new Message();
+        m.insertMsg(0, "Cancel", "insert-test", "insert-test", 0, DateTime.Now, 7, "סבבה", false, false, false);
     }
 
 
@@ -26,7 +27,7 @@ public partial class _Default : System.Web.UI.Page
         {
             if (user.Id == userID)
             {
-                p.cancelRide(rideID, user);
+                //p.cancelRide(rideID, user);
             }
         }
     }

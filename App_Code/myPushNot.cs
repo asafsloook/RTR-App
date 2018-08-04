@@ -192,19 +192,4 @@ public class myPushNot
         gcmBroker.Stop();
     }
     
-    public void cancelRide(int rideID, Volunteer user)
-    {
-        var x = new JObject();
-        
-        x.Add("title","נסיעה בוטלה");
-
-        //modify by import ride from db by rideID
-        x.Add("message", "ביום 26.8 מהדסה לירושלים");
-
-        x.Add("rideID",rideID);
-        x.Add("info", "Canceled");
-        x.Add("content-available", 1);
-      
-        RunPushNotificationOne(user, x);
-    }
 }

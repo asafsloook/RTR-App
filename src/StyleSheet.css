@@ -100,8 +100,6 @@ a, p, span, label, td, #volunteerRequest label, #volunteerProblems label {
     background-color: #94C541 !important;
 }
 
-#mypanel .ui-btn-icon-left:after {
-}
 
 #mypanel {
     background-color: #f6f6f6;
@@ -439,22 +437,22 @@ fieldset {
     text-align: center;
 }
 
-#ridesCounter {
-    /*right: 78%;
+/*#ridesCounter {
+    right: 78%;
             top: 12px;
             border-radius: 16px;
-            background-color: #660000;*/
-    /*background-color: #fa3e3e;
+            background-color: #660000;
+   background-color: #fa3e3e;
             border-radius: 21px;
             color: white;
             padding: 1px 3px;
             font-size: 10px;
             position: absolute;
             top: 7px;
-            right: 100px;*/
-}
+            right: 100px;
+}*/
 
-#ridesPH a, #myRidesPH p {
+    #ridesPH a, #myRidesPH p {
     text-align: right;
 }
 
