@@ -37,11 +37,11 @@ public class Message
         cmdParams[8] = cmd.Parameters.AddWithValue("@isPush", isPush);
         cmdParams[9] = cmd.Parameters.AddWithValue("@isMail", isMail);
         cmdParams[10] = cmd.Parameters.AddWithValue("@isWhatsapp", isWhatsapp);
-        string query = "insert into [Messages] values (@ParentID,@Type,@Title,@MsgContent,@RidePatID,@DateTime,@UserID,@UserNotes,@isPush,@isMail,@isWhatsapp)";
+        string query = "insert into [Messages] OUTPUT inserted.MsgID values (@ParentID,@Type,@Title,@MsgContent,@RidePatID,@DateTime,@UserID,@UserNotes,@isPush,@isMail,@isWhatsapp)";
         
         try
         {
-            return db.ExecuteQuery(query, cmd.CommandType, cmdParams);
+            return int.Parse(db.GetObjectScalarByQuery(query, cmd.CommandType, cmdParams).ToString());
         }
         catch (Exception e)
         {
@@ -50,23 +50,24 @@ public class Message
         }
     }
 
-    public void cancelRide(int rideID, Volunteer user)
+    public void cancelRide(int ridePatID, Volunteer user)
     {
         //get ride details and generate msg
         RidePat rp = new RidePat();
-        var abc = rp.GetRidePat(rideID);
+        var abc = rp.GetRidePat(ridePatID);
         var msg = "נסיעה מ" + abc.Origin.Name + " ל" + abc.Destination.Name + " בתאריך " + abc.Date.ToShortDateString() + ", בשעה " + abc.Date.ToShortTimeString();
 
         //insert msg to db
         Message m = new Message();
-        m.insertMsg(0, "Cancel", "נסיעה בוטלה", msg, rideID, DateTime.Now, user.Id, "סבבה", true, false, false);
+        int msgID = m.insertMsg(0, "Cancel", "נסיעה בוטלה", msg, ridePatID, DateTime.Now, user.Id, "סבבה", true, false, false);
 
         //create push
         var x = new JObject();
         x.Add("message", msg);
         x.Add("title", "נסיעה בוטלה");
-        x.Add("rideID", rideID);
-        x.Add("info", "Canceled");
+        x.Add("rideID", ridePatID);
+        x.Add("status", "Canceled");
+        x.Add("msgID", msgID);
         x.Add("content-available", 1);
        
         //send push

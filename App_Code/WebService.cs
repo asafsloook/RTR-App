@@ -94,12 +94,10 @@ public class WebService : System.Web.Services.WebService
     }
 
     [WebMethod]
-    public string confirmPush(int userId)
+    public string confirmPush(int userId, int msgId)
     {
-        StringBuilder sb = new  StringBuilder();
-        sb.Append("user " + userId + " confirm push: " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + Environment.NewLine);
-        
-        File.AppendAllText(Server.MapPath(".") +  "\\loger.txt", sb.ToString());
+        Message m = new Message();
+        m.insertMsg(msgId, "", "Confirm", "", 0, DateTime.Now, userId, "", true, false, false);
 
         JavaScriptSerializer j = new JavaScriptSerializer();
         return j.Serialize("ok");

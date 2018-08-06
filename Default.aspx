@@ -9,6 +9,9 @@
         div {
             margin: 5%;
         }
+        input{
+            margin: 5px;
+        }
     </style>
 </head>
 <body>

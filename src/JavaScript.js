@@ -2380,14 +2380,15 @@ function handleColdStart(data) {
 
 
 function alertPushMsg(data) {
+    
+    //data.message;
+    //data.title;
+    //data.additionalData.coldstart;
+    //data.additionalData.foreground;
+    //data.additionalData.status;
+    //data.additionalData.rideID;
+    //data.additionalData.msgID;
 
-    //var pushObj = data;
-    //pushObj.message;
-    //pushObj.title;
-    //pushObj.additionalData.coldstart;
-    //pushObj.additionalData.foreground;
-    //pushObj.additionalData.info;
-    //pushObj.additionalData.rideID;
 
     //decide kind of messege
 
@@ -2403,10 +2404,11 @@ function alertPushMsg(data) {
     }
 
     if (confirm('notification: ' + message)) {
-
+        
         //send to server to proceed
         var request = {
-            userId: parseInt(localStorage.userId)
+            userId: parseInt(localStorage.userId),
+            msgId: parseInt(data.additionalData.msgID)
         };
         confirmPush(request, confirmPushSCB, confirmPushECB);
 

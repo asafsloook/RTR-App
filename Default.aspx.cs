@@ -11,14 +11,13 @@ public partial class _Default : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
 
-        Message m = new Message();
-        m.insertMsg(0, "Cancel", "insert-test", "insert-test", 0, DateTime.Now, 7, "סבבה", false, false, false);
+
     }
 
-
-    protected void cancelRide(int rideID, int userID)
+    protected void cancelBTN_Click(object sender, EventArgs e)
     {
-        var p = new myPushNot();
+        var userID = int.Parse(UserTB.Text);
+        var ridePatID = int.Parse(RideTB.Text);
 
         var v = new Volunteer();
         List<Volunteer> volunteersList = v.getVolunteersList(true);
@@ -27,18 +26,10 @@ public partial class _Default : System.Web.UI.Page
         {
             if (user.Id == userID)
             {
-                //p.cancelRide(rideID, user);
+                Message m = new Message();
+                m.cancelRide(ridePatID, user);
             }
         }
-    }
-    
-
-    protected void cancelBTN_Click(object sender, EventArgs e)
-    {
-        int rideID = int.Parse(RideTB.Text);
-        int userID = int.Parse(UserTB.Text);
-
-        cancelRide(rideID, userID);
     }
 
     protected void globalBTN_Click(object sender, EventArgs e)
