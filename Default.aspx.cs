@@ -36,12 +36,8 @@ public partial class _Default : System.Web.UI.Page
     {
         string title = TextBox1.Text;
         string message = TextBox2.Text;
-
-        Volunteer v = new Volunteer();
-        List<Volunteer> volunteersList = v.getVolunteersList(true);
-
-        myPushNot pushNot = new myPushNot(message, title, "1", 1, "default");
-
-        pushNot.RunPushNotificationAll(volunteersList, pushNot);
+        
+        Message m = new Message();
+        m.globalMessage(message, title);
     }
 }

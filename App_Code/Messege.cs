@@ -50,16 +50,36 @@ public class Message
         }
     }
 
+    public void globalMessage(string message, string title)
+    {
+        //insert msg to db
+        int msgID = insertMsg(0, "Global", title, message, 0, DateTime.Now, 0, "", true, false, false);
+
+        //get volunteers
+        Volunteer v = new Volunteer();
+        List<Volunteer> volunteersList = v.getVolunteersList(true);
+        
+        //create push
+        var x = new JObject();
+        x.Add("message", message);
+        x.Add("title", title);
+        x.Add("msgID", msgID);
+        x.Add("content-available", 1);
+
+        //send push
+        myPushNot push = new myPushNot();
+        push.RunPushNotificationAll(volunteersList, x);
+    }
+
     public void cancelRide(int ridePatID, Volunteer user)
     {
         //get ride details and generate msg
         RidePat rp = new RidePat();
         var abc = rp.GetRidePat(ridePatID);
-        var msg = "נסיעה מ" + abc.Origin.Name + " ל" + abc.Destination.Name + " בתאריך " + abc.Date.ToShortDateString() + ", בשעה " + abc.Date.ToShortTimeString();
+        var msg = "בוטלה נסיעה מ" + abc.Origin.Name + " ל" + abc.Destination.Name + " בתאריך " + abc.Date.ToShortDateString() + ", בשעה " + abc.Date.ToShortTimeString();
 
         //insert msg to db
-        Message m = new Message();
-        int msgID = m.insertMsg(0, "Cancel", "נסיעה בוטלה", msg, ridePatID, DateTime.Now, user.Id, "סבבה", true, false, false);
+        int msgID = insertMsg(0, "Cancel", "נסיעה בוטלה", msg, ridePatID, DateTime.Now, user.Id, "", true, false, false);
 
         //create push
         var x = new JObject();

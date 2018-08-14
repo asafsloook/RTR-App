@@ -94,10 +94,10 @@ public class WebService : System.Web.Services.WebService
     }
 
     [WebMethod]
-    public string confirmPush(int userId, int msgId)
+    public string confirmPush(int userId, int msgId, string status)
     {
         Message m = new Message();
-        m.insertMsg(msgId, "", "Confirm", "", 0, DateTime.Now, userId, "", true, false, false);
+        m.insertMsg(msgId, "", status, "", 0, DateTime.Now, userId, "", true, false, false);
 
         JavaScriptSerializer j = new JavaScriptSerializer();
         return j.Serialize("ok");

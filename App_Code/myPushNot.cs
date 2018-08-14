@@ -86,7 +86,7 @@ public class myPushNot
         sound = _sound;
     }
 
-    public void RunPushNotificationAll(List<Volunteer> userList, myPushNot pushNot)
+    public void RunPushNotificationAll(List<Volunteer> userList, JObject data)
     {
         List<string> registrationIDs = new List<string>();
 
@@ -123,26 +123,11 @@ public class myPushNot
         // Start the broker
         gcmBroker.Start();
 
-        foreach (var regId in registrationIDs)
+        gcmBroker.QueueNotification(new GcmNotification
         {
-
-            // Queue a notification to send
-            gcmBroker.QueueNotification(new GcmNotification
-            {
-
-                RegistrationIds = new List<string> {
-            regId
-        },
-                Data = JObject.Parse(
-                        "{" +
-                               "\"title\" : \"" + Title + "\"," +
-                               "\"message\" : \"" + Message + "\"," +
-                                "\"info\" : \" Optional \"," +
-                            "\"content-available\" : \"" + "1" + "\"" +
-                        "}")
-            });
-        }
-
+            RegistrationIds = registrationIDs,
+            Data = data
+        });
 
         // Stop the broker, wait for it to finish   
         // This isn't done after every message, but after you're
@@ -163,13 +148,13 @@ public class myPushNot
         // Wire up events
         gcmBroker.OnNotificationFailed += (notification, aggregateEx) =>
         {
-            //Console.WriteLine("GCM Notification Failed!");
-        };
+        //Console.WriteLine("GCM Notification Failed!");
+    };
 
         gcmBroker.OnNotificationSucceeded += (notification) =>
         {
-            //Console.WriteLine("GCM Notification Sent!");
-        };
+        //Console.WriteLine("GCM Notification Sent!");
+    };
 
         // Start the broker
         gcmBroker.Start();
@@ -191,5 +176,5 @@ public class myPushNot
         // done with the broker
         gcmBroker.Stop();
     }
-    
+
 }

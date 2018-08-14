@@ -1,6 +1,6 @@
 ﻿
 
-    .modal {
+.modal {
     display: none;
     position: fixed;
     z-index: 1000;
@@ -452,7 +452,7 @@ fieldset {
             right: 100px;
 }*/
 
-    #ridesPH a, #myRidesPH p {
+#ridesPH a, #myRidesPH p {
     text-align: right;
 }
 
@@ -710,4 +710,94 @@ hr.weekSeperator {
 #menuBTN {
     width: 32px;
     height: 32px;
+}
+
+.statusItem, .statusName, .statusNum, .problemItem {
+    height: 75px;
+}
+
+.statusName, .statusNum, .problemName {
+    text-align: center;
+    vertical-align: middle;
+    line-height: 75px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.statusNum {
+    float: right;
+    width: 75px;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.statusName, .problemName {
+    float: left;
+    width: 73%;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+#status hr, #problem hr {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
+}
+
+.statusContent, .problemContent {
+    padding: 1em;
+    height: calc(100vh - 2em);
+}
+
+.statusFooter {
+    height: 75px;
+    background-color: yellow !important;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    color: black !important;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+.statusButton, .problemButton {
+    text-align: center;
+    margin: 18px;
+    vertical-align: middle;
+    line-height: 35px;
+}
+
+.statusActive {
+    background-color: rgba(99, 255, 133, 0.6);
+}
+
+.problemName {
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+#problem .keyIcon {
+    float: left;
+    margin: 5px -24px 0px 0px;
+}
+
+.problemActionButtons {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    width: 100%;
+    text-align: center;
+}
+
+    .problemActionButtons .sendButton, .problemActionButtons .cancelButton {
+        float: left;
+        width: 80px;
+        height: 60px;
+        line-height: 60px;
+        vertical-align: middle;
+        margin: 20px;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+
+#problem .accordion {
+    max-height: 138px !important;
 }

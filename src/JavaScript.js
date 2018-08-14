@@ -1956,13 +1956,13 @@ $(document).ready(function () {
 
 
 function autoSavePref(el) {
-    
+
     if (autoClicks) return;
 
-    setTimeout(function() {
+    setTimeout(function () {
         justSavePrefs = true;
         saveAllPrefs();
-    },100);
+    }, 100);
 }
 
 
@@ -2206,7 +2206,7 @@ function saveRoutes() {
         }
 
     }
-    
+
     //if (routesArr.length == 1) {
     //    alert("אנא בחר העדפות ורק לאחר מכן לחץ על שמור");
     //    return;
@@ -2380,7 +2380,7 @@ function handleColdStart(data) {
 
 
 function alertPushMsg(data) {
-    
+
     //data.message;
     //data.title;
     //data.additionalData.coldstart;
@@ -2394,24 +2394,35 @@ function alertPushMsg(data) {
 
     var message = '';
     for (x in data) {
-        message += "data." + x + " :" + data[x] + " , ";
+        //message += "data." + x + " :" + data[x] + " , ";
 
         if (x == "additionalData") {
             for (y in data.additionalData) {
-                message += "data.additionalData." + y + " :" + data.additionalData[y] + " , ";
+                //message += "data.additionalData." + y + " :" + data.additionalData[y] + " , ";
             }
         }
     }
-
-    if (confirm('notification: ' + message)) {
-        
-        //send to server to proceed
+    
+    var userID_ = parseInt(localStorage.userId);
+    var msgID_ = parseInt(data.additionalData.msgID);
+    
+    if (confirm(data.message)) {
+        //send confirm msg to server
         var request = {
-            userId: parseInt(localStorage.userId),
-            msgId: parseInt(data.additionalData.msgID)
+            userId: userID_,
+            msgId: msgID_,
+            status: "OK"
         };
         confirmPush(request, confirmPushSCB, confirmPushECB);
-
+    }
+    else {
+        //send cancel msg to server
+        var request = {
+            userId: userID_,
+            msgId: msgID_,
+            status: "NO"
+        };
+        confirmPush(request, confirmPushSCB, confirmPushECB);
     }
 }
 
@@ -2459,3 +2470,30 @@ $(document).ajaxStop(function () {
     $("body").removeClass("loading");
 });
 
+//status and problems
+$(document).ready(function () {
+    $('.problemButton.problemKeyboard').on('click', function () {
+        $('#problem textarea').removeClass('ui-screen-hidden');
+        clearAll();
+        $(this).parent().parent().addClass('statusActive');
+    });
+
+    $('.problemButton').on('click', function () {
+        if (this.className.includes('problemKeyboard')) return;
+        $('#problem textarea').addClass('ui-screen-hidden');
+        clearAll();
+        $(this).parent().parent().addClass('statusActive');
+    });
+
+    $('.cancelButton').on('click', function () {
+        $('#problem textarea').addClass('ui-screen-hidden');
+        clearAll();
+    });
+});
+
+function clearAll() {
+    var allProblems = $('#problem .statusActive');
+    for (var i = 0; i < allProblems.length; i++) {
+        allProblems.eq(i).removeClass('statusActive');
+    }
+}
