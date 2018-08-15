@@ -1469,8 +1469,9 @@ $(document).one('pagebeforecreate', function () {
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="myRidesTab" data-theme="a">הנסיעות שלי</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="preferencesTab" href="#myPreferences" data-theme="a">העדפות</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="loginAgainTab" href="#" data-theme="a">חזור לחשבון שלי</a> </li>'
-        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="trackRidesTab" href="#trackRides" data-theme="b">מעקב הסעות</a> </li>'
-        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="auctionTab" href="#auction" data-theme="b">מכרז</a> </li>'
+        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="NotifyTab" href="#status" data-theme="a">דיווחים</a> </li>'
+        //+ '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="trackRidesTab" href="#trackRides" data-theme="b">מעקב הסעות</a> </li>'
+        //+ '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="auctionTab" href="#auction" data-theme="b">מכרז</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-delete">'
         + '<a href="#" data-rel="close">סגירת התפריט</a>'
         + '</li>'
@@ -2402,10 +2403,10 @@ function alertPushMsg(data) {
             }
         }
     }
-    
+
     var userID_ = parseInt(localStorage.userId);
     var msgID_ = parseInt(data.additionalData.msgID);
-    
+
     if (confirm(data.message)) {
         //send confirm msg to server
         var request = {
@@ -2470,7 +2471,7 @@ $(document).ajaxStop(function () {
     $("body").removeClass("loading");
 });
 
-//status and problems
+//status and problemsr
 $(document).ready(function () {
     $('.problemButton.problemKeyboard').on('click', function () {
         $('#problem textarea').removeClass('ui-screen-hidden');
@@ -2489,7 +2490,52 @@ $(document).ready(function () {
         $('#problem textarea').addClass('ui-screen-hidden');
         clearAll();
     });
+
+    $('.sendButton').on('click', function () {
+        if ($('.problemItem.statusActive').length == 1) {
+            var problem = $('.problemItem.statusActive').eq(0).children().children().children().html();
+            if (problem == 'keyboard') problem = $('#problem .accordion').val();
+
+            //send problem to db
+        }
+    });
 });
+
+$(document).on('pagebeforeshow', '#status', function () {
+    if ($('.statusContent').html() == "") {
+        var str = "";
+        for (var i = 0; i < userInfo.Statusim.length; i++) {
+            str +=
+                '<div class="statusItem">' +
+                '      <div class="statusNum">' +
+                '          <span>' + (i + 1) + '</span>' +
+                '      </div>' +
+                '      <div class="statusName">' +
+                '           <div class="statusButton">' +
+                '               <span>' + userInfo.Statusim[i] + '</span>' +
+                '           </div>' +
+                '       </div>' +
+                '   </div>' +
+                '   <hr>';
+        }
+        $('.statusContent').html(str);
+        $('.statusButton').on('click', function () {
+
+            if (!$(this).parent().hasClass('statusActive') && confirm('האם אתה מאשר את שליחת דיווח הסטטוס?')) {
+                $(this).parent().addClass('statusActive');
+                $(this).parent().siblings().eq(0).addClass('statusActive');
+                var status = $(this).children().html();
+                var userid = parseInt(localStorage.userId);
+                sendStatus(status, userid);
+            }
+        });
+    }
+});
+
+
+function sendStatus(status, userid) {
+    //send status to db
+}
 
 function clearAll() {
     var allProblems = $('#problem .statusActive');

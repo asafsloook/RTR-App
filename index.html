@@ -1066,7 +1066,65 @@
         </div>
     </div>
 
+
     <div data-role="page" id="status">
+        <div data-role="content" class="statusContent"></div>
+        <div data-role="footer" class="statusFooter">
+            <div class="notifyProblem">
+                <a href="#problem"><h2>דווח על בעיה</h2></a>
+            </div>
+        </div>
+    </div>
+
+    <div data-role="page" id="problem">
+        <div class="problemContent" data-role="content">
+            <div class="problemItem">
+                <div class="problemName">
+                    <div class="problemButton">
+                        <span>ביטול הסעה</span>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="problemItem">
+                <div class="problemName">
+                    <div class="problemButton">
+                        <span>אני אאחר</span>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="problemItem">
+                <div class="problemName">
+                    <div class="problemButton">
+                        <span>מתעכב במחסום</span>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="problemItem">
+                <div class="problemName">
+                    <div class="problemButton problemKeyboard">
+                        <i class="material-icons keyIcon">keyboard</i>
+                        <span>סיבה אחרת</span>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <textarea class="accordion ui-screen-hidden" maxlength="150"></textarea>
+            <div class="problemActionButtons">
+                <div class="sendButton">
+                    <span>דווח</span>
+                </div>
+                <div class="cancelButton">
+                    <a data-rel="back"><span>בטל</span></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--<div data-role="page" id="status">
         <div class="statusContent" data-role="content">
             <div class="statusItem">
                 <div class="statusNum">
@@ -1080,8 +1138,8 @@
             </div>
             <hr>
         </div>
-    </div>
+    </div>-->
 
-   
+
 </body>
 </html>

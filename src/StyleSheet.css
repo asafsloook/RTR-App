@@ -723,7 +723,10 @@ hr.weekSeperator {
     border: 1px solid rgba(0, 0, 0, 0.15);
 }
 
-.statusNum {
+.problemName {
+    border:none;
+}
+    .statusNum {
     float: right;
     width: 75px;
     background-color: rgba(0, 0, 0, 0.05);
@@ -766,7 +769,14 @@ hr.weekSeperator {
 }
 
 .statusActive {
-    background-color: rgba(99, 255, 133, 0.6);
+    /*background-color: #c2fcc7;*/
+    /*rgba(99, 255, 133, 0.6);*/
+    background-color: #c2fcc7;
+    cursor: pointer;
+    -webkit-transition: background-color 0.5s ease-out;
+    -moz-transition: background-color 0.5s ease-out;
+    -o-transition: background-color 0.5s ease-out;
+    transition: background-color 0.5s ease-out;
 }
 
 .problemName {
@@ -800,4 +810,10 @@ hr.weekSeperator {
 
 #problem .accordion {
     max-height: 138px !important;
+    direction: rtl;
+}
+
+.notifyProblem a, .cancelButton a, .cancelButton a h2 {
+    text-decoration: none;
+    color: #333 !important;
 }

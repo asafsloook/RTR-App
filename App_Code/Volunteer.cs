@@ -39,33 +39,22 @@ public class Volunteer
     string status;//סטטוס
     int id;
     string regId;
+    List<string> statusim;
 
+    public List<string> Statusim { get; set; }
     public string RegId { get; set; }
-
     public string Remarks { get; set; }
-
     public DateTime BirthDate { get; set; }
-
     public DateTime JoinDate { get; set; }
-
     public bool KnowsArabic { get; set; }
-
     public bool IsActive { get; set; }
-
     public List<string> PrefArea { get; set; }
-
     public List<string> PrefLocation { get; set; }
-
     public List<string[]> PrefTime { get; set; }
-
     public int AvailableSeats { get; set; }
-
     public string UserName { get; set; }
-
     public string pnRegId { get; set; }
-
     public string DriverType { get; set; } //Primary or Secondary
-
     public int Id { get; set; }
 
     public string DisplayName
@@ -611,6 +600,16 @@ public class Volunteer
             v.PrefArea = v2.PrefArea;
             v.PrefTime = v2.PrefTime;
             v.PrefLocation = v2.PrefLocation;
+
+
+            DbService db2 = new DbService();
+            string query2 = "select * from status where StatusId > 99 ";
+            DataSet ds2 = db2.GetDataSetByQuery(query2);
+            v.Statusim = new List<string>();
+            foreach (DataRow dr2 in ds2.Tables[0].Rows)
+            {
+                v.Statusim.Add(dr2.ItemArray[0].ToString());
+            }
         }
 
         db = new DbService();
