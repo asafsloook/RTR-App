@@ -2501,9 +2501,13 @@ $(document).ready(function () {
     });
 });
 
+
 $(document).on('pagebeforeshow', '#status', function () {
     if ($('.statusContent').html() == "") {
         var str = "";
+        userInfo.Statusim.sort(function (a, b) {
+            return a.Id.toString().localeCompare(b.Id.toString());
+        });
         for (var i = 0; i < userInfo.Statusim.length; i++) {
             str +=
                 '<div class="statusItem">' +
@@ -2511,8 +2515,8 @@ $(document).on('pagebeforeshow', '#status', function () {
                 '          <span>' + (i + 1) + '</span>' +
                 '      </div>' +
                 '      <div class="statusName">' +
-                '           <div class="statusButton">' +
-                '               <span>' + userInfo.Statusim[i] + '</span>' +
+                '           <div class="statusButton" id="status' + userInfo.Statusim[i].Id + '">' +
+                '               <span>' + userInfo.Statusim[i].Name + '</span>' +
                 '           </div>' +
                 '       </div>' +
                 '   </div>' +
@@ -2521,10 +2525,22 @@ $(document).on('pagebeforeshow', '#status', function () {
         $('.statusContent').html(str);
         $('.statusButton').on('click', function () {
 
-            if (!$(this).parent().hasClass('statusActive') && confirm('האם אתה מאשר את שליחת דיווח הסטטוס?')) {
+            if (!$(this).parent().hasClass('statusActive')) {
+
+                if ($('.statusName.statusActive').length > 0) {
+                    for (var i = 0; i < $('.statusName.statusActive').length; i++) {
+                        var thisId = parseInt($(this).attr('id').toString().replace('status', ''));
+                        var thatId = parseInt($('.statusName.statusActive').eq(i).children().attr('id').toString().replace('status', ''));
+                        if (thisId == thatId) continue;
+                        if (thisId < thatId) return;
+                    }
+                }
+            }
+
+            var status = $(this).children().html();
+            if (confirm('האם אתה מאשר את שליחת דיווח הסטטוס: ' + status + '?')) {
                 $(this).parent().addClass('statusActive');
                 $(this).parent().siblings().eq(0).addClass('statusActive');
-                var status = $(this).children().html();
                 var userid = parseInt(localStorage.userId);
                 sendStatus(status, userid);
             }

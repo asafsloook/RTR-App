@@ -39,9 +39,18 @@ public class Volunteer
     string status;//סטטוס
     int id;
     string regId;
-    List<string> statusim;
+    List<RideStatus> statusim;
 
-    public List<string> Statusim { get; set; }
+    public class RideStatus
+    {
+        string name;
+        int id;
+
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+
+    public List<RideStatus> Statusim { get; set; }
     public string RegId { get; set; }
     public string Remarks { get; set; }
     public DateTime BirthDate { get; set; }
@@ -605,10 +614,13 @@ public class Volunteer
             DbService db2 = new DbService();
             string query2 = "select * from status where StatusId > 99 ";
             DataSet ds2 = db2.GetDataSetByQuery(query2);
-            v.Statusim = new List<string>();
+            v.Statusim = new List<RideStatus>();
             foreach (DataRow dr2 in ds2.Tables[0].Rows)
             {
-                v.Statusim.Add(dr2.ItemArray[0].ToString());
+                var stat = new RideStatus();
+                stat.Id = int.Parse(dr2.ItemArray[1].ToString());
+                stat.Name = dr2.ItemArray[0].ToString();
+                v.Statusim.Add(stat);
             }
         }
 
