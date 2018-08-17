@@ -716,16 +716,13 @@ hr.weekSeperator {
     height: 75px;
 }
 
-.statusName, .statusNum, .problemName {
+.statusName, .statusNum, .problemName{
     text-align: center;
     vertical-align: middle;
     line-height: 75px;
     border: 1px solid rgba(0, 0, 0, 0.15);
 }
 
-.problemName {
-    border:none;
-}
     .statusNum {
     float: right;
     width: 75px;
@@ -818,3 +815,4 @@ hr.weekSeperator {
     color: #333 !important;
 }
 
+    
