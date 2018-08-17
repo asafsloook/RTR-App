@@ -15,10 +15,13 @@
 //NEEDED
 //add info btn to signme lists
 //save prefs by all ctrl change
+
+//NEEDING
 //notes show on all rides
 //matan
 //get more info for ridepat
 //reg id to check user web service
+//
 
 domain = '';
 if (!window.location.href.includes('http')) {
@@ -35,11 +38,6 @@ Date.prototype.getWeek = function () {
     var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
     return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
 };
-
-Date.prototype.addHours = function (h) {
-    this.setTime(this.getTime() + (h * 60 * 60 * 1000));
-    return this;
-}
 
 
 //global variables for ride management
@@ -176,7 +174,6 @@ function myRidesToClientStructure(before) {
             after.push(ridePat);
         }
     }
-
     return after;
 }
 
@@ -1519,6 +1516,7 @@ $(document).on('pagebeforeshow', '#signMe', function () {
 
 $(document).on('pagebeforeshow', '#loginPreference', function () {
 
+
     $("#welcomeTitle").html("שלום " + userInfo.FirstNameH);
     $("#rakazBTNS").hide();
 
@@ -1538,18 +1536,6 @@ $(document).on('pagebeforeshow', '#loginPreference', function () {
 
 });
 
-$(document).on('pageshow', '#loginPreference', function () {
-    if (hasCloseRide()) {
-        closeRide = $.parseJSON(localStorage.closeRide);
-        var rideDate = new Date(closeRide.DateTime);
-        var isSameDay = rideDate.getDay() == (new Date()).getDay() ? 'היום' : 'מחר';
-        var alertRide = 'המערכת זיהתה שיש לך ' + isSameDay + ' נסיעה מ' + closeRide.StartPoint + ' ל' + closeRide.EndPoint + ' בשעה ' + rideDate.getHours() + ':' + (rideDate.getMinutes() < 10 ? '0' + rideDate.getMinutes() : rideDate.getMinutes()) + '. האם תרצה לדווח סטטוס?';
-        if (confirm(alertRide)) {
-        
-            $.mobile.pageContainer.pagecontainer("change", "#status");
-        }
-    }
-});
 
 function getPatientsSCB(data) {
 
@@ -1746,28 +1732,18 @@ function checkUserSuccessCB(results) {
 
     if (localStorage.availableSeats == null || localStorage.availableSeats == "0") {
         setTimeout(function () {
+
             $.mobile.pageContainer.pagecontainer("change", "#myPreferences");
         }, 1000);
     }
     else {
         setTimeout(function () {
+
             $.mobile.pageContainer.pagecontainer("change", "#loginPreference");
         }, 1000);
-    }
-}
 
-function hasCloseRide() {
-
-    if (myRides != null) {
-        for (var i = 0; i < myRides.length; i++) {
-            if ((new Date(myRides[i].DateTime)).addHours(12) >= (new Date()) && myRides[i].Status == 'Primary') {
-                localStorage.closeRide = JSON.stringify(myRides[i]);
-                return true;
-            }
-        }
-        return false;
     }
-    return false;
+
 }
 
 function getPrefs() {
@@ -2497,39 +2473,36 @@ $(document).ajaxStop(function () {
 
 //status and problemsr
 $(document).ready(function () {
-    $(document).on('click', '.problemButton.problemKeyboard', function () {
+    $('.problemButton.problemKeyboard').on('click', function () {
         $('#problem textarea').removeClass('ui-screen-hidden');
         clearAll();
         $(this).parent().parent().addClass('statusActive');
     });
 
-    $(document).on('click', '.problemButton', function () {
+    $('.problemButton').on('click', function () {
         if (this.className.includes('problemKeyboard')) return;
         $('#problem textarea').addClass('ui-screen-hidden');
         clearAll();
         $(this).parent().parent().addClass('statusActive');
     });
 
-    $(document).on('click', '.cancelButton', function () {
+    $('.cancelButton').on('click', function () {
         $('#problem textarea').addClass('ui-screen-hidden');
         clearAll();
     });
 
-    $(document).on('click', '.sendButton', function () {
+    $('.sendButton').on('click', function () {
         if ($('.problemItem.statusActive').length == 1) {
             var problem = $('.problemItem.statusActive').eq(0).children().children().children().html();
             if (problem == 'keyboard') problem = $('#problem .accordion').val();
 
-            //send problem status to db
-            var rideID = closeRide.Id;
-            sendStatus(problem, rideID);
+            //send problem to db
         }
     });
 });
 
 
 $(document).on('pagebeforeshow', '#status', function () {
-    
     if ($('.statusContent').html() == "") {
         var str = "";
         userInfo.Statusim.sort(function (a, b) {
@@ -2550,7 +2523,7 @@ $(document).on('pagebeforeshow', '#status', function () {
                 '   <hr>';
         }
         $('.statusContent').html(str);
-        $(document).on('click', '.statusButton', function () {
+        $('.statusButton').on('click', function () {
 
             if (!$(this).parent().hasClass('statusActive')) {
 
@@ -2568,15 +2541,15 @@ $(document).on('pagebeforeshow', '#status', function () {
             if (confirm('האם אתה מאשר את שליחת דיווח הסטטוס: ' + status + '?')) {
                 $(this).parent().addClass('statusActive');
                 $(this).parent().siblings().eq(0).addClass('statusActive');
-                var rideID = closeRide.Id;
-                sendStatus(status, rideID);
+                var userid = parseInt(localStorage.userId);
+                sendStatus(status, userid);
             }
         });
     }
 });
 
 
-function sendStatus(status, rideID) {
+function sendStatus(status, userid) {
     //send status to db
 }
 
