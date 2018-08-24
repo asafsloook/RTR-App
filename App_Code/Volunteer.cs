@@ -54,16 +54,29 @@ public class Volunteer
     public string RegId { get; set; }
     public string Remarks { get; set; }
     public DateTime BirthDate { get; set; }
+
+   // public DateTime BirthDate { get; set; }
+
     public DateTime JoinDate { get; set; }
+
     public bool KnowsArabic { get; set; }
+
     public bool IsActive { get; set; }
+
     public List<string> PrefArea { get; set; }
+
     public List<string> PrefLocation { get; set; }
+
     public List<string[]> PrefTime { get; set; }
+
     public int AvailableSeats { get; set; }
+
     public string UserName { get; set; }
+
     public string pnRegId { get; set; }
+
     public string DriverType { get; set; } //Primary or Secondary
+
     public int Id { get; set; }
 
     public string DisplayName
@@ -591,6 +604,7 @@ public class Volunteer
             {
                 v.BirthDate = Convert.ToDateTime(dr["BirthDate"].ToString());
             }
+            // v.BirthDate = Convert.ToDateTime(dr["BirthDate"].ToString());
             v.JoinDate = Convert.ToDateTime(dr["JoinDate"].ToString());
             v.Status = dr["IsActive"].ToString();
             v.Gender = dr["Gender"].ToString();
@@ -609,7 +623,6 @@ public class Volunteer
             v.PrefArea = v2.PrefArea;
             v.PrefTime = v2.PrefTime;
             v.PrefLocation = v2.PrefLocation;
-
 
             DbService db2 = new DbService();
             string query2 = "select * from status where StatusId > 99 ";
@@ -635,6 +648,7 @@ public class Volunteer
         cmdParams[1] = cmd.Parameters.AddWithValue("@ID", v.Id);
 
         int result = db.ExecuteQuery(updateRegid, cmd.CommandType, cmdParams);
+
 
 
         return v;
@@ -813,13 +827,13 @@ public class Volunteer
             //v.Hour3 = dr["preferHour3"].ToString();
             //v.PreferRoute1 = dr["preferRoute1"].ToString();
             //v.preferRoute2 = dr["preferRoute2"].ToString();
-            v.RegId = dr["pnRegId"].ToString();
+            //v.PreferRoute3 = dr["preferRoute3"].ToString();
             v.JoinDate = Convert.ToDateTime(dr["JoinDate"].ToString());
             v.IsActive = Convert.ToBoolean(dr["IsActive"].ToString());
             v.KnowsArabic = Convert.ToBoolean(dr["KnowsArabic"].ToString());
-            //v.BirthDate = Convert.ToDateTime(dr["BirthDate"].ToString());
+           // v.BirthDate = Convert.ToDateTime(dr["BirthDate"].ToString());
             v.Gender = dr["Gender"].ToString();
-
+            v.RegId = dr["pnRegId"].ToString();
 
             list.Add(v);
         }
@@ -850,7 +864,7 @@ public class Volunteer
             v.City = dr["CityCityName"].ToString();
             v.Address = dr["Address"].ToString();
             v.Email = dr["Email"].ToString();
-            v.BirthDate = Convert.ToDateTime(dr["BirthDate"].ToString());
+           // v.BirthDate = Convert.ToDateTime(dr["BirthDate"].ToString());
             v.JoinDate = Convert.ToDateTime(dr["JoinDate"].ToString());
             v.IsActive = Convert.ToBoolean(dr["IsActive"].ToString());
             v.Gender = dr["Gender"].ToString();
@@ -943,8 +957,8 @@ public class Volunteer
         }
         else if (func == "new")
         {
-            query = "insert into Volunteer (Address, BirthDate, CellPhone, CellPhone2, CityCityName, Email, FirstNameA, FirstNameH, Gender, HomePhone, IsActive, JoinDate, KnowsArabic, LastNameA, LastNameH, Remarks)";
-            query += " values (@address,@bDay,@cell,@cell2,@city,@email,@firstNameA,@firstNameH,@gender,@phone,@IsActive,@jDate,@knowsArabic,@lastNameA,@lastNameH,@remarks);SELECT SCOPE_IDENTITY();";
+            query = "insert into Volunteer (Address, CellPhone, CellPhone2, CityCityName, Email, FirstNameA, FirstNameH, Gender, HomePhone, IsActive, JoinDate, KnowsArabic, LastNameA, LastNameH, Remarks)";
+            query += " values (@address,@cell,@cell2,@city,@email,@firstNameA,@firstNameH,@gender,@phone,@IsActive,@jDate,@knowsArabic,@lastNameA,@lastNameH,@remarks);SELECT SCOPE_IDENTITY();";
             db = new DbService();
             Id = int.Parse(db.GetObjectScalarByQuery(query, cmd.CommandType, cmdParams).ToString());
 

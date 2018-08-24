@@ -2521,7 +2521,7 @@ $(document).ready(function () {
             if (problem == 'keyboard') problem = $('#problem .accordion').val();
 
             //send problem status to db
-            var rideID = closeRide.Id;
+            var rideID = closeRide.rideId;
             sendStatus(problem, rideID);
         }
     });
@@ -2568,7 +2568,7 @@ $(document).on('pagebeforeshow', '#status', function () {
             if (confirm('האם אתה מאשר את שליחת דיווח הסטטוס: ' + status + '?')) {
                 $(this).parent().addClass('statusActive');
                 $(this).parent().siblings().eq(0).addClass('statusActive');
-                var rideID = closeRide.Id;
+                var rideID = closeRide.rideId;
                 sendStatus(status, rideID);
             }
         });
@@ -2576,8 +2576,21 @@ $(document).on('pagebeforeshow', '#status', function () {
 });
 
 
-function sendStatus(status, rideID) {
+function sendStatus(_status, _rideId) {
     //send status to db
+    var request = {
+        rideId: _rideId,
+        status: _status
+    }
+    setStatus(request, SCB, ECB);
+}
+
+function SCB() {
+
+}
+
+function ECB() {
+
 }
 
 function clearAll() {

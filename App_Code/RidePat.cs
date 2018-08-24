@@ -437,7 +437,8 @@ public class RidePat
         string query = "";
         if (volunteerId != -1)
             query = "select * from RPView where (Status='שובץ נהג' or Status='ממתינה לשיבוץ')";
-        else query = "select * from RPView where PickupTime>= getdate()";
+        else
+            query = "select * from RPView where PickupTime>= getdate()";
         DbService db = new DbService();
         DataSet ds = db.GetDataSetByQuery(query);
         // Ride ride = new Ride();
@@ -467,9 +468,7 @@ public class RidePat
         }
         try
         {
-
-
-
+            
             foreach (DataRow dr in ds.Tables[0].Rows)
             {
 
@@ -524,6 +523,7 @@ public class RidePat
                 rp.pat = new Patient();
 
                 rp.pat.DisplayName = dr["DisplayName"].ToString();
+                rp.pat.CellPhone = dr["CellPhone"].ToString();
                 rp.pat.Equipment = rp.Pat.getEquipmentForPatient(rp.pat.DisplayName);
                 rp.pat.EscortedList = new List<Escorted>();
                 foreach (Escorted e in el)

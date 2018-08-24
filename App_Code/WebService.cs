@@ -6,8 +6,6 @@ using System.Web.Script.Serialization;
 using System.Web.Services;
 using System.Globalization;
 using System.Web.Script.Services;
-using System.Text;
-using System.IO;
 
 /// <summary>
 /// Summary description for WebService
@@ -42,9 +40,19 @@ public class WebService : System.Web.Services.WebService
     //    var a = 0;
     //}
 
+    [WebMethod]
+    public string confirmPush(int userId, int msgId, string status)
+    {
+        Message m = new Message();
+        m.insertMsg(msgId, "", status, "", 0, DateTime.Now, userId, "", true, false, false);
+
+        JavaScriptSerializer j = new JavaScriptSerializer();
+        return j.Serialize("ok");
+    }
+        
 
     [WebMethod]
-    public int setVolunteerPrefs(int Id, List<string> PrefLocation, List<string> PrefArea,List<string> PrefTime,int AvailableSeats)
+    public int setVolunteerPrefs(int Id, List<string> PrefLocation, List<string> PrefArea, List<string> PrefTime, int AvailableSeats)
     {
         Volunteer v = new Volunteer();
         return v.setVolunteerPrefs(Id, PrefLocation, PrefArea, PrefTime, AvailableSeats);
@@ -63,15 +71,15 @@ public class WebService : System.Web.Services.WebService
     [WebMethod]
     public int setRidePat(RidePat RidePat, string func)
     {
-        //Dictionary<string, object> d = (Dictionary<string, object>)ridePat;
-        // d = (Dictionary<string, object>)ridePat;
-        // JavaScriptSerializer j = new JavaScriptSerializer();
-        // Object[] o = j.Deserialize<object[]>(ridePat);
         RidePat rp = new RidePat();
         return rp.setRidePat(RidePat, func);
-        // rp.setRidePat(d, func);
-        // return j.Serialize(rp);
+    }
 
+    [WebMethod]
+    public int setRideStatus(int rideId, string status)
+    {
+        Ride r = new Ride();
+      return r.setStatus(rideId, status);
     }
 
 
@@ -94,17 +102,6 @@ public class WebService : System.Web.Services.WebService
     }
 
     [WebMethod]
-    public string confirmPush(int userId, int msgId, string status)
-    {
-        Message m = new Message();
-        m.insertMsg(msgId, "", status, "", 0, DateTime.Now, userId, "", true, false, false);
-
-        JavaScriptSerializer j = new JavaScriptSerializer();
-        return j.Serialize("ok");
-    }
-
-
-    [WebMethod]
     public string getCoorList()
     {
         JavaScriptSerializer j = new JavaScriptSerializer();
@@ -123,11 +120,11 @@ public class WebService : System.Web.Services.WebService
     }
 
     [WebMethod]
-    public string getPatientEscorted(string displayName)
+    public string getPatientEscorted(string displayName, string caller)
     {
         JavaScriptSerializer j = new JavaScriptSerializer();
         Patient p = new Patient();
-        List<Escorted> escortedsList = p.getescortedsList(displayName);
+        List<Escorted> escortedsList = p.getescortedsList(displayName, caller);
         return j.Serialize(escortedsList);
     }
 
@@ -347,7 +344,7 @@ public class WebService : System.Web.Services.WebService
     public string getAllEquipment()
     {
         Patient p = new Patient();
-        List<string> el= p.getAllEquipment();
+        List<string> el = p.getAllEquipment();
         JavaScriptSerializer j = new JavaScriptSerializer();
         return j.Serialize(el);
     }
@@ -365,7 +362,7 @@ public class WebService : System.Web.Services.WebService
     public void setVolunteer(Volunteer volunteer, string func)
     {
         Volunteer v = volunteer;
-       v.setVolunteer(v,func);
+        v.setVolunteer(v, func);
 
     }
 
@@ -393,7 +390,7 @@ public class WebService : System.Web.Services.WebService
     {
         JavaScriptSerializer j = new JavaScriptSerializer();
         Volunteer v = new Volunteer();
-        
+
         List<string> types = v.getVolunteerTypes();
         return j.Serialize(types);
     }
@@ -432,7 +429,7 @@ public class WebService : System.Web.Services.WebService
     ///--------------------finish Road to Recovery----------------------------------------
 
     #region login functions
-    [WebMethod(EnableSession =true)]
+    [WebMethod(EnableSession = true)]
     public string loginUser(string uName, string password)
     {
         HttpContext.Current.Session["userSession"] = uName;
@@ -454,14 +451,14 @@ public class WebService : System.Web.Services.WebService
 
 
 
-    [WebMethod]
-    public string loginDriver(string uName, string password)
-    {
-        JavaScriptSerializer j = new JavaScriptSerializer();
-        Drivers d = new Drivers(uName, password);
-        d = d.CheckLoginDetails();
-        return j.Serialize(d);
-    }
+    //[WebMethod]
+    //public string loginDriver(string uName, string password)
+    //{
+    //    JavaScriptSerializer j = new JavaScriptSerializer();
+    //    Drivers d = new Drivers(uName, password);
+    //    d = d.CheckLoginDetails();
+    //    return j.Serialize(d);
+    //}
     #endregion
 
     //#region orders functions
