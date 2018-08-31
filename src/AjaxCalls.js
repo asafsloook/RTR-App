@@ -186,7 +186,7 @@ function confirmPush(request, confirmPushSCB, confirmPushECB) {
     }) // end of ajax call
 }
 
-function setStatus(request, SCB, ECB) {
+function setStatus(request, setStatusSCB, setStatusECB) {
 
     // serialize the object to JSON string
     var dataString = JSON.stringify(request);
@@ -197,7 +197,7 @@ function setStatus(request, SCB, ECB) {
         type: 'POST',                              // can be also GET
         dataType: 'json',                          // expecting JSON datatype from the server
         contentType: 'application/json; charset = utf-8', // sent to the server
-        success: SCB,                // data.d id the Variable data contains the data we get from serverside
-        error: ECB
+        success: setStatusSCB,                // data.d id the Variable data contains the data we get from serverside
+        error: setStatusECB
     }) // end of ajax call
 }

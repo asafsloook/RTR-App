@@ -1068,6 +1068,12 @@
 
 
     <div data-role="page" id="status">
+        <div data-role="header">
+            <a data-rel="back" style="float:left;border:none;margin:0;margin-left:2%" href="#" class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"></a>
+            <h1>דיווחים</h1>
+            <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+            </a>
+        </div>
         <div data-role="content" class="statusContent"></div>
         <div data-role="footer" class="statusFooter">
             <div class="notifyProblem">
@@ -1077,15 +1083,13 @@
     </div>
 
     <div data-role="page" id="problem">
+        <div data-role="header">
+            <a data-rel="back" style="float:left;border:none;margin:0;margin-left:2%" href="#" class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"></a>
+            <h1>דיווח בעיה</h1>
+            <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+            </a>
+        </div>
         <div class="problemContent" data-role="content">
-            <div class="problemItem">
-                <div class="problemName">
-                    <div class="problemButton">
-                        <span>ביטול הסעה</span>
-                    </div>
-                </div>
-            </div>
-            <hr>
             <div class="problemItem">
                 <div class="problemName">
                     <div class="problemButton">
@@ -1111,13 +1115,10 @@
                 </div>
             </div>
             <hr>
-            <textarea class="accordion ui-screen-hidden" maxlength="150"></textarea>
-            <div class="problemActionButtons">
+            <div id="accordionMaster" class="ui-screen-hidden">
+                <textarea class="accordion" maxlength="150"></textarea>
                 <div class="sendButton">
                     <span>דווח</span>
-                </div>
-                <div class="cancelButton">
-                    <a data-rel="back"><span>בטל</span></a>
                 </div>
             </div>
         </div>
