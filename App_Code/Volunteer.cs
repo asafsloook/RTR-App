@@ -625,7 +625,7 @@ public class Volunteer
             v.PrefLocation = v2.PrefLocation;
 
             DbService db2 = new DbService();
-            string query2 = "select * from status where StatusId > 99 ";
+            string query2 = "select * from status where StatusId > 99 and StatusId < 1000";
             DataSet ds2 = db2.GetDataSetByQuery(query2);
             v.Statusim = new List<RideStatus>();
             foreach (DataRow dr2 in ds2.Tables[0].Rows)

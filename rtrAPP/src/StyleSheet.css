@@ -1,6 +1,105 @@
-﻿.ui-btn-icon-left:after {
+﻿
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba( 255, 255, 255, .8 );
+}
+
+/* When the body has the loading class, we turn
+   the scrollbar off with overflow:hidden */
+body.loading .modal {
+    overflow: hidden;
+}
+
+/* Anytime the body has the loading class, our
+   modal element will be visible */
+body.loading .modal {
+    display: block;
+}
+
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    position: relative;
+    margin: 100px auto;
+}
+
+.modal .spinner {
+    margin: 0;
+    left: calc(50% - 20px) !important;
+    top: calc(50% - 20px) !important;
+}
+
+
+
+.double-bounce1, .double-bounce2 {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: #333;
+    opacity: 0.6;
+    position: absolute;
+    top: 0;
+    left: 0;
+    -webkit-animation: sk-bounce 2.0s infinite ease-in-out;
+    animation: sk-bounce 2.0s infinite ease-in-out;
+}
+
+.double-bounce2 {
+    -webkit-animation-delay: -1.0s;
+    animation-delay: -1.0s;
+}
+
+@-webkit-keyframes sk-bounce {
+    0%, 100% {
+        -webkit-transform: scale(0.0)
+    }
+
+    50% {
+        -webkit-transform: scale(1.0)
+    }
+}
+
+@keyframes sk-bounce {
+    0%, 100% {
+        transform: scale(0.0);
+        -webkit-transform: scale(0.0);
+    }
+
+    50% {
+        transform: scale(1.0);
+        -webkit-transform: scale(1.0);
+    }
+}
+
+a, p, span, label, td, #volunteerRequest label, #volunteerProblems label {
+    font-size: 20px;
+}
+
+#userPnBTN {
+    background-color: #C7DE9C;
+}
+
+#loginLogo p, #loginFailed a, #loginFailed p, #loginFailed input, #loginFailed .ui-btn, #loginPreference, #mypanel a {
+    font-size: 25px !important;
+}
+
+#myPreferences .ui-select {
+    width: 40%;
+    margin: 0 auto;
+}
+
+#myRides .ui-btn-icon-left:after, #mypanel .ui-btn-icon-left:after, #signMe .ui-btn-icon-left:after, #myPreferences .ui-btn-icon-left:after, #allPatients .ui-btn-icon-left:after, #allVolunteers .ui-btn-icon-left:after, #rakazLogin .ui-btn-icon-left:after {
     background-color: #94C541 !important;
 }
+
 
 #mypanel {
     background-color: #f6f6f6;
@@ -16,7 +115,7 @@
 }
 
 #showAllRides .ui-checkbox {
-    margin: 0;  
+    margin: 0;
 }
 
 
@@ -53,7 +152,7 @@ h1, h2 {
     font-size: 16px;
 }
 
- .ui-checkbox label::after {
+.ui-checkbox label::after {
     background-color: #94C541 !important;
     border-color: #94C541 !important;
     color: #fff !important;
@@ -87,7 +186,7 @@ h1, h2 {
 
 #myPreferences #zmanim td {
     padding: 0;
-    text-align: center;
+    text-align: right;
 }
 
 #myPreferences #zmanim form {
@@ -107,7 +206,7 @@ h1, h2 {
 
 #myPreferences #zmanim table {
     width: 100%;
-    margin-top: 15%;
+    margin-top: 10%;
 }
 
 
@@ -154,8 +253,8 @@ h1, h2 {
 
 
 #signMe .ui-filterable {
-    width: 70%;
-    margin-left: 30%;
+    width: 65%;
+    margin-left: 35%;
 }
 
 #starts label, #ends label {
@@ -318,9 +417,10 @@ option, select, span, #maslulLV, h4 {
     font-size: 20px;
 }
 
-#ridesPH li a, #myRidesPH li a {
+#ridesPH li a {
     margin-bottom: 5%;
 }
+
 
 #ridesPH li p, #myRidesPH li p {
     font-size: 16px;
@@ -337,20 +437,20 @@ fieldset {
     text-align: center;
 }
 
-#ridesCounter {
-    /*right: 78%;
+/*#ridesCounter {
+    right: 78%;
             top: 12px;
             border-radius: 16px;
-            background-color: #660000;*/
-    /*background-color: #fa3e3e;
+            background-color: #660000;
+   background-color: #fa3e3e;
             border-radius: 21px;
             color: white;
             padding: 1px 3px;
             font-size: 10px;
             position: absolute;
             top: 7px;
-            right: 100px;*/
-}
+            right: 100px;
+}*/
 
 #ridesPH a, #myRidesPH p {
     text-align: right;
@@ -386,7 +486,7 @@ hr {
     width: 100%;
 }
 
-#deleteMePage, #signMePage, #suggest, #infoPastRide, #deleteConfirm, #signConfirmation {
+#deleteMePage, #signMePage, #suggest, #infoPastRide, #deleteConfirm, #signConfirmation, #deleteConfirmation, #infoPage {
     text-align: center;
     padding: 30% 0px;
 }
@@ -466,11 +566,11 @@ hr {
 
 #loginLogo {
     text-align: center;
-    padding-top: 50%;
+    padding-top: 30%;
 }
 
 #loginPreference {
-    padding-top: 25%;
+    /*padding-top: 25%;*/
     text-align: center;
 }
 
@@ -480,6 +580,7 @@ hr {
         text-shadow: none;
         color: black;
         margin: 3% auto;
+        width: 65%;
     }
 
     #loginPreference h2 {
@@ -515,6 +616,7 @@ hr {
         width: 20%;
         margin: 0 auto;
         margin-top: 7%;
+        padding: 3%;
     }
 
     #loginFailed p, #volunteerRequest p, #volunteerProblems p {
@@ -580,9 +682,146 @@ hr.weekSeperator {
     text-shadow: none;
 }
 
-#okBTN, #deleteMePageNOBTN, #deleteOptionsNOBTN, #deleteConfirmNOBTN, #closeInfoBTN, #suggestOkBTN, #signConfirmationOkBTN {
+#okBTN, #backToSignMe, #deleteMePageNOBTN, #deleteOptionsNOBTN, #deleteConfirmNOBTN, #closeInfoBTN, #suggestOkBTN, #signConfirmationOkBTN, #deleteConfirmationBTN {
     background-color: #c2fcc7;
     border-color: #c2fcc7;
     color: #111;
     text-shadow: none;
+}
+
+#myRidesPH li {
+    height: 80px;
+    padding: 4%;
+    background-color: #fff;
+}
+
+#deleteOptions a, #signMePage a {
+    margin: 5% auto;
+    width: 80%;
+}
+
+#menuBTN::after {
+    width: 30px;
+    height: 30px;
+    margin-left: -15px;
+    margin-top: -15px;
+}
+
+#menuBTN {
+    width: 32px;
+    height: 32px;
+}
+
+.statusItem, .statusName, .statusNum, .problemItem {
+    height: 75px;
+}
+
+.statusName, .statusNum, .problemName{
+    text-align: center;
+    vertical-align: middle;
+    line-height: 75px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+    .statusNum {
+    float: right;
+    width: 75px;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.statusName, .problemName {
+    float: left;
+    width: 73%;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+#status hr, #problem hr {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
+}
+
+.statusContent, .problemContent {
+    padding: 1em;
+    height: calc(100vh - 2em);
+}
+
+.statusFooter {
+    height: 75px;
+    background-color: yellow !important;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    color: black !important;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+.statusButton, .problemButton {
+    text-align: center;
+    margin: 18px;
+    vertical-align: middle;
+    line-height: 35px;
+}
+
+.statusActive {
+    /*background-color: #c2fcc7;*/
+    /*rgba(99, 255, 133, 0.6);*/
+    background-color: #c2fcc7;
+    cursor: pointer;
+    -webkit-transition: background-color 0.5s ease-out;
+    -moz-transition: background-color 0.5s ease-out;
+    -o-transition: background-color 0.5s ease-out;
+    transition: background-color 0.5s ease-out;
+}
+
+.problemName {
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+#problem .keyIcon {
+    float: left;
+    margin: 5px -24px 0px 0px;
+}
+
+.problemActionButtons {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    width: 100%;
+    text-align: center;
+}
+
+    .problemActionButtons .sendButton, .problemActionButtons .cancelButton {
+        float: left;
+        width: 80px;
+        height: 60px;
+        line-height: 60px;
+        vertical-align: middle;
+        margin: 20px;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+
+#problem .accordion {
+    max-height: 138px !important;
+    direction: rtl;
+}
+
+.notifyProblem a, .cancelButton a, .cancelButton a h2 {
+    text-decoration: none;
+    color: #333 !important;
+}
+
+
+.sendButton {
+    background-color: rgba(0, 0, 0, 0.05);
+    width: 20%;
+    height: 5vh;
+    line-height: 5vh;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid rgba(0, 0, 0, 0.15);
 }

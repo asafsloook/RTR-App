@@ -1,4 +1,6 @@
-﻿// add to kavim+times explain text
+﻿
+//DONE
+// add to kavim+times explain text
 // disable/hide tabs in first login
 // check all when choosing area first login
 // add haifa to south
@@ -9,19 +11,17 @@
 // get week (if fix)
 // match (shift fix)
 //add manager to rakaz permisions
+
+//NEEDED
 //add info btn to signme lists
 //save prefs by all ctrl change
-//notes show on all rides
-//matan-get more info for ridepat
-//matan-reg id to check user web service
-//double set status bug
-//problems ui
-//login to reporting status page
 
-//matan-last status (live) remember (nees status on ride (also הלוך חזור, primary seconderay on status))
-//matan-myrides cancel popup rakaz call when ride is near (need coordinator cell)
-//problem statuses
-//matan- varchar 250 status
+//NEEDING
+//notes show on all rides
+//matan
+//get more info for ridepat
+//reg id to check user web service
+//
 
 domain = '';
 if (!window.location.href.includes('http')) {
@@ -38,11 +38,6 @@ Date.prototype.getWeek = function () {
     var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
     return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
 };
-
-Date.prototype.addHours = function (h) {
-    this.setTime(this.getTime() + (h * 60 * 60 * 1000));
-    return this;
-}
 
 
 //global variables for ride management
@@ -179,7 +174,6 @@ function myRidesToClientStructure(before) {
             after.push(ridePat);
         }
     }
-
     return after;
 }
 
@@ -434,7 +428,6 @@ function deleteAllRideErrorCB() {
 //success call back function for delete ride
 function deleteRideSuccessCB() {
 
-
     //for refreshing my rides after the delete
     myRidesPrint = true;
     getMyRidesList();
@@ -653,7 +646,7 @@ function printInfo(ride) {
     $('#infoPagePH').empty();
 
     var str = getRideStr(ride);
-    str += '<a href="tel:' + ride.Pat.CellPhone + '"><i class="fa fa-phone-square" style="font-size: 30px;"></i></a><br><br>'
+    str += '<i class="fa fa-phone-square" style="font-size: 30px;"></i><br><br>'
     //call
     //window.open("tel:" + this.id);
 
@@ -901,11 +894,11 @@ function getRideStr(rideOBJ) {
     }
 
     str += '<p>מ' + rideOBJ.StartPoint + ' '
-        + 'ל' + rideOBJ.EndPoint
-        + '<br/><br/>' + rideOBJ.Person + '<br/>';
+        + 'ל' + rideOBJ.EndPoint + ', '
+        + '<br/>' + rideOBJ.Person + '</p>';
 
     if (rideOBJ.Melave.length > 0) {
-        str += 'מלווים: ';
+        str += '<p>מלווים: ';
 
         for (var i = 0; i < rideOBJ.Melave.length; i++) {
             str += rideOBJ.Melave[i] + "<br/>";
@@ -917,10 +910,10 @@ function getRideStr(rideOBJ) {
     if (rideOBJ.RideNum > 0) {
         for (var i = 0; i < rides.length; i++) {
             if (rides[i].RideNum == rideOBJ.RideNum && rideOBJ.Id != rides[i].Id) {
-                str += '<p>' + rides[i].Person + '<br/>';
+                str += '<p>' + rides[i].Person + '</p>';
 
                 if (rides[i].Melave.length > 0) {
-                    str += 'מלווים: ';
+                    str += '<p>מלווים: ';
 
                     for (var j = 0; j < rides[i].Melave.length; j++) {
                         str += rides[i].Melave[j] + "<br/>";
@@ -1476,7 +1469,7 @@ $(document).one('pagebeforecreate', function () {
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="myRidesTab" data-theme="a">הנסיעות שלי</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="preferencesTab" href="#myPreferences" data-theme="a">העדפות</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="loginAgainTab" href="#" data-theme="a">חזור לחשבון שלי</a> </li>'
-        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="NotifyTab" data-theme="a">דיווחים</a> </li>'
+        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="NotifyTab" href="#status" data-theme="a">דיווחים</a> </li>'
         //+ '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="trackRidesTab" href="#trackRides" data-theme="b">מעקב הסעות</a> </li>'
         //+ '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="auctionTab" href="#auction" data-theme="b">מכרז</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-delete">'
@@ -1523,6 +1516,7 @@ $(document).on('pagebeforeshow', '#signMe', function () {
 
 $(document).on('pagebeforeshow', '#loginPreference', function () {
 
+
     $("#welcomeTitle").html("שלום " + userInfo.FirstNameH);
     $("#rakazBTNS").hide();
 
@@ -1542,18 +1536,6 @@ $(document).on('pagebeforeshow', '#loginPreference', function () {
 
 });
 
-$(document).on('pageshow', '#loginPreference', function () {
-    if (hasCloseRide()) {
-        closeRide = $.parseJSON(localStorage.closeRide);
-        var rideDate = new Date(closeRide.DateTime);
-        var isSameDay = rideDate.getDay() == (new Date()).getDay() ? 'היום' : 'מחר';
-        var alertRide = 'המערכת זיהתה שיש לך ' + isSameDay + ' נסיעה מ' + closeRide.StartPoint + ' ל' + closeRide.EndPoint + ' בשעה ' + rideDate.getHours() + ':' + (rideDate.getMinutes() < 10 ? '0' + rideDate.getMinutes() : rideDate.getMinutes()) + '. האם תרצה לדווח סטטוס?';
-        if (confirm(alertRide)) {
-
-            $.mobile.pageContainer.pagecontainer("change", "#status");
-        }
-    }
-});
 
 function getPatientsSCB(data) {
 
@@ -1750,28 +1732,18 @@ function checkUserSuccessCB(results) {
 
     if (localStorage.availableSeats == null || localStorage.availableSeats == "0") {
         setTimeout(function () {
+
             $.mobile.pageContainer.pagecontainer("change", "#myPreferences");
         }, 1000);
     }
     else {
         setTimeout(function () {
+
             $.mobile.pageContainer.pagecontainer("change", "#loginPreference");
         }, 1000);
-    }
-}
 
-function hasCloseRide() {
-
-    if (myRides != null) {
-        for (var i = 0; i < myRides.length; i++) {
-            if ((new Date(myRides[i].DateTime))/*.addHours(12)*/ >= (new Date()) && myRides[i].Status == 'Primary') {
-                localStorage.closeRide = JSON.stringify(myRides[i]);
-                return true;
-            }
-        }
-        return false;
     }
-    return false;
+
 }
 
 function getPrefs() {
@@ -2012,23 +1984,14 @@ function goMenu(id) {
     else if (id == 'trackRidesTab') {
         $.mobile.pageContainer.pagecontainer("change", "#trackRides");
     }
-    else if (id == 'NotifyTab') {
-        $.mobile.pageContainer.pagecontainer("change", "#status");
-    }
 }
 
 
 $(document).ready(function () {
     //remember to add this event to every new page
-    $('#signMeTab , #myRidesTab , #loginAgainTab, #auctionTab, #trackRidesTab, #NotifyTab').on('click', function () {
+    $('#signMeTab , #myRidesTab , #loginAgainTab, #auctionTab, #trackRidesTab').on('click', function () {
 
         if (window.location.href.toString().indexOf('myPreferences') == -1) {
-
-            if ($(this).attr('id') == 'NotifyTab' && !hasCloseRide()) {
-                alert('אין לך נסיעות קרובות הדורשות דיווח.');
-                return;
-            }
-
             goMenu(this.id);
             return;
         }
@@ -2510,65 +2473,57 @@ $(document).ajaxStop(function () {
 
 //status and problemsr
 $(document).ready(function () {
-    $(document).on('click', '.problemButton.problemKeyboard', function () {
-        $('#problem #accordionMaster').removeClass('ui-screen-hidden');
+    $('.problemButton.problemKeyboard').on('click', function () {
+        $('#problem textarea').removeClass('ui-screen-hidden');
+        clearAll();
+        $(this).parent().parent().addClass('statusActive');
     });
 
-    $(document).on('click', '.problemButton', function () {
+    $('.problemButton').on('click', function () {
         if (this.className.includes('problemKeyboard')) return;
-        $('#problem #accordionMaster').addClass('ui-screen-hidden');
-
-        sendProblem(this);
+        $('#problem textarea').addClass('ui-screen-hidden');
+        clearAll();
+        $(this).parent().parent().addClass('statusActive');
     });
 
-    $(document).on('click', '.sendButton', function () {
+    $('.cancelButton').on('click', function () {
+        $('#problem textarea').addClass('ui-screen-hidden');
+        clearAll();
+    });
 
-        if ($('#problem textarea').val() == '') {
-            alert('לא ניתן לשלוח הודעה ריקה');
-            return;
+    $('.sendButton').on('click', function () {
+        if ($('.problemItem.statusActive').length == 1) {
+            var problem = $('.problemItem.statusActive').eq(0).children().children().children().html();
+            if (problem == 'keyboard') problem = $('#problem .accordion').val();
+
+            //send problem to db
         }
-
-        sendProblem(this);
     });
 });
 
-function sendProblem(element) {
-    var problem = $(element).children().html()
-    if (problem == 'דווח') problem = $('#problem .accordion').val();
-    if (!confirm('האם אתה מאשר את שליחת דיווח הסטטוס: ' + problem + '?')) {
-        return;
-    }
-    //send problem status to db
-    var rideID = closeRide.rideId;
-    sendStatus(problem, rideID);
-}
-
 
 $(document).on('pagebeforeshow', '#status', function () {
-
     if ($('.statusContent').html() == "") {
         var str = "";
         userInfo.Statusim.sort(function (a, b) {
             return a.Id.toString().localeCompare(b.Id.toString());
         });
         for (var i = 0; i < userInfo.Statusim.length; i++) {
-            var _status = userInfo.Statusim[i];
-            var active = '';//(typeof closeRide !== 'undefined') ? ((closeRide.Status.Id >= _status.Id) ? ' statusActive' : '') : '';
             str +=
                 '<div class="statusItem">' +
-                '      <div class="statusNum' + active + '">' +
+                '      <div class="statusNum">' +
                 '          <span>' + (i + 1) + '</span>' +
                 '      </div>' +
-                '      <div class="statusName' + active + '">' +
-                '       <div class="statusButton" id="status' + _status.Id + '">' +
-                '              <span>' + _status.Name + '</span>' +
-                '       </div>' +
+                '      <div class="statusName">' +
+                '           <div class="statusButton" id="status' + userInfo.Statusim[i].Id + '">' +
+                '               <span>' + userInfo.Statusim[i].Name + '</span>' +
+                '           </div>' +
                 '       </div>' +
                 '   </div>' +
                 '   <hr>';
         }
         $('.statusContent').html(str);
-        $(document).on('click', '.statusButton', function () {
+        $('.statusButton').on('click', function () {
 
             if (!$(this).parent().hasClass('statusActive')) {
 
@@ -2580,33 +2535,27 @@ $(document).on('pagebeforeshow', '#status', function () {
                         if (thisId < thatId) return;
                     }
                 }
+            }
 
-                var status = $(this).children().html();
-                if (confirm('האם אתה מאשר את שליחת דיווח הסטטוס: ' + status + '?')) {
-                    $(this).parent().addClass('statusActive');
-                    $(this).parent().siblings().eq(0).addClass('statusActive');
-                    var rideID = closeRide.rideId;
-                    sendStatus(status, rideID);
-                }
+            var status = $(this).children().html();
+            if (confirm('האם אתה מאשר את שליחת דיווח הסטטוס: ' + status + '?')) {
+                $(this).parent().addClass('statusActive');
+                $(this).parent().siblings().eq(0).addClass('statusActive');
+                var userid = parseInt(localStorage.userId);
+                sendStatus(status, userid);
             }
         });
     }
 });
 
 
-function sendStatus(_status, _rideId) {
+function sendStatus(status, userid) {
     //send status to db
-    var request = {
-        rideId: _rideId,
-        status: _status
+}
+
+function clearAll() {
+    var allProblems = $('#problem .statusActive');
+    for (var i = 0; i < allProblems.length; i++) {
+        allProblems.eq(i).removeClass('statusActive');
     }
-    setStatus(request, setStatusSCB, setStatusECB);
-}
-
-function setStatusSCB() {
-
-}
-
-function setStatusECB() {
-
 }

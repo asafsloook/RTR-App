@@ -49,7 +49,7 @@ public class WebService : System.Web.Services.WebService
         JavaScriptSerializer j = new JavaScriptSerializer();
         return j.Serialize("ok");
     }
-        
+
 
     [WebMethod]
     public int setVolunteerPrefs(int Id, List<string> PrefLocation, List<string> PrefArea, List<string> PrefTime, int AvailableSeats)
@@ -79,7 +79,7 @@ public class WebService : System.Web.Services.WebService
     public int setRideStatus(int rideId, string status)
     {
         Ride r = new Ride();
-      return r.setStatus(rideId, status);
+        return r.setStatus(rideId, status);
     }
 
 
@@ -206,12 +206,20 @@ public class WebService : System.Web.Services.WebService
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     public string GetRidePatView(int volunteerId)
     {
-        string test = (string)HttpContext.Current.Session["userSession"];
+        try
+        {
+            string test = (string)HttpContext.Current.Session["userSession"];
+            
+            RidePat rp = new RidePat();
+            List<RidePat> r = rp.GetRidePatView(volunteerId);
+            JavaScriptSerializer j = new JavaScriptSerializer();
+            return j.Serialize(r);
+        }
+        catch (Exception)
+        {
+            throw new Exception("שגיאה בהבאת נסיעות");
+        }
 
-        RidePat rp = new RidePat();
-        List<RidePat> r = rp.GetRidePatView(volunteerId);
-        JavaScriptSerializer j = new JavaScriptSerializer();
-        return j.Serialize(r);
     }
 
     [WebMethod]

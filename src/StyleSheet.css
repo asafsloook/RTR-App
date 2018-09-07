@@ -1,4 +1,18 @@
-﻿
+﻿/*popup*/
+#popupDialog {
+    margin: 0 auto;
+    text-align: center;
+}
+
+.dialogBTNS {
+    margin-top: 50px;
+}
+
+#cancelDialogBTN {
+    padding: 3%;
+    border: 1px solid;
+    border-radius: 8px;
+}
 
 .modal {
     display: none;
@@ -716,14 +730,14 @@ hr.weekSeperator {
     height: 75px;
 }
 
-.statusName, .statusNum, .problemName{
+.statusName, .statusNum, .problemName {
     text-align: center;
     vertical-align: middle;
     line-height: 75px;
     border: 1px solid rgba(0, 0, 0, 0.15);
 }
 
-    .statusNum {
+.statusNum {
     float: right;
     width: 75px;
     background-color: rgba(0, 0, 0, 0.05);
