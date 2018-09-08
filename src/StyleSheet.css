@@ -1,11 +1,11 @@
 ﻿/*popup*/
 #popupDialog {
-    margin: 0 auto;
     text-align: center;
+    margin:0 auto;
 }
 
 .dialogBTNS {
-    margin-top: 50px;
+    margin-top: 25%;
 }
 
 #cancelDialogBTN {

@@ -119,15 +119,13 @@ function ridesToClientStructure(before) {
 
 //error call back function for get rides
 function GetRidesErrorCB(e) {
-    //alert("I caught the exception : failed in GetRidesErrorCB \n The exception message is : " + e.responseText);
-    //level 1, general
     popupDialog('שגיאה', e.responseJSON.Message, '#loginLogo');
 }
 
 
 //success call back function for get my rides
 function GetMyRidesSuccessCB(results) {
-    
+
     var results = $.parseJSON(results.d);
 
     results = myRidesToClientStructure(results);
@@ -148,11 +146,13 @@ function GetMyRidesSuccessCB(results) {
 
         if (localStorage.availableSeats == null || localStorage.availableSeats == "0") {
             setTimeout(function () {
+                loginThread = false;
                 $.mobile.pageContainer.pagecontainer("change", "#myPreferences");
             }, 1000);
         }
         else {
             setTimeout(function () {
+                loginThread = false;
                 $.mobile.pageContainer.pagecontainer("change", "#loginPreference");
             }, 1000);
         }
@@ -209,8 +209,7 @@ function myRidesToClientStructure(before) {
 
 //error call back function for get my rides
 function GetMyRidesErrorCB(e) {
-    alert("I caught the exception : failed in GetRidesErrorCB \n The exception message is : " + e.responseText);
-    //level 2, general
+    popupDialog('שגיאה', e.responseJSON.Message, '#loginLogo');
 }
 
 
@@ -410,8 +409,7 @@ function deleteAllRideSuccessCB() {
 }
 
 function deleteAllRideErrorCB() {
-    alert("I caught the exception : failed in deleteAllRideErrorCB \n The exception message is : " + e.responseText);
-    //level 3, general
+    popupDialog('שגיאה', e.responseJSON.Message, '#myRides');
 }
 
 
@@ -430,8 +428,7 @@ function deleteRideSuccessCB() {
 
 //error call back function for delete ride
 function deleteRideErrorCB(e) {
-    alert("I caught the exception : failed in deleteRideErrorCB \n The exception message is : " + e.responseText);
-    //level 4, general
+    popupDialog('שגיאה', e.responseJSON.Message, '#myRides');
 }
 
 
@@ -936,8 +933,7 @@ function suggestStart() {
 
 //error call back function for get rides
 function signDriverErrorCB(e) {
-    alert("I caught the exception : failed in signDriverErrorCB \n The exception message is : " + e.responseText);
-    //level 5, general
+    popupDialog('שגיאה', e.responseJSON.Message, '#myRides');
 }
 
 //function for converting num of day to hebrew day
@@ -1399,8 +1395,7 @@ function getPatientsSCB(data) {
 }
 
 function getPatientsECB(e) {
-    alert("Error in getPatientsECB: " + e);
-    //level 6, general
+    popupDialog('שגיאה', e.responseJSON.Message, '#loginLogo');
 }
 
 
@@ -1412,8 +1407,7 @@ function getVolunteersSCB(data) {
 }
 
 function getVolunteersECB(e) {
-    alert("Error in getVolunteersECB: " + e);
-    //level 7, general
+    popupDialog('שגיאה', e.responseJSON.Message, '#loginLogo');
 }
 
 
@@ -1495,6 +1489,7 @@ function checkUserPN(cellphone) {
 function manualLogin() {
 
     setTimeout(function () {
+        localStorage.removeItem('cellphone');
         $.mobile.pageContainer.pagecontainer("change", "#loginFailed");
     }, 500);
 }
@@ -1509,9 +1504,8 @@ function checkUserSuccessCB(results) {
     if (results.Id == 0) {
         //send request for volunteer
         setTimeout(function () {
-            alert("הודעת שגיאה - מספר הטלפון אינו ידוע, אנא בדקו ונסו בשנית.");
-            //level 7
-            $.mobile.pageContainer.pagecontainer("change", "#loginFailed");
+            localStorage.removeItem('cellphone');
+            popupDialog('שגיאה', 'הודעת שגיאה - מספר הטלפון אינו ידוע, אנא בדקו ונסו בשנית', '#loginFailed');
         }, 100);
         return;
     }
@@ -1619,8 +1613,8 @@ function getPrefs() {
 }
 
 function checkUserErrorCB(e) {
-    alert("error in checkUser");
-    //level 8, general
+    localStorage.removeItem('cellphone');
+    popupDialog('שגיאה', e.responseJSON.Message, '#loginFailed');
 }
 
 
@@ -1666,7 +1660,7 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
         $('#continueBTN').on('click', function () {
 
             if ($('#area .ui-checkbox-on').length == 0) {
-                alert('אנא בחר איזור אחד לפחות');
+                popupDialog('שגיאה', 'אנא בחר איזור אחד לפחות', null);
                 //show dialog
                 return;
             }
@@ -1675,7 +1669,7 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
 
                 var actives = $('#starts .ui-checkbox-on,#ends .ui-checkbox-on');
                 if (actives.length == 0) {
-                    alert("אנא בחר נקודות מוצא ויעד ורק לאחר מכן לחץ על המשך");
+                    popupDialog('שגיאה', "אנא בחר נקודות מוצא ויעד ורק לאחר מכן לחץ על המשך", null);
                     //show dialog
                     return;
                 }
@@ -1838,7 +1832,6 @@ function setVolunteerPrefsSCB(data) {
         return;
     }
 
-    //alert("ההעדפות שלך נשמרו בהצלחה!");
 
     if (typeof tempID !== 'undefined') {
         goMenu(tempID);
@@ -1850,8 +1843,7 @@ function setVolunteerPrefsSCB(data) {
 }
 
 function setVolunteerPrefsECB(e) {
-    alert("error set user prefs: " + e);
-    //level 8, general
+    popupDialog('שגיאה', e.responseJSON.Message, '#myPreferences');
 }
 
 
@@ -1922,11 +1914,6 @@ function saveRoutes() {
         }
 
     }
-
-    //if (routesArr.length == 1) {
-    //    alert("אנא בחר העדפות ורק לאחר מכן לחץ על שמור");
-    //    return;
-    //}
 
     //save routesArr to DB
     localStorage.routes = JSON.stringify(routesArr);
@@ -2031,7 +2018,6 @@ function onDeviceReady() {
         push.on('registration', function (data) {
             // send the registration id to the server and save it in the DB
             // send also the userID
-            //alert('reg with key: ' + data.registrationId);
             localStorage.RegId = data.registrationId;
 
             login();
@@ -2058,8 +2044,7 @@ function onDeviceReady() {
         // triggred when there is an error in the notification server
         //-----------------------------------------------------------
         push.on('error', function (e) {
-            alert(e.message);
-            //level 9,
+            popupDialog('שגיאה', e.responseJSON.Message, '#loginLogo');
         });
     }
     else {
@@ -2433,8 +2418,7 @@ $(document).ready(function () {
     $(document).on('click', '.sendButton', function () {
 
         if ($('#problem textarea').val() == '') {
-            //alert('לא ניתן לשלוח הודעה ריקה');
-            popupDialog('שגיאה', 'לא ניתן לשלוח הודעה ריקה', null)
+            popupDialog('שגיאה', 'לא ניתן לשלוח הודעה ריקה', null);
             return;
         }
 
@@ -2448,7 +2432,7 @@ $(document).ready(function () {
         if (window.location.href.toString().indexOf('myPreferences') == -1) {
 
             if ($(this).attr('id') == 'NotifyTab' && !hasCloseRide()) {
-                alert('אין לך נסיעות קרובות הדורשות דיווח.');
+                popupDialog('שגיאה', 'אין לך נסיעות קרובות הדורשות דיווח.', null);
                 //show dialog
                 return;
             }
@@ -2459,14 +2443,14 @@ $(document).ready(function () {
 
         var actives = $('#starts .ui-checkbox-on,#ends .ui-checkbox-on');
         if (actives.length == 0) {
-            alert("אנא בחר נקודות מוצא ויעד בקווי הסעה");
+            popupDialog('שגיאה', "אנא בחר נקודות מוצא ויעד בקווי הסעה", null);
             //show dialog
             $('#mypanel').panel("close");
             return;
         }
 
         if ($('#area .ui-checkbox-on').length == 0) {
-            alert("אנא בחר איזורים");
+            popupDialog('שגיאה', "אנא בחר איזורים", null);
             //show dialog
             $('#mypanel').panel("close");
             return;
@@ -2572,10 +2556,13 @@ $(document).ready(function () {
     $("#popupDialog").popup();
     $("#cancelDialogBTN").on('click', function () {
         $("#popupDialog").popup('close');
-        alert('clicked');
         if (redirectUrlFromDialog != null) {
-            //$.mobile.pageContainer.pagecontainer("change", redirectUrlFromDialog);
-            window.location.replace('index.html');
+            if (redirectUrlFromDialog == '#loginLogo') {
+                window.location.replace('index.html');
+            }
+            else {
+                $.mobile.pageContainer.pagecontainer("change", redirectUrlFromDialog);
+            }
         }
         redirectUrlFromDialog = null;
     });
