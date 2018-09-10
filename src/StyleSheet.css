@@ -1,17 +1,33 @@
 ﻿/*popup*/
 #popupDialog {
     text-align: center;
-    margin:0 auto;
+    margin: 0 auto;
 }
 
 .dialogBTNS {
-    margin-top: 25%;
+    margin-top: 25px;
+    height: 50px;
 }
 
-#cancelDialogBTN {
-    padding: 3%;
-    border: 1px solid;
+#cancelDialogBTN, #confirmDialogBTN {
+    padding: 10px;
+    border: 1px solid black;
     border-radius: 8px;
+    color: black;
+}
+
+#popupTitle {
+    margin-bottom: 0;
+}
+
+#cancelDialog {
+    float: right;
+    margin-right: 30px;
+}
+
+#confirmDialog {
+    float: left;
+    margin-left: 30px;
 }
 
 .modal {
@@ -782,7 +798,7 @@ hr.weekSeperator {
 .statusActive {
     /*background-color: #c2fcc7;*/
     /*rgba(99, 255, 133, 0.6);*/
-    background-color: #c2fcc7;
+    background-color: #c2fcc7 !important;
     cursor: pointer;
     -webkit-transition: background-color 0.5s ease-out;
     -moz-transition: background-color 0.5s ease-out;
