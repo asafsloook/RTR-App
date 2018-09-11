@@ -19,11 +19,15 @@
 //login to reporting status page
 //problem statuses
 //matan- varchar 150 status ???
-
 //matan-last status (live) remember (nees status on ride (also הלוך חזור, primary seconderay on status))
 //matan-myrides cancel popup rakaz call when ride is near (need coordinator cell)
-
 //exceptions, error callbacks
+//double click on active problem
+//clear textarea problem after send
+//after send problem go one back to status
+
+//myPrefs exit without lines, (maybe ui )
+//connect live status to status page (auto activate) ??
 
 domain = '';
 if (!window.location.href.includes('http')) {
@@ -179,6 +183,8 @@ function myRidesToClientStructure(before) {
 
             ridePat.Status = results[i].Status;
 
+            ridePat.DriverType = results[i].DriverType;
+
             ridePat.Id = ridePat.RidePatNum;
             ridePat.DateTime = parseInt(ridePat.Date.replace('/Date(', ''));
             ridePat.StartPoint = ridePat.Origin.Name;
@@ -264,7 +270,7 @@ function myRideListItem(myRides, i) {
     var day = numToDayHebrew(myDate.getDay());
 
     //dont show past rides as backup driver (not a actual ride)
-    if (myRides[i].Status != "Primary" && $('#doneTAB').prop("class").indexOf("ui-btn-active") != -1) {
+    if (myRides[i].DriverType != "Primary" && $('#doneTAB').prop("class").indexOf("ui-btn-active") != -1) {
         return;
     }
 
@@ -278,7 +284,7 @@ function myRideListItem(myRides, i) {
     }
 
 
-    if (myRides[i].Status == "Primary") {
+    if (myRides[i].DriverType == "Primary") {
         str += 'primary popINFO">';
     }
     else {
@@ -307,7 +313,7 @@ function myRideListItem(myRides, i) {
 
 
 
-    if (myRides[i].Status == "Primary") {
+    if (myRides[i].DriverType == "Primary") {
         str += '<b>הסעה</b><br>';
     }
     else {
@@ -845,7 +851,7 @@ function getRideStr(rideOBJ) {
 
     var str = '<p>';
 
-    if (rideOBJ.Status == "Primary" || rideOBJ.Status == "ממתינה לשיבוץ") {
+    if (rideOBJ.DriverType == "Primary" || rideOBJ.Status == "ממתינה לשיבוץ") {
         str += '<b>הסעה</b><br><br>';
     }
     else {
@@ -1300,7 +1306,7 @@ function myRideHasMultipulePats(ridePatId) {
     var rideId = thisRide.rideId;
 
     for (var i = 0; i < myRides.length; i++) {
-        if (myRides[i].Id != ridePatId && myRides[i].rideId == rideId && myRides[i].Status == "Primary") {
+        if (myRides[i].Id != ridePatId && myRides[i].rideId == rideId && myRides[i].DriverType == "Primary") {
             return true;
         }
     }
@@ -1530,7 +1536,7 @@ function hasCloseRide() {
 
     if (myRides != null) {
         for (var i = 0; i < myRides.length; i++) {
-            if ((new Date(myRides[i].DateTime))/*.addHours(12)*/ >= (new Date()) && myRides[i].Status == 'Primary') {
+            if ((new Date(myRides[i].DateTime))/*.addHours(12)*/ >= (new Date()) && myRides[i].DriverType == 'Primary') {
                 localStorage.closeRide = JSON.stringify(myRides[i]);
                 return true;
             }
@@ -2160,54 +2166,63 @@ function sendProblem(element) {
         elemProblemForSend = $('.problemName').eq(2);
         problem = $('#problem .accordion').val();
     };
-    
+
     popupDialog('הודעת אישור', 'האם אתה מאשר את שליחת דיווח הסטטוס: ' + problem + '?', null, true, 'sendProblem');
 }
 
 
 $(document).on('pagebeforeshow', '#status', function () {
 
-    if ($('.statusContent').html() == "") {
-        var str = "";
-        userInfo.Statusim.sort(function (a, b) {
-            return a.Id.toString().localeCompare(b.Id.toString());
-        });
-        for (var i = 0; i < userInfo.Statusim.length; i++) {
-            var _status = userInfo.Statusim[i];
-            var active = '';//(typeof closeRide !== 'undefined') ? ((closeRide.Status.Id >= _status.Id) ? ' statusActive' : '') : '';
-            str +=
-                '<div class="statusItem">' +
-                '      <div class="statusNum' + active + '">' +
-                '          <span>' + (i + 1) + '</span>' +
-                '      </div>' +
-                '      <div class="statusName' + active + '">' +
-                '       <div class="statusButton" id="status' + _status.Id + '">' +
-                '              <span>' + _status.Name + '</span>' +
-                '       </div>' +
-                '       </div>' +
-                '   </div>' +
-                '   <hr>';
+    if ($('.statusContent').html() != "") $('.statusContent').empty();
+
+    var str = "";
+    var statusID = 0;
+
+    for (var i = 0; i < userInfo.Statusim.length; i++) {
+        if (closeRide.Status == userInfo.Statusim[i].Name) {
+            statusID = userInfo.Statusim[i].Id;
+            break;
         }
-        $('.statusContent').html(str);
-        $(document).on('click', '.statusButton', function () {
-
-            if (!$(this).parent().hasClass('statusActive')) {
-
-                if ($('.statusName.statusActive').length > 0) {
-                    for (var i = 0; i < $('.statusName.statusActive').length; i++) {
-                        var thisId = parseInt($(this).attr('id').toString().replace('status', ''));
-                        var thatId = parseInt($('.statusName.statusActive').eq(i).children().attr('id').toString().replace('status', ''));
-                        if (thisId == thatId) continue;
-                        if (thisId < thatId) return;
-                    }
-                }
-
-                statusForSend = $(this).children().html();
-                elemStatusForSend = this;
-                popupDialog('הודעת אישור', 'האם אתה מאשר את שליחת דיווח הסטטוס: ' + statusForSend + '?',null, true, 'sendStatus');
-            }
-        });
     }
+
+    userInfo.Statusim.sort(function (a, b) {
+        return a.Id.toString().localeCompare(b.Id.toString());
+    });
+    for (var i = 0; i < userInfo.Statusim.length; i++) {
+        var _status = userInfo.Statusim[i];
+        var active = (typeof closeRide !== 'undefined') ? ((statusID >= _status.Id) ? ' statusActive' : '') : '';
+        str +=
+            '<div class="statusItem">' +
+            '      <div class="statusNum' + active + '">' +
+            '          <span>' + (i + 1) + '</span>' +
+            '      </div>' +
+            '      <div class="statusName' + active + '">' +
+            '       <div class="statusButton" id="status' + _status.Id + '">' +
+            '              <span>' + _status.Name + '</span>' +
+            '       </div>' +
+            '       </div>' +
+            '   </div>' +
+            '   <hr>';
+    }
+    $('.statusContent').html(str);
+    $(document).on('click', '.statusButton', function () {
+
+        if (!$(this).parent().hasClass('statusActive')) {
+
+            if ($('.statusName.statusActive').length > 0) {
+                for (var i = 0; i < $('.statusName.statusActive').length; i++) {
+                    var thisId = parseInt($(this).attr('id').toString().replace('status', ''));
+                    var thatId = parseInt($('.statusName.statusActive').eq(i).children().attr('id').toString().replace('status', ''));
+                    if (thisId == thatId) continue;
+                    if (thisId < thatId) return;
+                }
+            }
+
+            statusForSend = $(this).children().html();
+            elemStatusForSend = this;
+            popupDialog('הודעת אישור', 'האם אתה מאשר את שליחת דיווח הסטטוס: ' + statusForSend + '?', null, true, 'sendStatus');
+        }
+    });
 });
 
 
@@ -2387,6 +2402,7 @@ $(document).ready(function () {
 
     $(document).on('click', '.problemButton', function () {
         if (this.className.includes('problemKeyboard')) return;
+        if ($(this).parent().hasClass('statusActive')) return;
         $('#problem #accordionMaster').addClass('ui-screen-hidden');
 
         sendProblem(this);
@@ -2555,8 +2571,12 @@ function otherDialogFunction(reaction_) {
                     return;
                 }
                 $(elemProblemForSend).addClass('statusActive');
+                $('#problem .accordion').empty();
                 var rideID = closeRide.rideId;
                 sendStatus(problem, rideID);
+                setTimeout(function () {
+                    window.history.back();
+                },1000);
                 break;
             case 'sendStatus':
                 if (reaction_ == 'Cancel') {

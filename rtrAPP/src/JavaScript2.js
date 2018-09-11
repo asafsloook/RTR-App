@@ -1984,7 +1984,8 @@ function goMenu(id) {
     else if (id == 'trackRidesTab') {
         $.mobile.pageContainer.pagecontainer("change", "#trackRides");
     }
-}
+
+ }
 
 
 $(document).ready(function () {
@@ -2024,12 +2025,6 @@ $(document).ready(function () {
         //DB
         tempID = this.id;
         setPrefs();
-        //} else {
-        goMenu(this.id);
-        return;
-        //}
-
-
     });
 
     $('a#menuBTN').on('click', function () {

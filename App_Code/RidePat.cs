@@ -319,7 +319,18 @@ public class RidePat
         }
         else if (func == "delete")
         {
+           
+            
             RidePatNum = ridePat.RidePatNum;
+            Ride r = new Ride();
+            RidePat rp = GetRidePat(ridePatNum);
+            foreach (Volunteer driver in rp.Drivers)
+            {
+Message m = new Message();
+                m.cancelRide(RidePatNum, driver);
+            }
+            
+          //  m.cancelRide(ridePatNum, dr);
             db = new DbService();
             string query = "delete from [PatientEscort_PatientInRide (RidePat)] where [PatientInRide (RidePat)RidePatNum]=" + RidePatNum;
             int res = db.ExecuteQuery(query);
@@ -327,6 +338,9 @@ public class RidePat
             db = new DbService();
             query = "delete from RidePat where RidePatNum=" + RidePatNum;
             res += db.ExecuteQuery(query);
+
+              
+            
 
             return res;
 
@@ -388,6 +402,19 @@ public class RidePat
         rp.RidePatNum = int.Parse(dr["RidePatNum"].ToString());
         rp.OnlyEscort = Convert.ToBoolean(dr["OnlyEscort"].ToString());
         rp.pat.DisplayName = dr["DisplayName"].ToString();
+        if (dr["MainDriver"].ToString() != "" )
+        {
+            rp.Drivers = new List<Volunteer>();
+            Volunteer v1 = new Volunteer();
+            v1.Id = int.Parse(dr["MainDriver"].ToString());
+            rp.Drivers.Add(v1);
+            if (dr["secondaryDriver"].ToString() != "")
+            {
+                Volunteer v2 = new Volunteer();
+                v2.Id = int.Parse(dr["secondaryDriver"].ToString());
+                rp.Drivers.Add(v2);
+            }
+        }
         //rp.pat.EscortedList = new List<Escorted>();
         rp.Escorts = new List<Escorted>();
         Location origin = new Location();
@@ -431,14 +458,15 @@ public class RidePat
 
 
     //This method is used for שבץ אותי
-    public List<RidePat> GetRidePatView(int volunteerId)//In case of coordinator will send -1 as ID.
+    public List<RidePat> GetRidePatView(int volunteerId)//In case of coordinator will send -1 as ID to receive all RidePats.
     {
         List<Escorted> el = new List<Escorted>();
         string query = "";
         if (volunteerId != -1)
-            query = "select * from RPView where (Status='שובץ נהג' or Status='ממתינה לשיבוץ')";
+           
+            query = "select * from RPView where (Status<>'הסתיימה' or Status<>'בוטלה')"; //Get all active RidePats
         else
-            query = "select * from RPView where PickupTime>= getdate()";
+            query = "select * from RPView where PickupTime>= getdate()"; // Get all future RidePats, even if cancelled
         DbService db = new DbService();
         DataSet ds = db.GetDataSetByQuery(query);
         // Ride ride = new Ride();
@@ -545,8 +573,14 @@ public class RidePat
                 rp.Shift = dr["Shift"].ToString();
                 rp.Date = Convert.ToDateTime(dr["PickupTime"].ToString());
                 rp.Status = dr["Status"].ToString();
+                if (rp.RideNum>0) // if RidePat is assigned to a Ride - Take the Ride's status
+                {
+                    query = "select top 1 statusStatusName from status_Ride where RideRideNum="+rp.RideNum + "order by Timestamp desc";
+                    db = new DbService();
+                    rp.Status = db.GetObjectScalarByQuery(query).ToString();
+                }
                 rpl.Add(rp);
-                //ride.Status = dr["statusRide"].ToString();
+                
             }
 
             return rpl;

@@ -1,4 +1,35 @@
-﻿
+﻿/*popup*/
+#popupDialog {
+    text-align: center;
+    margin: 0 auto;
+}
+
+.dialogBTNS {
+    margin-top: 25px;
+    height: 50px;
+}
+
+#cancelDialogBTN, #confirmDialogBTN {
+    padding: 10px;
+    border: 1px solid black;
+    border-radius: 8px;
+    color: black;
+    background-color: lightgrey;
+}
+
+#popupTitle {
+    margin-bottom: 0;
+}
+
+#cancelDialog {
+    float: right;
+    margin-right: 30px;
+}
+
+#confirmDialog {
+    float: left;
+    margin-left: 30px;
+}
 
 .modal {
     display: none;
@@ -716,14 +747,14 @@ hr.weekSeperator {
     height: 75px;
 }
 
-.statusName, .statusNum, .problemName{
+.statusName, .statusNum, .problemName {
     text-align: center;
     vertical-align: middle;
     line-height: 75px;
     border: 1px solid rgba(0, 0, 0, 0.15);
 }
 
-    .statusNum {
+.statusNum {
     float: right;
     width: 75px;
     background-color: rgba(0, 0, 0, 0.05);
@@ -768,7 +799,7 @@ hr.weekSeperator {
 .statusActive {
     /*background-color: #c2fcc7;*/
     /*rgba(99, 255, 133, 0.6);*/
-    background-color: #c2fcc7;
+    background-color: #c2fcc7 !important;
     cursor: pointer;
     -webkit-transition: background-color 0.5s ease-out;
     -moz-transition: background-color 0.5s ease-out;

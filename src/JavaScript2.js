@@ -149,7 +149,7 @@ function myRidesToClientStructure(before) {
             ridePat.rideId = results[i].Id;
 
             ridePat.Status = results[i].Status;
-
+            
             ridePat.Id = ridePat.RidePatNum;
             ridePat.DateTime = parseInt(ridePat.Date.replace('/Date(', ''));
             ridePat.StartPoint = ridePat.Origin.Name;
