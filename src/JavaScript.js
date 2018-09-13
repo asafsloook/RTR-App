@@ -2236,7 +2236,12 @@ function sendStatus(_status, _rideId) {
 }
 
 function setStatusSCB() {
-
+    if (window.location.href.toString().indexOf('problem') != -1) {
+        popupDialog('הודעת אישור', 'שליחת הבעיה התבצעה בהצלחה.', '#status', true, null);
+    }
+    else {
+        popupDialog('הודעת אישור', 'עדכון סטטוס הנסיעה התבצע בהצלחה.', null, true, null);
+    }
 }
 
 function setStatusECB() {
@@ -2546,19 +2551,17 @@ $(document).ready(function () {
     });
     $("#confirmDialogBTN").on('click', function () {
         $("#popupDialog").popup('close');
-        setTimeout(function () {
-            if (isConfirmDialog) {
-                if (redirectUrlFromDialog != null) {
-                    if (redirectUrlFromDialog == '#loginLogo') {
-                        window.location.replace('index.html');
-                    }
-                    else {
-                        $.mobile.pageContainer.pagecontainer("change", redirectUrlFromDialog);
-                    }
+        if (isConfirmDialog) {
+            if (redirectUrlFromDialog != null) {
+                if (redirectUrlFromDialog == '#loginLogo') {
+                    window.location.replace('index.html');
+                }
+                else {
+                    $.mobile.pageContainer.pagecontainer("change", redirectUrlFromDialog);
                 }
             }
-            redirectUrlFromDialog = null;
-        }, 100);
+        }
+        redirectUrlFromDialog = null;
         otherDialogFunction('Confirm');
     });
 });
@@ -2574,9 +2577,6 @@ function otherDialogFunction(reaction_) {
                 $('#problem .accordion').empty();
                 var rideID = closeRide.rideId;
                 sendStatus(problem, rideID);
-                setTimeout(function () {
-                    window.history.back();
-                },1000);
                 break;
             case 'sendStatus':
                 if (reaction_ == 'Cancel') {
