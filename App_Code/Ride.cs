@@ -17,6 +17,8 @@ public class Ride
         //
     }
 
+    public List<string> Statuses { get; set; }
+
     public int Id { get; set; }
 
     public Location Origin { get; set; }
@@ -405,9 +407,14 @@ public class Ride
                 }
 
                 r2.Id = int.Parse(dr["RideNum"].ToString());
-                query = "select top 1 statusStatusName from status_Ride where RideRideNum=" + r2.Id + "order by Timestamp desc";
+                query = "select statusStatusName from status_Ride where RideRideNum=" + r2.Id + " order by Timestamp desc";
                 db = new DbService();
-                r2.Status = db.GetObjectScalarByQuery(query).ToString();
+                r2.Statuses = new List<string>();
+                foreach (DataRow status_ in db.GetDataSetByQuery(query).Tables[0].Rows)
+                {
+                    r2.Statuses.Add(status_.ItemArray[0].ToString());
+                }
+                r2.Status = r2.Statuses[0];
                 RidePat rp = new RidePat();
                 r2.RidePats = new List<RidePat>();
                 rp.RidePatNum = int.Parse(dr["RidePatNum"].ToString());
