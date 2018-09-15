@@ -29,6 +29,14 @@
 //remove last status
 //myPrefs exit without lines, (maybe ui 
 //connect live status to status page (auto activate)
+//isconfirm false dont redirect in case of an error
+//login failed (db error), go to loginFailed and fill phone from LS
+
+//signDriver isPrimary
+//background to foreground
+
+//1 WEBSERVICE, 1 SERVER, 1 DB - MATAN ASAF
+
 
 domain = '';
 if (!window.location.href.includes('http')) {
@@ -87,6 +95,11 @@ function GetRidesSuccessCB(results) {
 
         //getMyRides
         getMyRidesList();
+    }
+
+    if (typeof fromSignMe !== 'undefined' && fromSignMe) {
+        printRides(rides);
+        fromSignMe = false;
     }
 }
 
@@ -416,7 +429,7 @@ function deleteAllRideSuccessCB() {
     $.mobile.pageContainer.pagecontainer("change", "#deleteConfirmation");
 }
 
-function deleteAllRideErrorCB() {
+function deleteAllRideErrorCB(e) {
     popupDialog('שגיאה', e.responseJSON.Message, '#myRides', false, null);
 }
 
@@ -1360,7 +1373,9 @@ $(document).on('pagebeforeshow', '#signMe', function () {
     else if ($('#shiftDDL').val() == 'אחהצ') {
         $('#afternoonTAB').addClass('ui-btn-active');
     }
-    printRides(rides);
+
+    fromSignMe = true;
+    getRidesList();
 });
 
 
@@ -1525,7 +1540,7 @@ function checkUserPN(cellphone) {
 function manualLogin() {
 
     setTimeout(function () {
-        localStorage.removeItem('cellphone');
+        //localStorage.removeItem('cellphone');
         $.mobile.pageContainer.pagecontainer("change", "#loginFailed");
     }, 500);
 }
@@ -1540,7 +1555,7 @@ function checkUserSuccessCB(results) {
     if (results.Id == 0) {
         //send request for volunteer
         setTimeout(function () {
-            localStorage.removeItem('cellphone');
+            //localStorage.removeItem('cellphone');
             popupDialog('שגיאה', 'הודעת שגיאה - מספר הטלפון אינו ידוע, אנא בדקו ונסו בשנית', '#loginFailed', false, null);
         }, 100);
         return;
@@ -1662,7 +1677,7 @@ function getPrefs() {
 }
 
 function checkUserErrorCB(e) {
-    localStorage.removeItem('cellphone');
+    //localStorage.removeItem('cellphone');
     popupDialog('שגיאה', e.responseJSON.Message, '#loginFailed', false, null);
 }
 
@@ -1673,7 +1688,11 @@ function showSavedSeats() {
     $('#mySeats').selectmenu('refresh');
 }
 
-
+$(document).on('pagebeforeshow', '#loginFailed', function () {
+    if (localStorage.cellphone != null) {
+        $('#userPnTB').val(localStorage.cellphone.replace('-',''));
+    }
+});
 
 $(document).on('pagebeforeshow', '#myPreferences', function () {
     autoClicks = true;
@@ -2189,8 +2208,9 @@ function login() {
 
     }
     else {
-        var cellphone = localStorage.cellphone;
-        checkUserPN(cellphone);
+        //var cellphone = localStorage.cellphone;
+        //checkUserPN(cellphone);
+        manualLogin();
     }
 }
 
@@ -2623,14 +2643,12 @@ $(document).ready(function () {
     });
     $("#confirmDialogBTN").on('click', function () {
         $("#popupDialog").popup('close');
-        if (isConfirmDialog) {
-            if (redirectUrlFromDialog != null) {
-                if (redirectUrlFromDialog == '#loginLogo') {
-                    window.location.replace('index.html');
-                }
-                else {
-                    $.mobile.pageContainer.pagecontainer("change", redirectUrlFromDialog);
-                }
+        if (redirectUrlFromDialog != null) {
+            if (redirectUrlFromDialog == '#loginLogo') {
+                window.location.replace('index.html');
+            }
+            else {
+                $.mobile.pageContainer.pagecontainer("change", redirectUrlFromDialog);
             }
         }
         redirectUrlFromDialog = null;
@@ -2686,10 +2704,9 @@ function otherDialogFunction(reaction_) {
 function popupDialog(title, content, redirectUrl, isConfirm, dialogFunction_) {
 
     redirectUrlFromDialog = redirectUrl;
-    isConfirmDialog = isConfirm;
     dialogFunction = dialogFunction_;
 
-    if (isConfirmDialog) $('#cancelDialogBTN').show();
+    if (isConfirm) $('#cancelDialogBTN').show();
     else $('#cancelDialogBTN').hide();
 
 

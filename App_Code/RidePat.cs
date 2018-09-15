@@ -319,18 +319,18 @@ public class RidePat
         }
         else if (func == "delete")
         {
-           
-            
+
+
             RidePatNum = ridePat.RidePatNum;
             Ride r = new Ride();
             RidePat rp = GetRidePat(ridePatNum);
             foreach (Volunteer driver in rp.Drivers)
             {
-Message m = new Message();
+                Message m = new Message();
                 m.cancelRide(RidePatNum, driver);
             }
-            
-          //  m.cancelRide(ridePatNum, dr);
+
+            //  m.cancelRide(ridePatNum, dr);
             db = new DbService();
             string query = "delete from [PatientEscort_PatientInRide (RidePat)] where [PatientInRide (RidePat)RidePatNum]=" + RidePatNum;
             int res = db.ExecuteQuery(query);
@@ -339,8 +339,8 @@ Message m = new Message();
             query = "delete from RidePat where RidePatNum=" + RidePatNum;
             res += db.ExecuteQuery(query);
 
-              
-            
+
+
 
             return res;
 
@@ -402,7 +402,7 @@ Message m = new Message();
         rp.RidePatNum = int.Parse(dr["RidePatNum"].ToString());
         rp.OnlyEscort = Convert.ToBoolean(dr["OnlyEscort"].ToString());
         rp.pat.DisplayName = dr["DisplayName"].ToString();
-        if (dr["MainDriver"].ToString() != "" )
+        if (dr["MainDriver"].ToString() != "")
         {
             rp.Drivers = new List<Volunteer>();
             Volunteer v1 = new Volunteer();
@@ -463,7 +463,7 @@ Message m = new Message();
         List<Escorted> el = new List<Escorted>();
         string query = "";
         if (volunteerId != -1)
-           
+
             query = "select * from RPView where (Status<>'הסתיימה' or Status<>'בוטלה')"; //Get all active RidePats
         else
             query = "select * from RPView where PickupTime>= getdate()"; // Get all future RidePats, even if cancelled
@@ -496,7 +496,7 @@ Message m = new Message();
         }
         try
         {
-            
+
             foreach (DataRow dr in ds.Tables[0].Rows)
             {
 
@@ -543,7 +543,7 @@ Message m = new Message();
                 {
                     rp.RideNum = int.Parse(dr["RideNum"].ToString());
                 }
-                catch (Exception )
+                catch (Exception)
                 {
 
                 }
@@ -573,14 +573,14 @@ Message m = new Message();
                 rp.Shift = dr["Shift"].ToString();
                 rp.Date = Convert.ToDateTime(dr["PickupTime"].ToString());
                 rp.Status = dr["Status"].ToString();
-                if (rp.RideNum>0) // if RidePat is assigned to a Ride - Take the Ride's status
+                if (rp.RideNum > 0) // if RidePat is assigned to a Ride - Take the Ride's status
                 {
-                    query = "select top 1 statusStatusName from status_Ride where RideRideNum="+rp.RideNum + "order by Timestamp desc";
+                    query = "select top 1 statusStatusName from status_Ride where RideRideNum=" + rp.RideNum + "order by Timestamp desc";
                     db = new DbService();
                     rp.Status = db.GetObjectScalarByQuery(query).ToString();
                 }
                 rpl.Add(rp);
-                
+
             }
 
             return rpl;
@@ -657,6 +657,11 @@ Message m = new Message();
         string query = "select RideNum,Origin,Destination,PickupTime,Status,MainDriver,secondaryDriver from RPView where RidePatNum=" + ridePatId;
         DbService db = new DbService();
         DataSet ds = db.GetDataSetByQuery(query);
+        if (ds.Tables[0].Rows.Count == 0)
+        {
+            //there is no ride pats with that id
+            throw new Exception("הנסיעה אליה ניסיתם להירשם בוטלה.");
+        }
         DataRow dr = ds.Tables[0].Rows[0];
 
         Origin = new Location();
@@ -673,7 +678,8 @@ Message m = new Message();
 
             if (dr["MainDriver"].ToString() == "")
                 query = "update Ride set MainDriver=" + userId + " where RideNum=" + RideId;
-            else if (dr["MainDriver"].ToString() != userId.ToString()) query = "update Ride set secondaryDriver=" + userId + " where RideNum=" + RideId;
+            else if (dr["MainDriver"].ToString() != userId.ToString())
+                query = "update Ride set secondaryDriver=" + userId + " where RideNum=" + RideId;
 
             DbService db4 = new DbService();
             int res = db4.ExecuteQuery(query);
