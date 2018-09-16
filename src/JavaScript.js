@@ -31,10 +31,9 @@
 //connect live status to status page (auto activate)
 //isconfirm false dont redirect in case of an error
 //login failed (db error), go to loginFailed and fill phone from LS
-
-//signDriver isPrimary
 //background to foreground
 
+//signDriver isPrimary
 //1 WEBSERVICE, 1 SERVER, 1 DB - MATAN ASAF
 
 
@@ -1690,7 +1689,7 @@ function showSavedSeats() {
 
 $(document).on('pagebeforeshow', '#loginFailed', function () {
     if (localStorage.cellphone != null) {
-        $('#userPnTB').val(localStorage.cellphone.replace('-',''));
+        $('#userPnTB').val(localStorage.cellphone.replace('-', ''));
     }
 });
 
@@ -2059,6 +2058,29 @@ function showAreas() {
 
 
 function onDeviceReady() {
+    
+    //Handle the backbutton
+    document.addEventListener("backbutton", onBackKeyDown, false);
+    function onBackKeyDown() {
+        if (window.location.href.includes('loginFailed')) {
+            navigator.app.exitApp();
+        }        
+        else {
+            navigator.app.backHistory();
+        }
+    }
+
+    //Handle the resume event: login, check how much time been in background, refresh rides etc
+    document.addEventListener("resume", onResume, false);
+    function onResume() {
+
+    }
+
+    //Handle the pause event: put timer, save things etc
+    document.addEventListener("pause", onPause, false);
+    function onPause() {
+        
+    }
 
     if (typeof PushNotification !== 'undefined') {
 
@@ -2188,17 +2210,12 @@ if (window.location.href.toString().indexOf('http') == -1) {
 
     document.addEventListener("deviceready", onDeviceReady, false);
 
-    //ignore backbutton
-    document.addEventListener("backbutton", onBackKeyDown, false);
-    function onBackKeyDown() {
-        return;
-    }
+    
 }
 else {
     if (window.location.href.toString().indexOf('index.html') != -1) {
         login();
     }
-
 }
 
 function login() {
@@ -2605,6 +2622,11 @@ $(document).ready(function () {
     $('#userPnBTN').on('click', function () {
 
         var cellphone = $('#userPnTB').val().toString();
+        //check cellphone, 10 digits only
+        if (!cellphone.match(/^\d{10}$/)) {
+            popupDialog('שגיאה', 'מספר הטלפון שהוכנס שגוי.', null, false, null);
+            return;
+        }
         var temp = cellphone.substring(0, 3) + "-" + cellphone.substring(3, 10);
         cellphone = temp;
         localStorage.cellphone = cellphone;
@@ -2698,7 +2720,6 @@ function otherDialogFunction(reaction_) {
         }
     }
 }
-
 
 
 function popupDialog(title, content, redirectUrl, isConfirm, dialogFunction_) {
