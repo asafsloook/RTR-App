@@ -32,9 +32,10 @@
 //isconfirm false dont redirect in case of an error
 //login failed (db error), go to loginFailed and fill phone from LS
 //background to foreground
-
-//signDriver isPrimary
 //1 WEBSERVICE, 1 SERVER, 1 DB - MATAN ASAF
+//signDriver isPrimary
+
+//decide handle of tentative myRides 22:14 (דיווחים ועוד)
 
 
 domain = '';
@@ -471,6 +472,9 @@ function filterRides(rides) {
         //else if (!checkTime(rides[i])) {
 
         //}
+        else if (rides[i].Status == 'שובץ גיבוי') {
+
+        }
         else if (typeof showAll !== 'undefined') {
             filteredRides.push(rides[i]);
         }
@@ -1227,11 +1231,12 @@ function createMelaveStr(ride) {
 }
 
 
-function signDriverToRide(id) {
+function signDriverToRide(id, driverType_) {
 
     var request = {
         ridePatId: id,
-        userId: parseInt(localStorage.userId)
+        userId: parseInt(localStorage.userId),
+        driverType: driverType_
     };
 
     signDriver(request, signDriverSuccessCB, signDriverErrorCB);
@@ -1592,6 +1597,12 @@ function hasCloseRide() {
             var nowMillisecsPlusAfter = new Date().getTime() + closeRideTimeAfter;
             var myRideMillisecs = myRides[i].DateTime;
 
+            if (typeof myRides[i].DateTime === 'undefined') continue;
+
+            var tentativeHour = new Date(myRideMillisecs);
+            if (tentativeHour.getHours() == 22 && tentativeHour.getMinutes() == 14) {
+                continue;
+            }
             if (myRideMillisecs >= nowMillisecsMinusBefore && myRideMillisecs <= nowMillisecsPlusAfter && myRides[i].DriverType == 'Primary' && !myRides[i].Statuses.includes('הגענו לנקודת היעד')) {
                 closeRides.push(myRides[i]);
             }
@@ -2058,13 +2069,13 @@ function showAreas() {
 
 
 function onDeviceReady() {
-    
+
     //Handle the backbutton
     document.addEventListener("backbutton", onBackKeyDown, false);
     function onBackKeyDown() {
         if (window.location.href.includes('loginFailed')) {
             navigator.app.exitApp();
-        }        
+        }
         else {
             navigator.app.backHistory();
         }
@@ -2079,7 +2090,7 @@ function onDeviceReady() {
     //Handle the pause event: put timer, save things etc
     document.addEventListener("pause", onPause, false);
     function onPause() {
-        
+
     }
 
     if (typeof PushNotification !== 'undefined') {
@@ -2210,7 +2221,7 @@ if (window.location.href.toString().indexOf('http') == -1) {
 
     document.addEventListener("deviceready", onDeviceReady, false);
 
-    
+
 }
 else {
     if (window.location.href.toString().indexOf('index.html') != -1) {
@@ -2320,6 +2331,8 @@ $(document).on('pagebeforeshow', '#problem', function () {
 
 
 function sendStatus(_status, _rideId) {
+
+    lastStatus = _status;
     //send status to db
     var request = {
         rideId: _rideId,
@@ -2330,11 +2343,20 @@ function sendStatus(_status, _rideId) {
 
 function setStatusSCB() {
     if (window.location.href.toString().indexOf('problem') != -1) {
+        updateLocalStatus(lastStatus);
         popupDialog('הודעת אישור', 'שליחת הבעיה התבצעה בהצלחה.', '#status', false, null);
     }
     else {
+        updateLocalStatus(lastStatus);
         popupDialog('הודעת אישור', 'עדכון סטטוס הנסיעה התבצע בהצלחה.', null, false, null);
     }
+}
+
+function updateLocalStatus(lastStatus_) {
+    closeRide.Statuses.push(lastStatus_);
+
+    var elementPos = myRides.map(function (x) { return x.Id; }).indexOf(closeRide.Id);
+    myRides[elementPos].Statuses.push(lastStatus_);
 }
 
 function setStatusECB() {
@@ -2400,19 +2422,20 @@ $(document).ready(function () {
 
     //on sign me to ride click ok
     $("#okBTN").on("click", function () {
-
+        debugger;
         lastRide = getRideById(idChoose);
 
         maxSeats = checkAvailabilty(lastRide);
 
         mySeats = parseInt(localStorage.availableSeats);
 
-        if (maxSeats == mySeats || lastRide.Status != 'ממתינה לשיבוץ') {
-            signDriverToRide(idChoose);
+        if (/*maxSeats == mySeats || */ lastRide.Status == 'ממתינה לשיבוץ' || lastRide.Status == 'שובץ נהג') {
+            var driverType = lastRide.Status == "ממתינה לשיבוץ" ? "primary" : "";
+            signDriverToRide(idChoose, driverType);
         }
-        else {
-            CombineRideRidePat(idChoose, localStorage.myRideTemp);
-        }
+        //else {
+        //    CombineRideRidePat(idChoose, localStorage.myRideTemp);
+        //}
 
         //handle case that rise if already taken
 

@@ -39,7 +39,8 @@ public class Volunteer
     string status;//סטטוס
     int id;
     string regId;
-    List<RideStatus> statusim;
+
+    public List<RideStatus> Statusim { get; set; }
 
     public class RideStatus
     {
@@ -50,12 +51,11 @@ public class Volunteer
         public string Name { get; set; }
     }
 
-    public List<RideStatus> Statusim { get; set; }
     public string RegId { get; set; }
-    public string Remarks { get; set; }
-    public DateTime BirthDate { get; set; }
 
-   // public DateTime BirthDate { get; set; }
+    public string Remarks { get; set; }
+
+    // public DateTime BirthDate { get; set; }
 
     public DateTime JoinDate { get; set; }
 
@@ -72,8 +72,6 @@ public class Volunteer
     public int AvailableSeats { get; set; }
 
     public string UserName { get; set; }
-
-    public string pnRegId { get; set; }
 
     public string DriverType { get; set; } //Primary or Secondary
 
@@ -538,7 +536,7 @@ public class Volunteer
             Volunteer v = new Volunteer();
             v.DisplayName = dr["DisplayName"].ToString();
             v.CellPhone = dr["CellPhone"].ToString();
-            v.TypeVol =dr["VolunTypeType"].ToString();
+            v.TypeVol = dr["VolunTypeType"].ToString();
             v.UserName = dr["UserName"].ToString();
             vl.Add(v);
         }
@@ -583,7 +581,7 @@ public class Volunteer
     public Volunteer getVolunteerByMobile(string mobile, string regId)
     {
         DbService db = new DbService();
-        string query = "select * from VolunteerTypeView where cellPhone = '" + mobile + "'";
+        string query = "select * from VolunteerTypeView where CellPhone = '" + mobile + "'";
         DataSet ds = db.GetDataSetByQuery(query);
         Volunteer v = new Volunteer();
         foreach (DataRow dr in ds.Tables[0].Rows)
@@ -600,10 +598,10 @@ public class Volunteer
             v.City = dr["CityCityName"].ToString();
             v.Address = dr["Address"].ToString();
             v.Email = dr["Email"].ToString();
-            if (dr["BirthDate"].ToString() != "")
-            {
-                v.BirthDate = Convert.ToDateTime(dr["BirthDate"].ToString());
-            }
+            //if (dr["BirthDate"].ToString() != "")
+            //{
+            //    v.BirthDate = Convert.ToDateTime(dr["BirthDate"].ToString());
+            //}
             // v.BirthDate = Convert.ToDateTime(dr["BirthDate"].ToString());
             v.JoinDate = Convert.ToDateTime(dr["JoinDate"].ToString());
             v.Status = dr["IsActive"].ToString();
@@ -654,7 +652,6 @@ public class Volunteer
         return v;
 
     }
-
 
 
     //public string JoinDate
@@ -831,7 +828,7 @@ public class Volunteer
             v.JoinDate = Convert.ToDateTime(dr["JoinDate"].ToString());
             v.IsActive = Convert.ToBoolean(dr["IsActive"].ToString());
             v.KnowsArabic = Convert.ToBoolean(dr["KnowsArabic"].ToString());
-           // v.BirthDate = Convert.ToDateTime(dr["BirthDate"].ToString());
+            // v.BirthDate = Convert.ToDateTime(dr["BirthDate"].ToString());
             v.Gender = dr["Gender"].ToString();
             v.RegId = dr["pnRegId"].ToString();
 
@@ -864,7 +861,7 @@ public class Volunteer
             v.City = dr["CityCityName"].ToString();
             v.Address = dr["Address"].ToString();
             v.Email = dr["Email"].ToString();
-           // v.BirthDate = Convert.ToDateTime(dr["BirthDate"].ToString());
+            // v.BirthDate = Convert.ToDateTime(dr["BirthDate"].ToString());
             v.JoinDate = Convert.ToDateTime(dr["JoinDate"].ToString());
             v.IsActive = Convert.ToBoolean(dr["IsActive"].ToString());
             v.Gender = dr["Gender"].ToString();
@@ -901,6 +898,12 @@ public class Volunteer
         return v;
     }
 
+    public string GetVolunteerRegById(int id)
+    {
+        string query = "select pnRegID from Volunteer where Id ='" + id + "'";
+        DbService db = new DbService();
+        return db.GetObjectScalarByQuery(query).ToString();
+    }
 
     public void setVolunteer(Volunteer v, string func)
     {
@@ -910,7 +913,7 @@ public class Volunteer
         cmd.CommandType = CommandType.Text;
         SqlParameter[] cmdParams = new SqlParameter[17];
 
-        cmdParams[0] = cmd.Parameters.AddWithValue("@address", v.Address);        
+        cmdParams[0] = cmd.Parameters.AddWithValue("@address", v.Address);
         cmdParams[1] = cmd.Parameters.AddWithValue("@cell", v.CellPhone);
         cmdParams[2] = cmd.Parameters.AddWithValue("@cell2", v.CellPhone2);
         cmdParams[3] = cmd.Parameters.AddWithValue("@city", v.City);
@@ -939,7 +942,7 @@ public class Volunteer
 
             res = db.ExecuteQuery(query, cmd.CommandType, cmdParams);
 
-            if (res==0)
+            if (res == 0)
             {
                 throw new Exception();
             }

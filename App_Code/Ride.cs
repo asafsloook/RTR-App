@@ -17,8 +17,6 @@ public class Ride
         //
     }
 
-    public List<string> Statuses { get; set; }
-
     public int Id { get; set; }
 
     public Location Origin { get; set; }
@@ -32,6 +30,7 @@ public class Ride
     public string Status { get; set; }
 
     public string DriverType { get; set; }
+    public List<string> Statuses { get; private set; }
 
     public List<Ride> GetRidesForNotifyfull()
     {

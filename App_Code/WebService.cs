@@ -6,6 +6,7 @@ using System.Web.Script.Serialization;
 using System.Web.Services;
 using System.Globalization;
 using System.Web.Script.Services;
+//using log4net;
 
 /// <summary>
 /// Summary description for WebService
@@ -16,6 +17,8 @@ using System.Web.Script.Services;
 [System.Web.Script.Services.ScriptService]
 public class WebService : System.Web.Services.WebService
 {
+    //private static readonly ILog Log =
+    //         LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
     public WebService()
     {
@@ -39,16 +42,6 @@ public class WebService : System.Web.Services.WebService
     //    // return j.Serialize(rp);
     //    var a = 0;
     //}
-
-    [WebMethod]
-    public string confirmPush(int userId, int msgId, string status)
-    {
-        Message m = new Message();
-        m.insertMsg(msgId, "", status, "", 0, DateTime.Now, userId, "", true, false, false);
-
-        JavaScriptSerializer j = new JavaScriptSerializer();
-        return j.Serialize("ok");
-    }
 
 
     [WebMethod]
@@ -206,20 +199,12 @@ public class WebService : System.Web.Services.WebService
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     public string GetRidePatView(int volunteerId)
     {
-        try
-        {
-            string test = (string)HttpContext.Current.Session["userSession"];
-            
-            RidePat rp = new RidePat();
-            List<RidePat> r = rp.GetRidePatView(volunteerId);
-            JavaScriptSerializer j = new JavaScriptSerializer();
-            return j.Serialize(r);
-        }
-        catch (Exception)
-        {
-            throw new Exception("שגיאה בהבאת נסיעות");
-        }
+        string test = (string)HttpContext.Current.Session["userSession"];
 
+        RidePat rp = new RidePat();
+        List<RidePat> r = rp.GetRidePatView(volunteerId);
+        JavaScriptSerializer j = new JavaScriptSerializer();
+        return j.Serialize(r);
     }
 
     [WebMethod]
@@ -308,10 +293,10 @@ public class WebService : System.Web.Services.WebService
 
     [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public string AssignRideToRidePat(int ridePatId, int userId) //Get RidePatId & UserId, Create a new Ride with this info - then return RideId
+    public string AssignRideToRidePat(int ridePatId, int userId, string driverType) //Get RidePatId & UserId, Create a new Ride with this info - then return RideId
     {
         RidePat rp = new RidePat();
-        int res = rp.AssignRideToRidePat(ridePatId, userId);
+        int res = rp.AssignRideToRidePat(ridePatId, userId, driverType);
         JavaScriptSerializer j = new JavaScriptSerializer();
         return j.Serialize(res);
     }
@@ -336,16 +321,16 @@ public class WebService : System.Web.Services.WebService
         return j.Serialize(res);
     }
 
-    [WebMethod]
-    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public string getAllStatus()
-    {
-        Status s = new Status();
-        List<Status> sl = new List<Status>();
-        sl = s.getAllStatus();
-        JavaScriptSerializer j = new JavaScriptSerializer();
-        return j.Serialize(sl);
-    }
+    //[WebMethod]
+    //[ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    //public string getAllStatus()
+    //{
+    //    Status s = new Status();
+    //    List<Status> sl = new List<Status>();
+    //    sl = s.getAllStatus();
+    //    JavaScriptSerializer j = new JavaScriptSerializer();
+    //    return j.Serialize(sl);
+    //}
 
     [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
@@ -431,22 +416,50 @@ public class WebService : System.Web.Services.WebService
         List<Location> hospitalList = d.getBarrierListForView(active);
         return j.Serialize(hospitalList);
     }
-    #endregion
 
+    [WebMethod]
+    public string confirmPush(int userId, int msgId, string status)
+    {
+        Message m = new Message();
+        m.insertMsg(msgId, "", status, "", 0, DateTime.Now, userId, "", true, false, false);
+
+        JavaScriptSerializer j = new JavaScriptSerializer();
+        return j.Serialize("ok");
+    }
+    #endregion
+}
 
     ///--------------------finish Road to Recovery----------------------------------------
 
-    #region login functions
-    [WebMethod(EnableSession = true)]
-    public string loginUser(string uName, string password)
-    {
-        HttpContext.Current.Session["userSession"] = uName;
-        JavaScriptSerializer j = new JavaScriptSerializer();
-        User u = new User(uName, password);
-        bool userInDB = u.CheckLoginDetails();
-        return j.Serialize(userInDB);
-    }
+    //#region login functions
+    //[WebMethod(EnableSession = true)]
 
+    //public string loginUser(string uName, string password)
+    //{
+    //    JavaScriptSerializer j = new JavaScriptSerializer();
+    //    bool userInDB;
+    //    try
+    //    {
+           
+    //        User u = new User(uName, password);
+    //        userInDB = u.CheckLoginDetails();
+    //    }
+    //    catch (Exception)
+    //    {
+
+    //        throw;
+    //    }
+    //    HttpContext.Current.Session["userSession"] = uName;
+        
+    //    writeToLog("Successful login");
+    //    return j.Serialize(userInDB);
+    //}
+
+    //public void writeToLog (string str)
+    //{
+    //    string user = (string)HttpContext.Current.Session["userSession"];
+    //    Log.Error(str + " ;for user: "+user);
+    //}
     //[WebMethod]
     //public string getUserType(string user)
     //{
@@ -467,7 +480,7 @@ public class WebService : System.Web.Services.WebService
     //    d = d.CheckLoginDetails();
     //    return j.Serialize(d);
     //}
-    #endregion
+    //#endregion
 
     //#region orders functions
 
@@ -1214,15 +1227,6 @@ public class WebService : System.Web.Services.WebService
     //}
     //#endregion
 
-    //#region cities functions
-    [WebMethod]
-    public string getCities()
-    {
-        JavaScriptSerializer j = new JavaScriptSerializer();
-        City c = new City();
-        List<City> citiesList = c.getCitiesList();
-        return j.Serialize(citiesList);
-    }
 
     //#endregion
 
@@ -1624,4 +1628,14 @@ public class WebService : System.Web.Services.WebService
     //    return j.Serialize(url);
     //}
     //#endregion
-}
+//}
+
+    ////#region cities functions
+    //[WebMethod]
+    //public string getCities()
+    //{
+    //    JavaScriptSerializer j = new JavaScriptSerializer();
+    //    City c = new City();
+    //    List<City> citiesList = c.getCitiesList();
+    //    return j.Serialize(citiesList);
+    //}
