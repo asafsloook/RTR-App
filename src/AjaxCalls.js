@@ -37,7 +37,6 @@ function GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB) {
 
 
 function signDriver(request, signDriverSuccessCB, signDriverErrorCB) {
-    debugger;
     // serialize the object to JSON string
     var dataString = JSON.stringify(request);
 
@@ -53,7 +52,6 @@ function signDriver(request, signDriverSuccessCB, signDriverErrorCB) {
 }
 
 function CombineRideRidePatAjax(request, signDriverSuccessCB, signDriverErrorCB) {
-    debugger;
     // serialize the object to JSON string
     var dataString = JSON.stringify(request);
 

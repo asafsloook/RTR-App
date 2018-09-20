@@ -186,7 +186,7 @@
     <div data-role="page" id="signMe">
 
 
-        <div data-role="header">
+        <div data-role="header"><img src="Images/spyIcon.png" class="spyIcon">
             <h1>שבץ אותי</h1>
             <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
             </a>
@@ -279,7 +279,7 @@
 
     <div data-role="page" id="myRides">
 
-        <div data-role="header">
+        <div data-role="header"><img src="Images/spyIcon.png" class="spyIcon">
 
             <h1>הנסיעות שלי</h1>
             <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
@@ -586,7 +586,7 @@
 
     <div id="myPreferences" data-role="page">
 
-        <div data-role="header">
+        <div data-role="header"><img src="Images/spyIcon.png" class="spyIcon">
             <h1>ההעדפות שלי</h1>
             <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
             </a>
@@ -935,8 +935,8 @@
 
 
     <div data-role="page" id="status">
-        <div data-role="header">
-            <a data-rel="back" style="float:left;border:none;margin:0;margin-left:2%" href="#" class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"></a>
+        <div data-role="header"><img src="Images/spyIcon.png" class="spyIcon">
+            <a style="float:left;border:none;margin:0;margin-left:2%" href="#" data-rel="back" class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"></a>
             <h1>דיווחים</h1>
             <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
             </a>
@@ -950,7 +950,7 @@
     </div>
 
     <div data-role="page" id="problem">
-        <div data-role="header">
+        <div data-role="header"><img src="Images/spyIcon.png" class="spyIcon">
             <a data-rel="back" style="float:left;border:none;margin:0;margin-left:2%" href="#" class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"></a>
             <h1>דיווח בעיה</h1>
             <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
@@ -992,12 +992,12 @@
     </div>
 
 
-    <div data-role="popup" id="popupDialog" data-theme="a" data-overlay-theme="b" data-position-to="window" data-dismissible="false">
+    <div data-role="popup" id="popupDialog" data-theme="a" data-overlay-theme="b" data-position-to="window" data-dismissible="false" data-history="false">
         <div data-role="header" data-theme="a">
             <h1 id="popupTitle"></h1>
         </div>
         <div role="main" class="ui-content">
-            <div><p id="popupContent"></p></div>
+            <div id="popupContentDiv"><p id="popupContent"></p></div>
         </div>
         <div role="contentinfo" class="ui-footer">
             <div class="dialogBTNS">

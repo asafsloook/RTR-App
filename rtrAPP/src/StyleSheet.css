@@ -1,4 +1,12 @@
-﻿/*popup*/
+﻿.spyIcon {
+    max-height: 40px;
+    position: absolute;
+    right: 60px;
+    margin: 1px 0;
+}
+
+
+/*popup*/
 #popupDialog {
     text-align: center;
     margin: 0 auto;

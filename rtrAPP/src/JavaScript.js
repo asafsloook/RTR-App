@@ -1,13 +1,13 @@
-﻿// add to kavim+times explain text
-// disable/hide tabs in first login
-// check all when choosing area first login
-// add haifa to south
-// alef-hey checked
-// space before () headers
-// daf rakaz text (my acc)
-// adding some green
-// get week (if fix)
-// match (shift fix)
+﻿//add to kavim+times explain text
+//disable/hide tabs in first login
+//check all when choosing area first login
+//add haifa to south
+//alef-hey checked
+//space before () headers
+//daf rakaz text (my acc)
+//adding some green
+//get week (if fix)
+//match (shift fix)
 //add manager to rakaz permisions
 //add info btn to signme lists
 //save prefs by all ctrl change
@@ -19,20 +19,29 @@
 //login to reporting status page
 //problem statuses
 //matan- varchar 150 status ???
-
 //matan-last status (live) remember (nees status on ride (also הלוך חזור, primary seconderay on status))
 //matan-myrides cancel popup rakaz call when ride is near (need coordinator cell)
-
 //exceptions, error callbacks
-
 //double click on active problem
 //clear textarea problem after send
 //after send problem go one back to status
-//myPrefs exit without lines, (maybe ui )
+//check hasCloseRide
+//remove last status
+//myPrefs exit without lines, (maybe ui 
+//connect live status to status page (auto activate)
+//isconfirm false dont redirect in case of an error
+//login failed (db error), go to loginFailed and fill phone from LS
+//background to foreground
+//1 WEBSERVICE, 1 SERVER, 1 DB - MATAN ASAF
+//signDriver isPrimary
+//decide handle of tentative myRides 22:14 => (9:00-24:00)
+//onBackKeyDown()
+//meragel icon (add another userId-Spy)
 
 domain = '';
 if (!window.location.href.includes('http')) {
-    domain = 'https://proj.ruppin.ac.il/igroup91/test2/tar2';
+    //domain = 'https://proj.ruppin.ac.il/igroup91/test2/tar2';
+    domain = 'https://proj.ruppin.ac.il/igroup91/test2/tar3/road%20to%20recovery/pages/';
 }
 else {
     domain = '..';
@@ -87,6 +96,11 @@ function GetRidesSuccessCB(results) {
 
         //getMyRides
         getMyRidesList();
+    }
+
+    if (typeof fromSignMe !== 'undefined' && fromSignMe) {
+        printRides(rides);
+        fromSignMe = false;
     }
 }
 
@@ -183,6 +197,9 @@ function myRidesToClientStructure(before) {
             ridePat.rideId = results[i].Id;
 
             ridePat.Status = results[i].Status;
+            ridePat.Statuses = results[i].Statuses;
+
+            ridePat.DriverType = results[i].DriverType;
 
             ridePat.Id = ridePat.RidePatNum;
             ridePat.DateTime = parseInt(ridePat.Date.replace('/Date(', ''));
@@ -269,7 +286,7 @@ function myRideListItem(myRides, i) {
     var day = numToDayHebrew(myDate.getDay());
 
     //dont show past rides as backup driver (not a actual ride)
-    if (myRides[i].Status != "Primary" && $('#doneTAB').prop("class").indexOf("ui-btn-active") != -1) {
+    if (myRides[i].DriverType != "Primary" && $('#doneTAB').prop("class").indexOf("ui-btn-active") != -1) {
         return;
     }
 
@@ -283,7 +300,7 @@ function myRideListItem(myRides, i) {
     }
 
 
-    if (myRides[i].Status == "Primary") {
+    if (myRides[i].DriverType == "Primary") {
         str += 'primary popINFO">';
     }
     else {
@@ -312,7 +329,7 @@ function myRideListItem(myRides, i) {
 
 
 
-    if (myRides[i].Status == "Primary") {
+    if (myRides[i].DriverType == "Primary") {
         str += '<b>הסעה</b><br>';
     }
     else {
@@ -413,7 +430,7 @@ function deleteAllRideSuccessCB() {
     $.mobile.pageContainer.pagecontainer("change", "#deleteConfirmation");
 }
 
-function deleteAllRideErrorCB() {
+function deleteAllRideErrorCB(e) {
     popupDialog('שגיאה', e.responseJSON.Message, '#myRides', false, null);
 }
 
@@ -453,7 +470,10 @@ function filterRides(rides) {
         else if ($('#shiftDDL').val() != "משמרת" && $('#shiftDDL').val() != rides[i].Shift) {
 
         }
-        else if (!checkTime(rides[i])) {
+        //else if (!checkTime(rides[i])) {
+
+        //}
+        else if (rides[i].Status == 'שובץ גיבוי') {
 
         }
         else if (typeof showAll !== 'undefined') {
@@ -640,6 +660,9 @@ function rideStr(str, results, i) {
 
     if (time.startsWith("0")) {
         time = time.substring(1, time.length);
+    }
+    if (time == '22:14') {
+        time = 'אחה"צ';
     }
 
     str += '<p style="padding: 4%;float: right;margin-right: 0;text-align: right;border-radius:15px;max-width: 50%;border: 1px #ddd solid;"';
@@ -850,7 +873,7 @@ function getRideStr(rideOBJ) {
 
     var str = '<p>';
 
-    if (rideOBJ.Status == "Primary" || rideOBJ.Status == "ממתינה לשיבוץ") {
+    if (rideOBJ.DriverType == "Primary" || rideOBJ.Status == "ממתינה לשיבוץ") {
         str += '<b>הסעה</b><br><br>';
     }
     else {
@@ -1209,11 +1232,12 @@ function createMelaveStr(ride) {
 }
 
 
-function signDriverToRide(id) {
+function signDriverToRide(id, driverType_) {
 
     var request = {
         ridePatId: id,
-        userId: parseInt(localStorage.userId)
+        userId: parseInt(localStorage.userId),
+        driverType: driverType_
     };
 
     signDriver(request, signDriverSuccessCB, signDriverErrorCB);
@@ -1305,7 +1329,7 @@ function myRideHasMultipulePats(ridePatId) {
     var rideId = thisRide.rideId;
 
     for (var i = 0; i < myRides.length; i++) {
-        if (myRides[i].Id != ridePatId && myRides[i].rideId == rideId && myRides[i].Status == "Primary") {
+        if (myRides[i].Id != ridePatId && myRides[i].rideId == rideId && myRides[i].DriverType == "Primary") {
             return true;
         }
     }
@@ -1354,7 +1378,9 @@ $(document).on('pagebeforeshow', '#signMe', function () {
     else if ($('#shiftDDL').val() == 'אחהצ') {
         $('#afternoonTAB').addClass('ui-btn-active');
     }
-    printRides(rides);
+
+    fromSignMe = true;
+    getRidesList();
 });
 
 
@@ -1380,15 +1406,53 @@ $(document).on('pagebeforeshow', '#loginPreference', function () {
 });
 
 $(document).on('pageshow', '#loginPreference', function () {
-    if (hasCloseRide()) {
-        closeRide = $.parseJSON(localStorage.closeRide);
-        var rideDate = new Date(closeRide.DateTime);
-        var isSameDay = rideDate.getDay() == (new Date()).getDay() ? 'היום' : 'מחר';
-        var alertRide = 'המערכת זיהתה שיש לך ' + isSameDay + ' נסיעה מ' + closeRide.StartPoint + ' ל' + closeRide.EndPoint + ' בשעה ' + rideDate.getHours() + ':' + (rideDate.getMinutes() < 10 ? '0' + rideDate.getMinutes() : rideDate.getMinutes()) + '. האם תרצה לדווח סטטוס?';
-
-        popupDialog('הודעה', alertRide, '#status', true, null);
-    }
+    loginToCloseRide();
 });
+
+function loginToCloseRide() {
+    if (hasCloseRide()) {
+
+        if (closeRides.length > 1) {
+            chooseCloseRide();
+        }
+        else {
+
+            closeRide = closeRides[0];
+            var rideDate = new Date(closeRide.DateTime);
+            var isSameDay = rideDate.getDay() == (new Date()).getDay() ? 'היום' : 'מחר';
+            var alertRide = 'המערכת זיהתה שיש לך ' + isSameDay + ' נסיעה מ' + closeRide.StartPoint + ' ל' + closeRide.EndPoint + ' בשעה ' + rideDate.getHours() + ':' + (rideDate.getMinutes() < 10 ? '0' + rideDate.getMinutes() : rideDate.getMinutes()) + '. האם תרצה לדווח סטטוס?';
+
+            var isTentative = rideDate.getHours() == 22 && rideDate.getMinutes() == 14;
+            if (isTentative) {
+                alertRide = 'המערכת זיהתה שיש לך ' + isSameDay + ' נסיעה מ' + closeRide.StartPoint + ' ל' + closeRide.EndPoint + ' אחה"צ. ' + 'האם תרצה לדווח סטטוס?';
+            }
+
+            popupDialog('הודעה', alertRide, '#status', true, null);
+        }
+    }
+}
+
+function chooseCloseRide() {
+
+    var alertRide = '<p>המערכת זיהתה שיש לך נסיעות קרובות. <br/> האם תרצה לדווח סטטוס?</p><select id="closeRidesSelectMenu">';
+
+    for (var i = 0; i < closeRides.length; i++) {
+
+        var rideDate = new Date(closeRides[i].DateTime);
+        var isSameDay = rideDate.getDay() == (new Date()).getDay() ? 'היום' : 'מחר';
+        var selectOptionContent = isSameDay + ', מ' + closeRides[i].StartPoint + ' ל' + closeRides[i].EndPoint + ', ' + rideDate.getHours() + ':' + (rideDate.getMinutes() < 10 ? '0' + rideDate.getMinutes() : rideDate.getMinutes());
+
+
+        var isTentative = rideDate.getHours() == 22 && rideDate.getMinutes() == 14;
+        if (isTentative) {
+            selectOptionContent = isSameDay + ', מ' + closeRides[i].StartPoint + ' ל' + closeRides[i].EndPoint + ', ' + 'אחה"צ';
+        }
+        alertRide += '<option>' + selectOptionContent + '</option>';
+    }
+    alertRide += '</select>';
+
+    popupDialog('הודעה', alertRide, null, true, 'multipuleCloseRides');
+}
 
 function getPatientsSCB(data) {
 
@@ -1492,7 +1556,7 @@ function checkUserPN(cellphone) {
 function manualLogin() {
 
     setTimeout(function () {
-        localStorage.removeItem('cellphone');
+        //localStorage.removeItem('cellphone');
         $.mobile.pageContainer.pagecontainer("change", "#loginFailed");
     }, 500);
 }
@@ -1507,7 +1571,7 @@ function checkUserSuccessCB(results) {
     if (results.Id == 0) {
         //send request for volunteer
         setTimeout(function () {
-            localStorage.removeItem('cellphone');
+            //localStorage.removeItem('cellphone');
             popupDialog('שגיאה', 'הודעת שגיאה - מספר הטלפון אינו ידוע, אנא בדקו ונסו בשנית', '#loginFailed', false, null);
         }, 100);
         return;
@@ -1531,14 +1595,37 @@ function checkUserSuccessCB(results) {
     getRidesList();
 }
 
-function hasCloseRide() {
+hourToMillisecs = 3600000;
+closeRideTimeBefore = 3 * hourToMillisecs;
+closeRideTimeAfter = 9 * hourToMillisecs;
 
+
+function hasCloseRide() {
+    closeRides = [];
     if (myRides != null) {
         for (var i = 0; i < myRides.length; i++) {
-            if ((new Date(myRides[i].DateTime))/*.addHours(12)*/ >= (new Date()) && myRides[i].Status == 'Primary') {
-                localStorage.closeRide = JSON.stringify(myRides[i]);
-                return true;
+
+            if (myRides[i].DriverType != 'Primary') continue;
+            if (typeof myRides[i].DateTime === 'undefined') continue;
+
+            var nowMillisecs = new Date().getTime();
+            var nowMillisecsMinusBefore = nowMillisecs - closeRideTimeBefore;
+            var nowMillisecsPlusAfter = nowMillisecs + closeRideTimeAfter;
+            var myRideMillisecs = myRides[i].DateTime;
+
+            var tentative = new Date(myRideMillisecs);
+            var isTentative = tentative.getHours() == 22 && tentative.getMinutes() == 14;
+
+            if (isTentative && new Date().getHours() >= 9 && tentative.toLocaleDateString() == new Date().toLocaleDateString()) {
+                closeRides.push(myRides[i]);
             }
+            else if (!isTentative && myRideMillisecs >= nowMillisecsMinusBefore && myRideMillisecs <= nowMillisecsPlusAfter && myRides[i].DriverType == 'Primary' && !myRides[i].Statuses.includes('הגענו לנקודת היעד')) {
+                closeRides.push(myRides[i]);
+            }
+        }
+        if (closeRides.length > 0) {
+            localStorage.closeRides = JSON.stringify(closeRides);
+            return true;
         }
         return false;
     }
@@ -1616,7 +1703,7 @@ function getPrefs() {
 }
 
 function checkUserErrorCB(e) {
-    localStorage.removeItem('cellphone');
+    //localStorage.removeItem('cellphone');
     popupDialog('שגיאה', e.responseJSON.Message, '#loginFailed', false, null);
 }
 
@@ -1627,7 +1714,11 @@ function showSavedSeats() {
     $('#mySeats').selectmenu('refresh');
 }
 
-
+$(document).on('pagebeforeshow', '#loginFailed', function () {
+    if (localStorage.cellphone != null) {
+        $('#userPnTB').val(localStorage.cellphone.replace('-', ''));
+    }
+});
 
 $(document).on('pagebeforeshow', '#myPreferences', function () {
     autoClicks = true;
@@ -1775,7 +1866,10 @@ function goMenu(id) {
         $.mobile.pageContainer.pagecontainer("change", "#trackRides");
     }
     else if (id == 'NotifyTab') {
-        $.mobile.pageContainer.pagecontainer("change", "#status");
+        if (window.location.href.includes('status')) {
+            return;
+        }
+        loginToCloseRide();
     }
 }
 
@@ -1995,6 +2089,33 @@ function showAreas() {
 
 function onDeviceReady() {
 
+    //Handle the backbutton
+    document.addEventListener("backbutton", onBackKeyDown, false);
+    function onBackKeyDown() {
+        if (window.location.href.includes('loginFailed')) {
+
+            popupDialog('הודעה', 'האם ברצונך לצאת מהאפליקציה?', null, true, 'exitApp');
+        }
+        else {
+            navigator.app.backHistory();
+        }
+    }
+
+    //Handle the resume event: login, check how much time been in background, refresh rides etc
+    document.addEventListener("resume", onResume, false);
+    function onResume() {
+        if (window.location.href.includes('signMe')) {
+            fromSignMe = true;
+        }
+        getRidesList();
+    }
+
+    //Handle the pause event: put timer, save things etc
+    document.addEventListener("pause", onPause, false);
+    function onPause() {
+
+    }
+
     if (typeof PushNotification !== 'undefined') {
 
         var push = PushNotification.init({
@@ -2123,17 +2244,12 @@ if (window.location.href.toString().indexOf('http') == -1) {
 
     document.addEventListener("deviceready", onDeviceReady, false);
 
-    //ignore backbutton
-    document.addEventListener("backbutton", onBackKeyDown, false);
-    function onBackKeyDown() {
-        return;
-    }
+
 }
 else {
     if (window.location.href.toString().indexOf('index.html') != -1) {
         login();
     }
-
 }
 
 function login() {
@@ -2143,8 +2259,9 @@ function login() {
 
     }
     else {
-        var cellphone = localStorage.cellphone;
-        checkUserPN(cellphone);
+        //var cellphone = localStorage.cellphone;
+        //checkUserPN(cellphone);
+        manualLogin();
     }
 }
 
@@ -2165,58 +2282,92 @@ function sendProblem(element) {
         elemProblemForSend = $('.problemName').eq(2);
         problem = $('#problem .accordion').val();
     };
-    
+
     popupDialog('הודעת אישור', 'האם אתה מאשר את שליחת דיווח הסטטוס: ' + problem + '?', null, true, 'sendProblem');
 }
 
 
 $(document).on('pagebeforeshow', '#status', function () {
 
-    if ($('.statusContent').html() == "") {
-        var str = "";
-        userInfo.Statusim.sort(function (a, b) {
-            return a.Id.toString().localeCompare(b.Id.toString());
-        });
-        for (var i = 0; i < userInfo.Statusim.length; i++) {
-            var _status = userInfo.Statusim[i];
-            var active = '';//(typeof closeRide !== 'undefined') ? ((closeRide.Status.Id >= _status.Id) ? ' statusActive' : '') : '';
-            str +=
-                '<div class="statusItem">' +
-                '      <div class="statusNum' + active + '">' +
-                '          <span>' + (i + 1) + '</span>' +
-                '      </div>' +
-                '      <div class="statusName' + active + '">' +
-                '       <div class="statusButton" id="status' + _status.Id + '">' +
-                '              <span>' + _status.Name + '</span>' +
-                '       </div>' +
-                '       </div>' +
-                '   </div>' +
-                '   <hr>';
-        }
-        $('.statusContent').html(str);
-        $(document).on('click', '.statusButton', function () {
+    if ($('.statusContent').html() != "") $('.statusContent').empty();
 
-            if (!$(this).parent().hasClass('statusActive')) {
+    var str = "";
 
-                if ($('.statusName.statusActive').length > 0) {
-                    for (var i = 0; i < $('.statusName.statusActive').length; i++) {
-                        var thisId = parseInt($(this).attr('id').toString().replace('status', ''));
-                        var thatId = parseInt($('.statusName.statusActive').eq(i).children().attr('id').toString().replace('status', ''));
-                        if (thisId == thatId) continue;
-                        if (thisId < thatId) return;
-                    }
-                }
-
-                statusForSend = $(this).children().html();
-                elemStatusForSend = this;
-                popupDialog('הודעת אישור', 'האם אתה מאשר את שליחת דיווח הסטטוס: ' + statusForSend + '?',null, true, 'sendStatus');
-            }
-        });
+    userInfo.Statusim.sort(function (a, b) {
+        return a.Id.toString().localeCompare(b.Id.toString());
+    });
+    for (var i = 0; i < userInfo.Statusim.length; i++) {
+        var _status = userInfo.Statusim[i];
+        var active = (typeof closeRide !== 'undefined') ? ((closeRide.Statuses.includes(_status.Name)) ? ' statusActive' : '') : '';
+        str +=
+            '<div class="statusItem">' +
+            '      <div class="statusNum' + active + '">' +
+            '          <span>' + (i + 1) + '</span>' +
+            '      </div>' +
+            '      <div class="statusName' + active + '">' +
+            '       <div class="statusButton" id="status' + _status.Id + '">' +
+            '              <span>' + _status.Name + '</span>' +
+            '       </div>' +
+            '       </div>' +
+            '   </div>' +
+            '   <hr>';
     }
+    $('.statusContent').html(str);
+    $(document).on('click', '.statusButton', function () {
+
+        if (!$(this).parent().hasClass('statusActive')) {
+
+            if ($('.statusName.statusActive').length > 0) {
+                for (var i = 0; i < $('.statusName.statusActive').length; i++) {
+                    var thisId = parseInt($(this).attr('id').toString().replace('status', ''));
+                    var thatId = parseInt($('.statusName.statusActive').eq(i).children().attr('id').toString().replace('status', ''));
+                    if (thisId == thatId) continue;
+                    if (thisId < thatId) return;
+                }
+            }
+
+            statusForSend = $(this).children().html();
+            elemStatusForSend = this;
+            popupDialog('הודעת אישור', 'האם אתה מאשר את שליחת דיווח הסטטוס: ' + statusForSend + '?', null, true, 'sendStatus');
+        }
+    });
 });
 
 
+$(document).on('pagebeforeshow', '#problem', function () {
+
+    if ($('.statusContent').html() != "") $('.statusContent').empty();
+
+    var str = "";
+
+    var problems_ = $('.problemName');
+
+    for (var i = 0; i < problems_.length; i++) {
+        var problem_ = problems_.eq(i).children().children()[0].innerHTML;
+
+        if (closeRide.Statuses.includes(problem_)) {
+            problems_.eq(i).addClass('statusActive');
+        }
+    }
+});
+
+$(document).on("pagebeforeshow", function (event) {
+    if (typeof localStorage.userId !== 'undefined' && typeof localStorage['userId-Spy'] !== 'undefined') {
+        if (localStorage.userId != localStorage['userId-Spy']) {
+            $('.spyIcon').show();
+        }
+        else {
+            $('.spyIcon').hide();
+        }
+    }
+    else {
+        $('.spyIcon').hide();
+    }
+});
+
 function sendStatus(_status, _rideId) {
+
+    lastStatus = _status;
     //send status to db
     var request = {
         rideId: _rideId,
@@ -2226,7 +2377,21 @@ function sendStatus(_status, _rideId) {
 }
 
 function setStatusSCB() {
+    if (window.location.href.toString().indexOf('problem') != -1) {
+        updateLocalStatus(lastStatus);
+        popupDialog('הודעת אישור', 'שליחת הבעיה התבצעה בהצלחה.', '#status', false, null);
+    }
+    else {
+        updateLocalStatus(lastStatus);
+        popupDialog('הודעת אישור', 'עדכון סטטוס הנסיעה התבצע בהצלחה.', null, false, null);
+    }
+}
 
+function updateLocalStatus(lastStatus_) {
+    closeRide.Statuses.push(lastStatus_);
+
+    var elementPos = myRides.map(function (x) { return x.Id; }).indexOf(closeRide.Id);
+    myRides[elementPos].Statuses.push(lastStatus_);
 }
 
 function setStatusECB() {
@@ -2299,12 +2464,13 @@ $(document).ready(function () {
 
         mySeats = parseInt(localStorage.availableSeats);
 
-        if (maxSeats == mySeats || lastRide.Status != 'ממתינה לשיבוץ') {
-            signDriverToRide(idChoose);
+        if (/*maxSeats == mySeats || */ lastRide.Status == 'ממתינה לשיבוץ' || lastRide.Status == 'שובץ נהג') {
+            var driverType = lastRide.Status == "ממתינה לשיבוץ" ? "primary" : "";
+            signDriverToRide(idChoose, driverType);
         }
-        else {
-            CombineRideRidePat(idChoose, localStorage.myRideTemp);
-        }
+        //else {
+        //    CombineRideRidePat(idChoose, localStorage.myRideTemp);
+        //}
 
         //handle case that rise if already taken
 
@@ -2392,6 +2558,7 @@ $(document).ready(function () {
 
     $(document).on('click', '.problemButton', function () {
         if (this.className.includes('problemKeyboard')) return;
+        if ($(this).parent().hasClass('statusActive')) return;
         $('#problem #accordionMaster').addClass('ui-screen-hidden');
 
         sendProblem(this);
@@ -2423,16 +2590,31 @@ $(document).ready(function () {
             return;
         }
 
-        var actives = $('#starts .ui-checkbox-on,#ends .ui-checkbox-on');
-        if (actives.length == 0) {
-            popupDialog('שגיאה', "אנא בחר נקודות מוצא ויעד בקווי הסעה", null, false, null);
+        var areasActive = [];
+        for (var i = 0; i < $('#area .ui-checkbox-on').length; i++) {
+            areasActive.push($('#area .ui-checkbox-on').eq(i).siblings()[0].id.replace('Area', ''));
+        }
+
+        var activesRoutes;
+        var activesRoutesSelector = '';
+
+        for (var i = 0; i < areasActive.length; i++) {
+            if (i > 0) {
+                activesRoutesSelector += ',';
+            }
+            activesRoutesSelector += '#starts .' + areasActive[i] + ' .ui-checkbox-on,#ends .' + areasActive[i] + ' .ui-checkbox-on';
+        }
+        activesRoutes = $(activesRoutesSelector);
+
+        if ($('#area .ui-checkbox-on').length == 0) {
+            popupDialog('שגיאה', "אנא בחר איזורים", null, false, null);
             //show dialog
             $('#mypanel').panel("close");
             return;
         }
 
-        if ($('#area .ui-checkbox-on').length == 0) {
-            popupDialog('שגיאה', "אנא בחר איזורים", null, false, null);
+        if (activesRoutes.length == 0) {
+            popupDialog('שגיאה', "אנא בחר נקודות מוצא ויעד בקווי הסעה", null, false, null);
             //show dialog
             $('#mypanel').panel("close");
             return;
@@ -2474,6 +2656,7 @@ $(document).ready(function () {
 
 
     $('#volenteersPH').on('click', 'a', function () {
+        localStorage['userId-Spy'] = localStorage.userId;
         checkUserPN(this.id);
     });
 
@@ -2498,6 +2681,11 @@ $(document).ready(function () {
     $('#userPnBTN').on('click', function () {
 
         var cellphone = $('#userPnTB').val().toString();
+        //check cellphone, 10 digits only
+        if (!cellphone.match(/^\d{10}$/)) {
+            popupDialog('שגיאה', 'מספר הטלפון שהוכנס שגוי.', null, false, null);
+            return;
+        }
         var temp = cellphone.substring(0, 3) + "-" + cellphone.substring(3, 10);
         cellphone = temp;
         localStorage.cellphone = cellphone;
@@ -2531,23 +2719,20 @@ $(document).ready(function () {
     $("#popupDialog").popup();
     $("#cancelDialogBTN").on('click', function () {
         $("#popupDialog").popup('close');
+        $('#mypanel').panel("close");
         otherDialogFunction('Cancel');
     });
     $("#confirmDialogBTN").on('click', function () {
         $("#popupDialog").popup('close');
-        setTimeout(function () {
-            if (isConfirmDialog) {
-                if (redirectUrlFromDialog != null) {
-                    if (redirectUrlFromDialog == '#loginLogo') {
-                        window.location.replace('index.html');
-                    }
-                    else {
-                        $.mobile.pageContainer.pagecontainer("change", redirectUrlFromDialog);
-                    }
-                }
+        if (redirectUrlFromDialog != null) {
+            if (redirectUrlFromDialog == '#loginLogo') {
+                window.location.replace('index.html');
             }
-            redirectUrlFromDialog = null;
-        }, 100);
+            else {
+                $.mobile.pageContainer.pagecontainer("change", redirectUrlFromDialog);
+            }
+        }
+        redirectUrlFromDialog = null;
         otherDialogFunction('Confirm');
     });
 });
@@ -2560,6 +2745,7 @@ function otherDialogFunction(reaction_) {
                     return;
                 }
                 $(elemProblemForSend).addClass('statusActive');
+                $('#problem .accordion').empty();
                 var rideID = closeRide.rideId;
                 sendStatus(problem, rideID);
                 break;
@@ -2580,6 +2766,20 @@ function otherDialogFunction(reaction_) {
                 };
                 confirmPush(request, confirmPushSCB, confirmPushECB);
                 break;
+            case 'multipuleCloseRides':
+                if (reaction_ == 'Cancel') {
+                    break;
+                }
+                var selectedIndex = $('#closeRidesSelectMenu').prop('selectedIndex');
+                closeRide = closeRides[selectedIndex];
+                $.mobile.pageContainer.pagecontainer("change", "#status");
+                break;
+            case 'exitApp':
+                if (reaction_ == 'Cancel') {
+                    break;
+                }
+                navigator.app.exitApp();
+                break;
             default:
                 break;
         }
@@ -2587,14 +2787,12 @@ function otherDialogFunction(reaction_) {
 }
 
 
-
 function popupDialog(title, content, redirectUrl, isConfirm, dialogFunction_) {
 
     redirectUrlFromDialog = redirectUrl;
-    isConfirmDialog = isConfirm;
     dialogFunction = dialogFunction_;
 
-    if (isConfirmDialog) $('#cancelDialogBTN').show();
+    if (isConfirm) $('#cancelDialogBTN').show();
     else $('#cancelDialogBTN').hide();
 
 
