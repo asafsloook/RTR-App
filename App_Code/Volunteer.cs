@@ -40,6 +40,10 @@ public class Volunteer
     int id;
     string regId;
 
+    public List<Location> Hospitals { get; set; }
+    public List<Location> Barriers { get; set; }
+
+
     public List<RideStatus> Statusim { get; set; }
 
     public class RideStatus

@@ -37,6 +37,12 @@
 //decide handle of tentative myRides 22:14 => (9:00-24:00)
 //onBackKeyDown()
 //meragel icon (add another userId-Spy)
+//data-filter rakaz pages
+//cancel alert without cancel btn
+//refresh myrides after cancel push
+
+//myRoutes dynamic
+//rakaz meragel regId -> volunteer
 
 domain = '';
 if (!window.location.href.includes('http')) {
@@ -473,7 +479,7 @@ function filterRides(rides) {
         //else if (!checkTime(rides[i])) {
 
         //}
-        else if (rides[i].Status == 'שובץ גיבוי') {
+        else if (rides[i].Status == 'שובץ גיבוי' || rides[i].Status == "שובץ נהג וגיבוי") {
 
         }
         else if (typeof showAll !== 'undefined') {
@@ -1593,6 +1599,12 @@ function checkUserSuccessCB(results) {
     //get all rides
     loginThread = true;
     getRidesList();
+
+    $('#locationsPH').append(buildLocationsHtml());
+    $('#locationsPH input, #kavim input').on('click', function () {
+
+        autoSavePref();
+    });
 }
 
 hourToMillisecs = 3600000;
@@ -1721,6 +1733,7 @@ $(document).on('pagebeforeshow', '#loginFailed', function () {
 });
 
 $(document).on('pagebeforeshow', '#myPreferences', function () {
+
     autoClicks = true;
 
     $('#prefTabs li').show();
@@ -2228,7 +2241,18 @@ function alertPushMsg(data) {
     userIDForPush_ = parseInt(localStorage.userId);
     msgIDForPush_ = parseInt(data.additionalData.msgID);
 
-    popupDialog(data.title, data.message, null, true, 'sendPushReaction');
+
+    if (data.additionalData.status == "Canceled") {
+        popupDialog(data.title, data.message, null, false, 'sendPushReaction');
+
+        if (window.location.href.toString().indexOf("#myRides") != -1) {
+            myRidesPrint = true;
+        }
+        getMyRidesList();
+    }
+    else {
+        popupDialog(data.title, data.message, null, true, 'sendPushReaction');
+    }
 }
 
 function confirmPushSCB(data) {
@@ -2644,11 +2668,7 @@ $(document).ready(function () {
             $('li #loginAgainTab,li #auctionTab,li #trackRidesTab').parent().hide()
         }
     });
-
-    $('#kavim input, #zmanim input').on('click', function () {
-
-        autoSavePref();
-    });
+    
     $('#other select').on('change', function () {
 
         autoSavePref();
@@ -2803,4 +2823,64 @@ function popupDialog(title, content, redirectUrl, isConfirm, dialogFunction_) {
     $('#popupTitle').html(title);
 
     $("#popupDialog").popup('open');
+}
+
+
+function buildLocationsHtml() {
+
+    var startPoints = locationsClasses(userInfo.Barriers);
+    var endPoints = locationsClasses(userInfo.Hospitals);
+
+    //barriers html
+    var str = '<div id="starts" class="start">' +
+        drawLocations(startPoints, 'b') +
+        '</div>' +
+
+        //hospitals html
+        '<div id="ends" class="end">' +
+        drawLocations(endPoints, 'h') +
+        '</div>';
+
+    return str;
+}
+
+function drawLocations(locations, identifier) {
+    var string = '';
+    for (var i = 0; i < locations.length; i++) {
+        var area = locations[i].Area;
+        var id = identifier + i.toString();
+        var name = locations[i].Name;
+        string +=
+            '<div hidden="hidden" class="' + area + '">' +
+            '       <label for="' + id + '">' + name + '</label>' +
+            '       <input type="checkbox" id="' + id + '"/>' +
+            '</div>';
+    }
+    return string;
+}
+
+function locationsClasses(locations) {
+    for (var i = 0; i < locations.length; i++) {
+        switch (locations[i].Area) {
+            case 'צפון':
+                locations[i].Area = 'north';
+                break;
+            case 'מרכז':
+                locations[i].Area = 'center';
+                break;
+            case 'דרום':
+                locations[i].Area = 'south';
+                break;
+            case 'צפון-מרכז':
+                locations[i].Area = 'north center';
+                break;
+            case 'מרכז-דרום':
+                locations[i].Area = 'south center';
+                break;
+            default:
+                break;
+        }
+    }
+
+    return locations;
 }

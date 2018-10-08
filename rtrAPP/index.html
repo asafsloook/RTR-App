@@ -85,7 +85,7 @@
         <a href="http://www.roadtorecovery.org.il/?lang=he">לאתר העמותה</a>
         <br /><br />
         <!-- Paypal donate btn -->
-        <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" class="paypalForm">
             <div class="paypal-donations"><input type="hidden" name="cmd" value="_donations"><input type="hidden" name="business" value="roadtorecovery10@gmail.com"><input type="hidden" name="item_name" value="Our operation is funded by donations only. Any amount you might be willing to contribute will be greatly appreciated!"><input type="hidden" name="currency_code" value="USD"><input type="image" src="http://www.roadtorecovery.org.il/wp-content/uploads/2017/06/Donate_car.jpg" name="submit" alt="PayPal - The safer, easier way to pay online."><img alt="" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1"></div>
         </form>
     </div>
@@ -770,6 +770,10 @@
                         </form>
                     </div>
 
+                    <!--<div id="locationsPH">
+
+                    </div>-->
+
                     <div id="starts" class="start">
                         <form hidden="hidden" class="north">
                             <input type="checkbox" id="north1">
@@ -794,6 +798,10 @@
                         <form hidden="hidden" class="center">
                             <input type="checkbox" id="center4">
                             <label for="center4">הפרחים</label>
+                        </form>
+                        <form hidden="hidden" class="south">
+                            <input type="checkbox" id="south222">
+                            <label for="south222">כרם שלום</label>
                         </form>
                         <form hidden="hidden" class="center">
                             <input type="checkbox" id="center55">
@@ -899,9 +907,9 @@
         <div data-role="content">
 
             <form class="ui-filterable">
-                <input id="autocomplete-input" data-type="search" placeholder="חפש מתנדבים">
+                <input id="autocomplete-input2" data-type="search" placeholder="חפש מתנדבים">
             </form>
-            <ul id="allVolunteersPH" data-inset="true" data-role="listview" data-filter="true" data-input="#autocomplete-input"></ul>
+            <ul id="allVolunteersPH" data-inset="true" data-role="listview" data-filter="true" data-input="#autocomplete-input2"></ul>
 
         </div>
     </div>
@@ -919,9 +927,9 @@
         <div data-role="content">
 
             <form class="ui-filterable">
-                <input id="autocomplete-input" data-type="search" placeholder="חפש חולים">
+                <input id="autocomplete-input3" data-type="search" placeholder="חפש חולים">
             </form>
-            <ul id="allPatientsPH" data-inset="true" data-role="listview" data-filter="true" data-input="#autocomplete-input"></ul>
+            <ul id="allPatientsPH" data-inset="true" data-role="listview" data-filter="true" data-input="#autocomplete-input3"></ul>
 
         </div>
     </div>

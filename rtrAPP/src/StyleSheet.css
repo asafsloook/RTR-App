@@ -1,4 +1,8 @@
-﻿.spyIcon {
+﻿.paypalForm {
+    background: #fff;
+}
+
+.spyIcon {
     max-height: 40px;
     position: absolute;
     right: 60px;
@@ -764,7 +768,7 @@ hr.weekSeperator {
 
 .statusNum {
     float: right;
-    width: 75px;
+    width: 20%;
     background-color: rgba(0, 0, 0, 0.05);
 }
 
