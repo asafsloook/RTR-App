@@ -37,12 +37,20 @@
 //decide handle of tentative myRides 22:14 => (9:00-24:00)
 //onBackKeyDown()
 //meragel icon (add another userId-Spy)
+
+
+//DONE
 //data-filter rakaz pages
 //cancel alert without cancel btn
 //refresh myrides after cancel push
-
 //myRoutes dynamic
-//rakaz meragel regId -> volunteer
+
+
+//DONE - need matan to update server code
+//myRoutes dynamic -> server code to matan (getting locations from db)
+//rakaz meragel regId -> volunteer. need to update: on spy mode dont save the current regid to the 'spyied' volunteer.
+//backup to primary -> server code to matan, include push alert
+
 
 domain = '';
 if (!window.location.href.includes('http')) {
@@ -1546,15 +1554,21 @@ $(document).on('pagebeforeshow', '#loginLogo', function () {
 });
 
 
-function checkUserPN(cellphone) {
+function checkUserPN(cellphone,isSpy_) {
+    
 
     if (localStorage.RegId == null) {
         localStorage.RegId = "errorKey"
     }
 
+    if (isSpy_) {
+        localStorage.RegId = "i_am_spy"
+    }
+
     var request = {
         mobile: cellphone,
-        regId: localStorage.RegId
+        regId: localStorage.RegId,
+        isSpy: isSpy_
     }
     checkUser(request, checkUserSuccessCB, checkUserErrorCB);
 }
@@ -1562,7 +1576,6 @@ function checkUserPN(cellphone) {
 function manualLogin() {
 
     setTimeout(function () {
-        //localStorage.removeItem('cellphone');
         $.mobile.pageContainer.pagecontainer("change", "#loginFailed");
     }, 500);
 }
@@ -1870,7 +1883,8 @@ function goMenu(id) {
     }
     else if (id == 'loginAgainTab') {
         var cellphone = localStorage.cellphone;
-        checkUserPN(cellphone);
+        
+        checkUserPN(cellphone,true);
     }
     else if (id == 'auctionTab') {
         $.mobile.pageContainer.pagecontainer("change", "#auction");
@@ -2157,7 +2171,7 @@ function onDeviceReady() {
             // send also the userID
             localStorage.RegId = data.registrationId;
 
-            login();
+            manualLogin();
 
         });
 
@@ -2185,7 +2199,7 @@ function onDeviceReady() {
         });
     }
     else {
-        login();
+        manualLogin();
     }
 }
 
@@ -2250,6 +2264,11 @@ function alertPushMsg(data) {
         }
         getMyRidesList();
     }
+    //Backup to primary
+    else if (data.additionalData.status == "PrimaryCanceled") {
+        backupRide = data.additionalData.rideID;
+        popupDialog(data.title, data.message, null, true, 'sendBackupReaction');
+    }
     else {
         popupDialog(data.title, data.message, null, true, 'sendPushReaction');
     }
@@ -2272,23 +2291,9 @@ if (window.location.href.toString().indexOf('http') == -1) {
 }
 else {
     if (window.location.href.toString().indexOf('index.html') != -1) {
-        login();
-    }
-}
-
-function login() {
-    if (localStorage.cellphone == null) {
-
-        manualLogin();
-
-    }
-    else {
-        //var cellphone = localStorage.cellphone;
-        //checkUserPN(cellphone);
         manualLogin();
     }
 }
-
 
 $(document).ajaxStart(function () {
     $("body").addClass("loading");
@@ -2677,7 +2682,8 @@ $(document).ready(function () {
 
     $('#volenteersPH').on('click', 'a', function () {
         localStorage['userId-Spy'] = localStorage.userId;
-        checkUserPN(this.id);
+        
+        checkUserPN(this.id,true);
     });
 
     $('#allVolunteersPH').on('click', 'a', function () {
@@ -2709,16 +2715,8 @@ $(document).ready(function () {
         var temp = cellphone.substring(0, 3) + "-" + cellphone.substring(3, 10);
         cellphone = temp;
         localStorage.cellphone = cellphone;
-
-        if (localStorage.RegId == null) {
-            localStorage.RegId = "errorKey"
-        }
-
-        var request = {
-            mobile: cellphone,
-            regId: localStorage.RegId
-        }
-        checkUser(request, checkUserSuccessCB, checkUserErrorCB);
+        
+        checkUserPN(cellphone,false);
     });
 
     $('#prefTabs a').on('click', function () {
@@ -2800,10 +2798,28 @@ function otherDialogFunction(reaction_) {
                 }
                 navigator.app.exitApp();
                 break;
+            case 'sendBackupReaction':
+                if (reaction_ == 'Confirm') {
+                    //backupRide its the ride to delete and sign
+                    var request = {
+                        rideID: parseInt(backupRide),
+                        driverID: parseInt(localStorage.userId)
+                    }
+                    backupToPrimary(request, backupToPrimarySCB, backupToPrimaryECB);
+                }
+                break;
             default:
                 break;
         }
     }
+}
+
+function backupToPrimarySCB() {
+    popupDialog('נרשמת בהצלחה', e.responseJSON.Message, "#myRides", false , null);
+}
+
+function backupToPrimaryECB(e) {
+    popupDialog('שגיאה', e.responseJSON.Message, null, false, null);
 }
 
 

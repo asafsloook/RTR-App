@@ -355,6 +355,7 @@ public class RidePat
         return RidePatNum;
 
     }
+    
 
     //public RidePat(Patient _pat, Escorted _escorted1, Destination _startPlace, Destination _target,
     //   string _day, string _date, string _leavingHour, int _quantity, string _addition, string _rideType,

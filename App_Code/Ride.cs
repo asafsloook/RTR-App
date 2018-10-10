@@ -314,6 +314,18 @@ public class Ride
         return lr;
     }
 
+    internal int backupToPrimary(int rideID, int driverID)
+    {
+        SqlCommand cmd = new SqlCommand();
+        cmd.CommandType = CommandType.Text;
+        SqlParameter[] cmdParams = new SqlParameter[2];
+        cmdParams[0] = cmd.Parameters.AddWithValue("@rideID", rideID);
+        cmdParams[1] = cmd.Parameters.AddWithValue("@driverID", driverID);
+        string query = "update Ride set SecondaryDriver = null, MainDriver = @driverID where RideNum = @rideID";
+        DbService db = new DbService();
+        return db.ExecuteQuery(query, cmd.CommandType, cmdParams);
+    }
+
     public List<Ride> GetMyRides(int volunteerId)
     {
         string query = "select * from RPView where MainDriver=" + volunteerId + " or secondaryDriver=" + volunteerId;

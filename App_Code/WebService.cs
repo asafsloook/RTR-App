@@ -278,6 +278,16 @@ public class WebService : System.Web.Services.WebService
 
     [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public string backupToPrimary(int rideID, int driverID)
+    {
+        Ride r = new Ride();
+        int res = r.backupToPrimary(rideID, driverID);
+        JavaScriptSerializer j = new JavaScriptSerializer();
+        return j.Serialize(res);
+    }
+
+    [WebMethod]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     public string SignDriver(int ridePatId, int ridePatId2, int driverId, bool primary)
     {
         RidePat rp = new RidePat();
