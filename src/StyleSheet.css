@@ -628,6 +628,7 @@ hr {
 
     #loginPreference h2 {
         color: black;
+        margin:10px;
     }
 
 
@@ -867,4 +868,8 @@ hr.weekSeperator {
     text-align: center;
     vertical-align: middle;
     border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.disabled-btn {
+    background-color: rgba(0, 0, 0, 0.2);
 }

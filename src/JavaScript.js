@@ -37,19 +37,26 @@
 //decide handle of tentative myRides 22:14 => (9:00-24:00)
 //onBackKeyDown()
 //meragel icon (add another userId-Spy)
-
-
-//DONE
 //data-filter rakaz pages
 //cancel alert without cancel btn
 //refresh myrides after cancel push
 //myRoutes dynamic
 
 
+//DONE
+//sign me and myRides btns split in start up page
+//status disabled greyout in status page
+//refresh rides with foreground resume
+
+
 //DONE - need matan to update server code
 //myRoutes dynamic -> server code to matan (getting locations from db)
 //rakaz meragel regId -> volunteer. need to update: on spy mode dont save the current regid to the 'spyied' volunteer.
 //backup to primary -> server code to matan, include push alert
+//check if PrimaryCanceled still needed
+
+//???
+//check filterRides with more statuses WHICH?!
 
 
 domain = '';
@@ -487,7 +494,7 @@ function filterRides(rides) {
         //else if (!checkTime(rides[i])) {
 
         //}
-        else if (rides[i].Status == 'שובץ גיבוי' || rides[i].Status == "שובץ נהג וגיבוי") {
+        else if (rides[i].Status == 'שובץ גיבוי' || rides[i].Status == "שובץ נהג וגיבוי" || rides[i].Statuses.includes("יצאתי לדרך")) {
 
         }
         else if (typeof showAll !== 'undefined') {
@@ -1554,8 +1561,8 @@ $(document).on('pagebeforeshow', '#loginLogo', function () {
 });
 
 
-function checkUserPN(cellphone,isSpy_) {
-    
+function checkUserPN(cellphone, isSpy_) {
+
 
     if (localStorage.RegId == null) {
         localStorage.RegId = "errorKey"
@@ -1567,8 +1574,7 @@ function checkUserPN(cellphone,isSpy_) {
 
     var request = {
         mobile: cellphone,
-        regId: localStorage.RegId,
-        isSpy: isSpy_
+        regId: localStorage.RegId
     }
     checkUser(request, checkUserSuccessCB, checkUserErrorCB);
 }
@@ -1883,8 +1889,8 @@ function goMenu(id) {
     }
     else if (id == 'loginAgainTab') {
         var cellphone = localStorage.cellphone;
-        
-        checkUserPN(cellphone,true);
+
+        checkUserPN(cellphone, true);
     }
     else if (id == 'auctionTab') {
         $.mobile.pageContainer.pagecontainer("change", "#auction");
@@ -2266,8 +2272,11 @@ function alertPushMsg(data) {
     }
     //Backup to primary
     else if (data.additionalData.status == "PrimaryCanceled") {
+        //check first if this ride still needprimary driver
         backupRide = data.additionalData.rideID;
-        popupDialog(data.title, data.message, null, true, 'sendBackupReaction');
+        backupRideMSG = data.message;
+        backupRideTITLE = data.title;
+        isPrimaryStillCanceled();
     }
     else {
         popupDialog(data.title, data.message, null, true, 'sendPushReaction');
@@ -2282,6 +2291,23 @@ function confirmPushECB(e) {
 
 }
 
+function isPrimaryStillCanceled() {
+    var request = {
+        driverID: parseInt(localStorage.userId),
+        rideID: parseInt(backupRide)
+    }
+    isPrimaryStillCanceledAJAX(request, isPrimaryStillCanceledSCB, isPrimaryStillCanceledECB);
+}
+
+function isPrimaryStillCanceledSCB(data) {
+    if (data.d == 'true') {
+        popupDialog(backupRideTITLE, backupRideMSG, null, true, 'sendBackupReaction');
+    }
+}
+
+function isPrimaryStillCanceledECB() {
+
+}
 
 if (window.location.href.toString().indexOf('http') == -1) {
 
@@ -2342,16 +2368,20 @@ $(document).on('pagebeforeshow', '#status', function () {
             '   <hr>';
     }
     $('.statusContent').html(str);
+    drawDisabled();
     $(document).on('click', '.statusButton', function () {
-
         if (!$(this).parent().hasClass('statusActive')) {
 
             if ($('.statusName.statusActive').length > 0) {
                 for (var i = 0; i < $('.statusName.statusActive').length; i++) {
                     var thisId = parseInt($(this).attr('id').toString().replace('status', ''));
                     var thatId = parseInt($('.statusName.statusActive').eq(i).children().attr('id').toString().replace('status', ''));
-                    if (thisId == thatId) continue;
-                    if (thisId < thatId) return;
+                    if (thisId == thatId) {
+                        continue;
+                    }
+                    if (thisId < thatId) {
+                        return;
+                    }
                 }
             }
 
@@ -2362,6 +2392,20 @@ $(document).on('pagebeforeshow', '#status', function () {
     });
 });
 
+function drawDisabled() {
+    var statusActive = false;
+    for (var i = $('.statusName').length; i >= 0; i--) {
+        var status_ = $('.statusName').eq(i);
+        if (status_.hasClass('statusActive') && !statusActive) {
+            statusActive = true;
+            continue;
+        }
+        if (statusActive && !status_.hasClass('statusActive')) {
+            status_.addClass("disabled-btn");
+            status_.siblings().eq(0).addClass("disabled-btn");
+        }
+    }
+}
 
 $(document).on('pagebeforeshow', '#problem', function () {
 
@@ -2673,7 +2717,7 @@ $(document).ready(function () {
             $('li #loginAgainTab,li #auctionTab,li #trackRidesTab').parent().hide()
         }
     });
-    
+
     $('#other select').on('change', function () {
 
         autoSavePref();
@@ -2682,8 +2726,8 @@ $(document).ready(function () {
 
     $('#volenteersPH').on('click', 'a', function () {
         localStorage['userId-Spy'] = localStorage.userId;
-        
-        checkUserPN(this.id,true);
+
+        checkUserPN(this.id, true);
     });
 
     $('#allVolunteersPH').on('click', 'a', function () {
@@ -2694,15 +2738,15 @@ $(document).ready(function () {
         window.open("tel:" + this.id);
     });
 
-    $("#nextPageBTN").on('click', function () {
+    //$("#nextPageBTN").on('click', function () {
 
-        if (checkPlanRides(myRides)) {
-            $.mobile.pageContainer.pagecontainer("change", "#myRides");
-        }
-        else {
-            $.mobile.pageContainer.pagecontainer("change", "#signMe");
-        }
-    });
+    //    if (checkPlanRides(myRides)) {
+    //        $.mobile.pageContainer.pagecontainer("change", "#myRides");
+    //    }
+    //    else {
+    //        $.mobile.pageContainer.pagecontainer("change", "#signMe");
+    //    }
+    //});
 
     $('#userPnBTN').on('click', function () {
 
@@ -2715,8 +2759,8 @@ $(document).ready(function () {
         var temp = cellphone.substring(0, 3) + "-" + cellphone.substring(3, 10);
         cellphone = temp;
         localStorage.cellphone = cellphone;
-        
-        checkUserPN(cellphone,false);
+
+        checkUserPN(cellphone, false);
     });
 
     $('#prefTabs a').on('click', function () {
@@ -2773,6 +2817,7 @@ function otherDialogFunction(reaction_) {
                 }
                 $(elemStatusForSend).parent().addClass('statusActive');
                 $(elemStatusForSend).parent().siblings().eq(0).addClass('statusActive');
+                drawDisabled();
                 var rideID = closeRide.rideId;
                 sendStatus(statusForSend, rideID);
                 break;
@@ -2815,7 +2860,7 @@ function otherDialogFunction(reaction_) {
 }
 
 function backupToPrimarySCB() {
-    popupDialog('נרשמת בהצלחה', e.responseJSON.Message, "#myRides", false , null);
+    popupDialog('נרשמת בהצלחה', e.responseJSON.Message, "#myRides", false, null);
 }
 
 function backupToPrimaryECB(e) {

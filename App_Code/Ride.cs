@@ -314,6 +314,16 @@ public class Ride
         return lr;
     }
 
+    internal bool isPrimaryStillCanceled(int rideID, int driverID)
+    {
+        string query = "select * from Ride where RideNum = " + rideID + " AND SecondaryDriver = " + driverID + " AND MainDriver is null";
+        DbService db = new DbService();
+        DataSet ds = db.GetDataSetByQuery(query);
+
+        if (ds.Tables[0].Rows[0].IsNull(0)) return false;
+        else return true;
+    }
+
     internal int backupToPrimary(int rideID, int driverID)
     {
         SqlCommand cmd = new SqlCommand();
