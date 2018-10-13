@@ -44,9 +44,9 @@
 
 
 //DONE
-//sign me and myRides btns split in start up page
+//signMe, myRides, Status pages in start up page
 //status disabled greyout in status page
-//refresh rides with foreground resume
+//refresh rides + myRides with foreground resume
 
 
 //DONE - need matan to update server code
@@ -124,7 +124,6 @@ function GetRidesSuccessCB(results) {
         fromSignMe = false;
     }
 }
-
 
 //from server structure to client structure (fields)
 function ridesToClientStructure(before) {
@@ -494,7 +493,7 @@ function filterRides(rides) {
         //else if (!checkTime(rides[i])) {
 
         //}
-        else if (rides[i].Status == 'שובץ גיבוי' || rides[i].Status == "שובץ נהג וגיבוי" || rides[i].Statuses.includes("יצאתי לדרך")) {
+        else if (rides[i].Status == 'שובץ גיבוי' || rides[i].Status == "שובץ נהג וגיבוי") {
 
         }
         else if (typeof showAll !== 'undefined') {
@@ -2141,6 +2140,11 @@ function onDeviceReady() {
             fromSignMe = true;
         }
         getRidesList();
+
+        if (window.location.href.includes('myRides')) {
+            myRidesPrint = true;
+        }
+        getMyRidesList();
     }
 
     //Handle the pause event: put timer, save things etc
@@ -2797,6 +2801,16 @@ $(document).ready(function () {
         redirectUrlFromDialog = null;
         otherDialogFunction('Confirm');
     });
+
+    $('#checkNeedForReport').on('click', function () {
+        if (!hasCloseRide()) {
+            popupDialog('שגיאה', 'אין לך נסיעות קרובות הדורשות דיווח.', null, false, null);
+        }
+        else {
+            loginToCloseRide();
+        }
+    });
+    
 });
 
 function otherDialogFunction(reaction_) {
