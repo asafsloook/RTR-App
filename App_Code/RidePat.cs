@@ -278,8 +278,11 @@ public class RidePat
         else if (func == "edit") //Edit existing RidePat in DB
         {
             RidePatNum = ridePat.RidePatNum;
+            string query = "select Status from RidePat where RidePatNum="+RidePatNum;
+            Status =  db.GetObjectScalarByQuery(query).ToString();
+            if (Status != "ממתינה לשיבוץ") throw new Exception("נסיעה זו כבר הוקצתה לנהג ואין אפשרות לערוך אותה");
             cmdParams[6] = cmd.Parameters.AddWithValue("@ridePatNum", RidePatNum);
-            string query = "update RidePat set Patient=@pat,Origin=@origin,Destination=@destination,PickupTime=@date,Remark=@remark,OnlyEscort=@onlyEscort where RidePatNum=@ridePatNum";
+            query = "update RidePat set Patient=@pat,Origin=@origin,Destination=@destination,PickupTime=@date,Remark=@remark,OnlyEscort=@onlyEscort where RidePatNum=@ridePatNum";
             int res = db.ExecuteQuery(query, cmd.CommandType, cmdParams);
 
             if (res > 0)
@@ -355,7 +358,6 @@ public class RidePat
         return RidePatNum;
 
     }
-    
 
     //public RidePat(Patient _pat, Escorted _escorted1, Destination _startPlace, Destination _target,
     //   string _day, string _date, string _leavingHour, int _quantity, string _addition, string _rideType,
@@ -410,20 +412,23 @@ public class RidePat
         rp.RidePatNum = int.Parse(dr["RidePatNum"].ToString());
         rp.OnlyEscort = Convert.ToBoolean(dr["OnlyEscort"].ToString());
         rp.pat.DisplayName = dr["DisplayName"].ToString();
+        rp.Drivers = new List<Volunteer>();
         if (dr["MainDriver"].ToString() != "")
         {
-            rp.Drivers = new List<Volunteer>();
             Volunteer v1 = new Volunteer();
             v1.Id = int.Parse(dr["MainDriver"].ToString());
             v1.RegId = v1.GetVolunteerRegById(v1.Id);
+            v1.DriverType = "Primary";
             rp.Drivers.Add(v1);
-            if (dr["secondaryDriver"].ToString() != "")
-            {
-                Volunteer v2 = new Volunteer();
-                v2.Id = int.Parse(dr["secondaryDriver"].ToString());
-                v2.RegId = v2.GetVolunteerRegById(v2.Id);
-                rp.Drivers.Add(v2);
-            }
+            
+        }
+        if (dr["secondaryDriver"].ToString() != "")
+        {
+            Volunteer v2 = new Volunteer();
+            v2.Id = int.Parse(dr["secondaryDriver"].ToString());
+            v2.RegId = v2.GetVolunteerRegById(v2.Id);
+            v2.DriverType = "Secondary";
+            rp.Drivers.Add(v2);
         }
         //rp.pat.EscortedList = new List<Escorted>();
         rp.Escorts = new List<Escorted>();
@@ -482,7 +487,7 @@ public class RidePat
         // Ride ride = new Ride();
         // ride.RidePats = new List<RidePat>();
         List<RidePat> rpl = new List<RidePat>();
-       // int numOfDrivers = 0;
+        // int numOfDrivers = 0;
 
         string query2 = "select * from RidePatEscortView";
         DbService db2 = new DbService();
@@ -528,19 +533,23 @@ public class RidePat
                 RidePat rp = new RidePat();
                 rp.Coordinator = new Volunteer();
                 rp.Coordinator.DisplayName = dr["Coordinator"].ToString();
-rp.Drivers = new List<Volunteer>();
+                rp.Drivers = new List<Volunteer>();
                 // if (numOfDrivers != 0)
                 //  {
                 if (dr["MainDriver"].ToString() != "")
                 {
-                    
+
                     Volunteer primary = new Volunteer();
                     primary.DriverType = "Primary";
 
                     primary.Id = int.Parse(dr["MainDriver"].ToString());
-                    string query3 = "select DisplayName from Volunteer where Id=" + primary.Id;
+                    string query3 = "select DisplayName,CellPhone from Volunteer where Id=" + primary.Id;
                     DbService db3 = new DbService();
-                    primary.DisplayName = db3.GetObjectScalarByQuery(query3).ToString();
+                    //primary.DisplayName = db3.GetObjectScalarByQuery(query3).ToString();
+                    DataSet driverSet = db3.GetDataSetByQuery(query3);
+                    DataRow driverRow = driverSet.Tables[0].Rows[0];
+                    primary.DisplayName = driverRow["DisplayName"].ToString();
+                    primary.CellPhone = driverRow["CellPhone"].ToString();
                     rp.Drivers.Add(primary);
                 }
 
@@ -552,9 +561,13 @@ rp.Drivers = new List<Volunteer>();
                     Volunteer secondary = new Volunteer();
                     secondary.DriverType = "secondary";
                     secondary.Id = int.Parse(dr["secondaryDriver"].ToString());
-                    string query4 = "select DisplayName from Volunteer where Id=" + secondary.Id;
+                    string query4 = "select DisplayName,Cellphone from Volunteer where Id=" + secondary.Id;
                     DbService db4 = new DbService();
-                    secondary.DisplayName = db4.GetObjectScalarByQuery(query4).ToString();
+                    // secondary.DisplayName = db4.GetObjectScalarByQuery(query4).ToString();
+                    DataSet driverSet = db4.GetDataSetByQuery(query4);
+                    DataRow driverRow = driverSet.Tables[0].Rows[0];
+                    secondary.DisplayName = driverRow["DisplayName"].ToString();
+                    secondary.CellPhone = driverRow["CellPhone"].ToString();
                     rp.Drivers.Add(secondary);
                 }
                 //  }
@@ -604,6 +617,8 @@ rp.Drivers = new List<Volunteer>();
                     {
                         rp.Statuses.Add(status.ItemArray[0].ToString());
                     }
+                    rp.Status = rp.Statuses[0];
+
                 }
                 rpl.Add(rp);
 

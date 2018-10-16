@@ -232,3 +232,15 @@ function isPrimaryStillCanceledAJAX(request, isPrimaryStillCanceledSCB, isPrimar
         error: isPrimaryStillCanceledECB
     }) // end of ajax call
 }
+
+function getLocations(getLocationsSCB, getLocationsECB) {
+    
+    $.ajax({ // ajax call starts
+        url: domain + '/WebService.asmx/getLocations',   // server side web service method
+        type: 'POST',                              // can be also GET
+        dataType: 'json',                          // expecting JSON datatype from the server
+        contentType: 'application/json; charset = utf-8', // sent to the server
+        success: getLocationsSCB,                // data.d id the Variable data contains the data we get from serverside
+        error: getLocationsECB
+    }) // end of ajax call
+}

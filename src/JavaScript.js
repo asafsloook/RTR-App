@@ -41,22 +41,16 @@
 //cancel alert without cancel btn
 //refresh myrides after cancel push
 //myRoutes dynamic
-
-
-//DONE
 //signMe, myRides, Status pages in start up page
 //status disabled greyout in status page
 //refresh rides + myRides with foreground resume
-
-
-//DONE - need matan to update server code
 //myRoutes dynamic -> server code to matan (getting locations from db)
 //rakaz meragel regId -> volunteer. need to update: on spy mode dont save the current regid to the 'spyied' volunteer.
 //backup to primary -> server code to matan, include push alert
 //check if PrimaryCanceled still needed
 
 //???
-//check filterRides with more statuses WHICH?!
+//check filterRides with more statuses WHICH?! OPEN ON BENNY
 
 
 domain = '';
@@ -1618,11 +1612,7 @@ function checkUserSuccessCB(results) {
     loginThread = true;
     getRidesList();
 
-    $('#locationsPH').append(buildLocationsHtml());
-    $('#locationsPH input, #kavim input').on('click', function () {
-
-        autoSavePref();
-    });
+    getLocations(getLocationsSCB, getLocationsECB);
 }
 
 hourToMillisecs = 3600000;
@@ -2810,7 +2800,7 @@ $(document).ready(function () {
             loginToCloseRide();
         }
     });
-    
+
 });
 
 function otherDialogFunction(reaction_) {
@@ -2958,4 +2948,23 @@ function locationsClasses(locations) {
     }
 
     return locations;
+}
+
+
+function getLocationsSCB(data) {
+    debugger;
+    var locations = JSON.parse(data.d);
+
+    userInfo.Barriers = locations.filter(b => b.Type == "מחסום");
+    userInfo.Hospitals = locations.filter(h => h.Type == "בית חולים");
+
+    $('#locationsPH').append(buildLocationsHtml());
+    $('#locationsPH input, #kavim input').on('click', function () {
+
+        autoSavePref();
+    });
+}
+
+function getLocationsECB(e) {
+
 }
