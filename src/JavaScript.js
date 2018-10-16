@@ -48,8 +48,6 @@
 //rakaz meragel regId -> volunteer. need to update: on spy mode dont save the current regid to the 'spyied' volunteer.
 //backup to primary -> server code to matan, include push alert
 //check if PrimaryCanceled still needed
-
-//???
 //check filterRides with more statuses WHICH?! OPEN ON BENNY
 
 
@@ -487,7 +485,7 @@ function filterRides(rides) {
         //else if (!checkTime(rides[i])) {
 
         //}
-        else if (rides[i].Status == 'שובץ גיבוי' || rides[i].Status == "שובץ נהג וגיבוי") {
+        else if (rides[i].Status == 'שובץ גיבוי' || rides[i].Status == "שובץ נהג וגיבוי" || userInfo.Statusim.filter(status => status.Name == rides[i].Status && status.Id >= 100).length > 0) {
 
         }
         else if (typeof showAll !== 'undefined') {
@@ -1595,6 +1593,11 @@ function checkUserSuccessCB(results) {
         return;
     }
 
+    if (localStorage.lastPush != undefined) {
+        alertPushMsg(JSON.parse(localStorage.lastPush));
+        localStorage.lastPush = undefined;
+    }
+    
 
     userInfo = results;
     localStorage.userId = userInfo.Id;
@@ -2207,7 +2210,7 @@ function onDeviceReady() {
 // When the user is in the application
 //------------------------------------------------
 function handleForeground(data) {
-    //
+    //OK
     alertPushMsg(data);
 }
 
@@ -2215,7 +2218,7 @@ function handleForeground(data) {
 // When the application runs in the background
 //-------------------------------------------------
 function handleBackground(data) {
-    //
+    //OK
     alertPushMsg(data);
 }
 
@@ -2224,7 +2227,7 @@ function handleBackground(data) {
 //-------------------------------------------------
 function handleColdStart(data) {
     //
-    alertPushMsg(data);
+    localStorage.lastPush = JSON.stringify(data);
 }
 
 
@@ -2267,7 +2270,8 @@ function alertPushMsg(data) {
     //Backup to primary
     else if (data.additionalData.status == "PrimaryCanceled") {
         //check first if this ride still needprimary driver
-        backupRide = data.additionalData.rideID;
+
+        backupRide = myRides.filter(r => r.Id == data.additionalData.rideID)[0].rideId;
         backupRideMSG = data.message;
         backupRideTITLE = data.title;
         isPrimaryStillCanceled();
@@ -2801,6 +2805,11 @@ $(document).ready(function () {
         }
     });
 
+    $('#locationsPH input, #kavim input').on('click', function () {
+
+        autoSavePref();
+    });
+
 });
 
 function otherDialogFunction(reaction_) {
@@ -2863,8 +2872,8 @@ function otherDialogFunction(reaction_) {
     }
 }
 
-function backupToPrimarySCB() {
-    popupDialog('נרשמת בהצלחה', e.responseJSON.Message, "#myRides", false, null);
+function backupToPrimarySCB(data) {
+    popupDialog('נרשמת בהצלחה', "", "#myRides", false, null);
 }
 
 function backupToPrimaryECB(e) {
@@ -2952,17 +2961,15 @@ function locationsClasses(locations) {
 
 
 function getLocationsSCB(data) {
-    debugger;
     var locations = JSON.parse(data.d);
 
     userInfo.Barriers = locations.filter(b => b.Type == "מחסום");
     userInfo.Hospitals = locations.filter(h => h.Type == "בית חולים");
 
-    $('#locationsPH').append(buildLocationsHtml());
-    $('#locationsPH input, #kavim input').on('click', function () {
 
-        autoSavePref();
-    });
+    if ($('#locationsPH').html() == "") {
+        $('#locationsPH').append(buildLocationsHtml());
+    }
 }
 
 function getLocationsECB(e) {

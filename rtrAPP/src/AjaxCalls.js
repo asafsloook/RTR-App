@@ -199,3 +199,48 @@ function setStatus(request, setStatusSCB, setStatusECB) {
         error: setStatusECB
     }) // end of ajax call
 }
+
+function backupToPrimary(request, backupToPrimarySCB, backupToPrimaryECB) {
+
+    // serialize the object to JSON string
+    var dataString = JSON.stringify(request);
+
+    $.ajax({ // ajax call starts
+        url: domain + '/WebService.asmx/backupToPrimary',   // server side web service method
+        data: dataString,                          // the parameters sent to the server
+        type: 'POST',                              // can be also GET
+        dataType: 'json',                          // expecting JSON datatype from the server
+        contentType: 'application/json; charset = utf-8', // sent to the server
+        success: backupToPrimarySCB,                // data.d id the Variable data contains the data we get from serverside
+        error: backupToPrimaryECB
+    }) // end of ajax call
+}
+
+
+function isPrimaryStillCanceledAJAX(request, isPrimaryStillCanceledSCB, isPrimaryStillCanceledECB) {
+
+    // serialize the object to JSON string
+    var dataString = JSON.stringify(request);
+
+    $.ajax({ // ajax call starts
+        url: domain + '/WebService.asmx/isPrimaryStillCanceled',   // server side web service method
+        data: dataString,                          // the parameters sent to the server
+        type: 'POST',                              // can be also GET
+        dataType: 'json',                          // expecting JSON datatype from the server
+        contentType: 'application/json; charset = utf-8', // sent to the server
+        success: isPrimaryStillCanceledSCB,                // data.d id the Variable data contains the data we get from serverside
+        error: isPrimaryStillCanceledECB
+    }) // end of ajax call
+}
+
+function getLocations(getLocationsSCB, getLocationsECB) {
+    
+    $.ajax({ // ajax call starts
+        url: domain + '/WebService.asmx/getLocations',   // server side web service method
+        type: 'POST',                              // can be also GET
+        dataType: 'json',                          // expecting JSON datatype from the server
+        contentType: 'application/json; charset = utf-8', // sent to the server
+        success: getLocationsSCB,                // data.d id the Variable data contains the data we get from serverside
+        error: getLocationsECB
+    }) // end of ajax call
+}

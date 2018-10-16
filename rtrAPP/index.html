@@ -38,7 +38,7 @@
             <div class="double-bounce1"></div>
             <div class="double-bounce2"></div>
         </div>
-        <p style="margin-top: 30%;">מהדורה 1.1 <br>מתאריך 09/07/2018</p>
+        <p style="margin-top: 30%;">מהדורה 1.2 <br>מתאריך 13/10/2018</p>
     </div>
 
 
@@ -58,7 +58,11 @@
         <h2 id="welcomeTitle"></h2>
         <a id="changePrefBTN" href="#myPreferences" data-role="button" data-inline="true">שינוי ההעדפות שלי</a>
         <br />
-        <a id="nextPageBTN" data-role="button" data-inline="true">המשך לשיבוץ</a>
+        <a data-role="button" href="#signMe" data-inline="true">שבץ אותי</a>
+        <br>
+        <a data-role="button" href="#myRides" data-inline="true">הנסיעות שלי</a>
+        <br>
+        <a data-role="button" id="checkNeedForReport" data-inline="true">דיווחים</a>
         <br>
         <div id="rakazBTNS">
             <a id="rakazLoginBTN" href="#rakazLogin" data-role="button" data-inline="true" class="ui-link ui-btn ui-btn-inline ui-shadow ui-corner-all" role="button">הכנס/י כמתנדב/ת</a>
@@ -591,10 +595,7 @@
             <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
             </a>
         </div>
-
         <div data-role="content">
-
-
             <div data-role="tabs" id="prefTabs">
                 <div data-role="navbar">
                     <ul>
@@ -604,11 +605,8 @@
                     </ul>
                 </div>
                 <div id="other">
-
                     <table>
                         <tr>
-
-
                             <td><p>מספר הנוסעים המקסימלי שבד"כ תוכלו לקחת</p></td>
                         </tr>
                         <tr>
@@ -628,9 +626,6 @@
                             </td>
                         </tr>
                     </table>
-
-
-
                 </div>
                 <div id="zmanim">
                     <p>ציינו את הזמנים שבד"כ מתאים לכם להסיע</p>
@@ -769,115 +764,14 @@
                             <label for="northArea">צפון</label>
                         </form>
                     </div>
-
-                    <!--<div id="locationsPH">
-
-                    </div>-->
-
-                    <div id="starts" class="start">
-                        <form hidden="hidden" class="north">
-                            <input type="checkbox" id="north1">
-                            <label for="north1">ג'למה (גלבוע)</label>
-                        </form>
-                        <form hidden="hidden" class="north">
-                            <input type="checkbox" id="north2">
-                            <label for="north2">ריחן</label>
-                        </form>
-                        <form hidden="hidden" class="center">
-                            <input type="checkbox" id="center1">
-                            <label for="center1">אייל</label>
-                        </form>
-                        <form hidden="hidden" class="center">
-                            <input type="checkbox" id="center2">
-                            <label for="center2">אליהו</label>
-                        </form>
-                        <form hidden="hidden" class="center">
-                            <input type="checkbox" id="center3">
-                            <label for="center3">בית לחם</label>
-                        </form>
-                        <form hidden="hidden" class="center">
-                            <input type="checkbox" id="center4">
-                            <label for="center4">הפרחים</label>
-                        </form>
-                        <form hidden="hidden" class="south">
-                            <input type="checkbox" id="south222">
-                            <label for="south222">כרם שלום</label>
-                        </form>
-                        <form hidden="hidden" class="center">
-                            <input type="checkbox" id="center55">
-                            <label for="center55">מכבים</label>
-                        </form>
-                        <form hidden="hidden" class="center">
-                            <input type="checkbox" id="center5">
-                            <label for="center5">נעלין</label>
-                        </form>
-                        <form hidden="hidden" class="center">
-                            <input type="checkbox" id="center6">
-                            <label for="center6">שער אפרים</label>
-                        </form>
-                        <form hidden="hidden" class="center">
-                            <input type="checkbox" id="center7">
-                            <label for="center7">תרקומיה</label>
-                        </form>
-                        <form hidden="hidden" class="south">
-                            <input type="checkbox" id="south1">
-                            <label for="south1">ארז</label>
-                        </form>
-                    </div>
-
-                    <div id="ends" class="end">
-
-                        <form hidden="hidden" class="north">
-                            <input type="checkbox" id="north3">
-                            <label for="north3">רמב"ם</label>
-                        </form>
-                        <form hidden="hidden" class="center north">
-                            <input type="checkbox" id="center8">
-                            <label for="center8">שיבא</label>
-                        </form>
-                        <form hidden="hidden" class="center">
-                            <input type="checkbox" id="center9">
-                            <label for="center9">איכילוב</label>
-                        </form>
-                        <form hidden="hidden" class="center">
-                            <input type="checkbox" id="center10">
-                            <label for="center10">אסותא</label>
-                        </form>
-                        <form hidden="hidden" class="center">
-                            <input type="checkbox" id="center11">
-                            <label for="center11">וולפסון</label>
-                        </form>
-                        <form hidden="hidden" class="south">
-                            <input type="checkbox" id="south4">
-                            <label for="south4">חיפה</label>
-                        </form>
-                        <form hidden="hidden" class="south">
-                            <input type="checkbox" id="south2">
-                            <label for="south2">מרכז</label>
-                        </form>
-                        <form hidden="hidden" class="south">
-                            <input type="checkbox" id="south3">
-                            <label for="south3">ירושלים</label>
-                        </form>
-
-                    </div>
-
-
+                    <div id="locationsPH"></div>
                 </div>
             </div>
-
             <a id="continueBTN" hidden="hidden" data-role="button" data-inline="true">המשך</a>
-
         </div>
-
-
-
     </div>
 
-
-
     <div id="rakazLogin" data-role="page">
-
         <div data-role="header">
             <a data-rel="back" style="float:left;border:none;margin:0;margin-left:2%" href="#" class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"></a>
             <h1>דף רכז</h1>
