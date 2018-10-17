@@ -183,7 +183,6 @@ function GetMyRidesSuccessCB(results) {
         }
         else {
             setTimeout(function () {
-                loginThread = false;
                 $.mobile.pageContainer.pagecontainer("change", "#loginPreference");
             }, 1000);
         }
@@ -1397,7 +1396,7 @@ $(document).on('pagebeforeshow', '#signMe', function () {
 
 
 $(document).on('pagebeforeshow', '#loginPreference', function () {
-
+    
     $("#welcomeTitle").html("שלום " + userInfo.FirstNameH);
     $("#rakazBTNS").hide();
 
@@ -1415,6 +1414,12 @@ $(document).on('pagebeforeshow', '#loginPreference', function () {
         getPatients(request, getPatientsSCB, getPatientsECB);
     }
 
+    //check push on coldstart from login (taking the cached data from localstorage)
+    if (localStorage.lastPush != undefined && loginThread) {
+        alertPushMsg(JSON.parse(localStorage.lastPush));
+        localStorage.removeItem("lastPush");
+    }
+    loginThread = false;
 });
 
 $(document).on('pageshow', '#loginPreference', function () {
@@ -1592,13 +1597,7 @@ function checkUserSuccessCB(results) {
         }, 100);
         return;
     }
-
-    if (localStorage.lastPush != undefined) {
-        alertPushMsg(JSON.parse(localStorage.lastPush));
-        localStorage.lastPush = undefined;
-    }
     
-
     userInfo = results;
     localStorage.userId = userInfo.Id;
     //get personal info: name, photo, address etc.
