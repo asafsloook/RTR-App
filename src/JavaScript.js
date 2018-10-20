@@ -49,7 +49,8 @@
 //backup to primary -> server code to matan, include push alert
 //check if PrimaryCanceled still needed
 //check filterRides with more statuses WHICH?! OPEN ON BENNY
-
+//הגענו ליעד dont show ride on status page
+//fix for hasCloseRide(), 3 hours before 9 hours after
 
 domain = '';
 if (!window.location.href.includes('http')) {
@@ -381,6 +382,7 @@ function filterMyRides(myRide) {
     }
     //planTAB is checked, meaning we are in the planned rides section
     else if (rideDateMillisec > nowMillisec && $('#planTAB').prop("class").indexOf("ui-btn-active") != -1) { }
+    else if (myRide.Statuses != null && myRide.Statuses.includes("הגענו ליעד") && $('#planTAB').prop("class").indexOf("ui-btn-active") != -1) { }
     else { pastRide = false; }
     return pastRide;
 }
@@ -1313,6 +1315,22 @@ $(document).on('pagebeforeshow', '#myRides', function () {
 });
 
 
+$(document).on('pagebeforeshow', '#volunteerRequest', function () {
+
+    var phone = localStorage.cellphone != null ? localStorage.cellphone.replace('-', '') : "";
+    $('#requestPhoneTB').val(phone);
+
+});
+
+$(document).on('pagebeforeshow', '#volunteerProblems', function () {
+
+    var phone = localStorage.cellphone != null ? localStorage.cellphone.replace('-', '') : "";
+    $('#problemPhoneTB').val(phone);
+
+});
+
+
+
 //activate doneTAB after closing infoPastRide
 $(document).on('pagebeforeshow', '#infoPastRide', function () {
 
@@ -1396,7 +1414,7 @@ $(document).on('pagebeforeshow', '#signMe', function () {
 
 
 $(document).on('pagebeforeshow', '#loginPreference', function () {
-    
+
     $("#welcomeTitle").html("שלום " + userInfo.FirstNameH);
     $("#rakazBTNS").hide();
 
@@ -1452,6 +1470,10 @@ function loginToCloseRide() {
 function chooseCloseRide() {
 
     var alertRide = '<p>המערכת זיהתה שיש לך נסיעות קרובות. <br/> האם תרצה לדווח סטטוס?</p><select id="closeRidesSelectMenu">';
+
+    closeRides.sort(function (a, b) {
+        return a.DateTime.toString().localeCompare(b.DateTime.toString());
+    });
 
     for (var i = 0; i < closeRides.length; i++) {
 
@@ -1597,7 +1619,7 @@ function checkUserSuccessCB(results) {
         }, 100);
         return;
     }
-    
+
     userInfo = results;
     localStorage.userId = userInfo.Id;
     //get personal info: name, photo, address etc.
@@ -1631,9 +1653,11 @@ function hasCloseRide() {
             if (typeof myRides[i].DateTime === 'undefined') continue;
 
             var nowMillisecs = new Date().getTime();
-            var nowMillisecsMinusBefore = nowMillisecs - closeRideTimeBefore;
-            var nowMillisecsPlusAfter = nowMillisecs + closeRideTimeAfter;
+
             var myRideMillisecs = myRides[i].DateTime;
+
+            var myRideMillisecsMinusBefore = myRideMillisecs - closeRideTimeBefore;
+            var myRideMillisecsPlusAfter = myRideMillisecs + closeRideTimeAfter;
 
             var tentative = new Date(myRideMillisecs);
             var isTentative = tentative.getHours() == 22 && tentative.getMinutes() == 14;
@@ -1641,7 +1665,7 @@ function hasCloseRide() {
             if (isTentative && new Date().getHours() >= 9 && tentative.toLocaleDateString() == new Date().toLocaleDateString()) {
                 closeRides.push(myRides[i]);
             }
-            else if (!isTentative && myRideMillisecs >= nowMillisecsMinusBefore && myRideMillisecs <= nowMillisecsPlusAfter && myRides[i].DriverType == 'Primary' && !myRides[i].Statuses.includes('הגענו לנקודת היעד')) {
+            else if (!isTentative && nowMillisecs >= myRideMillisecsMinusBefore && nowMillisecs <= myRideMillisecsPlusAfter && myRides[i].DriverType == 'Primary' && !myRides[i].Statuses.includes('הגענו ליעד')) {
                 closeRides.push(myRides[i]);
             }
         }
@@ -2647,6 +2671,8 @@ $(document).ready(function () {
 
     //remember to add this event to every new page
     $('#signMeTab , #myRidesTab , #loginAgainTab, #auctionTab, #trackRidesTab, #NotifyTab').on('click', function () {
+
+        $('#mypanel').panel("close");
 
         if (window.location.href.toString().indexOf('myPreferences') == -1) {
 

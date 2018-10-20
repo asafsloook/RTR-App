@@ -148,13 +148,13 @@ public class myPushNot
         // Wire up events
         gcmBroker.OnNotificationFailed += (notification, aggregateEx) =>
         {
-            //Console.WriteLine("GCM Notification Failed!");
-        };
+        //Console.WriteLine("GCM Notification Failed!");
+    };
 
         gcmBroker.OnNotificationSucceeded += (notification) =>
         {
-            //Console.WriteLine("GCM Notification Sent!");
-        };
+        //Console.WriteLine("GCM Notification Sent!");
+    };
 
         // Start the broker
         gcmBroker.Start();
