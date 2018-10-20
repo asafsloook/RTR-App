@@ -49,11 +49,8 @@
 //backup to primary -> server code to matan, include push alert
 //check if PrimaryCanceled still needed
 //check filterRides with more statuses WHICH?! OPEN ON BENNY
-
-
 //הגענו ליעד dont show ride on status page
 //fix for hasCloseRide(), 3 hours before 9 hours after
-//
 
 domain = '';
 if (!window.location.href.includes('http')) {
@@ -109,7 +106,7 @@ function GetRidesSuccessCB(results) {
         getMyRidesList();
     }
 
-    if (loginThread) {
+    if (typeof loginThread !== 'undefined' && loginThread) {
 
         //getMyRides
         getMyRidesList();
@@ -177,7 +174,7 @@ function GetMyRidesSuccessCB(results) {
         goSuggest = undefined;
     }
 
-    if (loginThread) {
+    if (typeof loginThread !== 'undefined' && loginThread) {
 
         if (localStorage.availableSeats == null || localStorage.availableSeats == "0") {
             setTimeout(function () {
@@ -385,7 +382,7 @@ function filterMyRides(myRide) {
     }
     //planTAB is checked, meaning we are in the planned rides section
     else if (rideDateMillisec > nowMillisec && $('#planTAB').prop("class").indexOf("ui-btn-active") != -1) { }
-    else if (myRide.Statuses.includes("הגענו ליעד") && $('#planTAB').prop("class").indexOf("ui-btn-active") != -1) { }
+    else if (myRide.Statuses != null && myRide.Statuses.includes("הגענו ליעד") && $('#planTAB').prop("class").indexOf("ui-btn-active") != -1) { }
     else { pastRide = false; }
     return pastRide;
 }
@@ -691,7 +688,7 @@ function rideStr(str, results, i) {
         str += ' class="primary" >'
             + '<b>הסעה ' + time + '</b>';
     }
-    str += '<i class="fa fa-info-circle" style="float: left;"></i><br>';
+    str += '<i class="fa fa-info-circle" style="float:left;margin-right: 15px;"></i><br>';
 
     str += results[i].StartPoint + ' <i class="fa fa-arrow-left"></i> ' //&#11164; &#129144;
         + '' + results[i].EndPoint
@@ -1436,7 +1433,7 @@ $(document).on('pagebeforeshow', '#loginPreference', function () {
     }
 
     //check push on coldstart from login (taking the cached data from localstorage)
-    if (localStorage.lastPush != undefined && loginThread) {
+    if (localStorage.lastPush != undefined && typeof loginThread !== 'undefined' && loginThread) {
         alertPushMsg(JSON.parse(localStorage.lastPush));
         localStorage.removeItem("lastPush");
     }

@@ -106,7 +106,7 @@ function GetRidesSuccessCB(results) {
         getMyRidesList();
     }
 
-    if (loginThread) {
+    if (typeof loginThread !== 'undefined' && loginThread) {
 
         //getMyRides
         getMyRidesList();
@@ -174,7 +174,7 @@ function GetMyRidesSuccessCB(results) {
         goSuggest = undefined;
     }
 
-    if (loginThread) {
+    if (typeof loginThread !== 'undefined' && loginThread) {
 
         if (localStorage.availableSeats == null || localStorage.availableSeats == "0") {
             setTimeout(function () {
@@ -688,7 +688,7 @@ function rideStr(str, results, i) {
         str += ' class="primary" >'
             + '<b>הסעה ' + time + '</b>';
     }
-    str += '<i class="fa fa-info-circle" style="float: left;"></i><br>';
+    str += '<i class="fa fa-info-circle" style="float:left;margin-right: 15px;"></i><br>';
 
     str += results[i].StartPoint + ' <i class="fa fa-arrow-left"></i> ' //&#11164; &#129144;
         + '' + results[i].EndPoint
@@ -1385,6 +1385,7 @@ $(document).one('pagebeforecreate', function () {
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="preferencesTab" href="#myPreferences" data-theme="a">העדפות</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="loginAgainTab" href="#" data-theme="a">חזור לדף הראשי</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="NotifyTab" data-theme="a">דיווחים</a> </li>'
+        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="aboutTab" data-theme="a">אודות</a> </li>'
         //+ '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="trackRidesTab" href="#trackRides" data-theme="b">מעקב הסעות</a> </li>'
         //+ '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="auctionTab" href="#auction" data-theme="b">מכרז</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-delete">'
@@ -1433,7 +1434,7 @@ $(document).on('pagebeforeshow', '#loginPreference', function () {
     }
 
     //check push on coldstart from login (taking the cached data from localstorage)
-    if (localStorage.lastPush != undefined && loginThread) {
+    if (localStorage.lastPush != undefined && typeof loginThread !== 'undefined' && loginThread) {
         alertPushMsg(JSON.parse(localStorage.lastPush));
         localStorage.removeItem("lastPush");
     }
@@ -1918,6 +1919,9 @@ function goMenu(id) {
             return;
         }
         loginToCloseRide();
+    }
+    else if (id == 'aboutTab') {
+        $.mobile.pageContainer.pagecontainer("change", "#about");
     }
 }
 
@@ -2670,7 +2674,7 @@ $(document).ready(function () {
 
 
     //remember to add this event to every new page
-    $('#signMeTab , #myRidesTab , #loginAgainTab, #auctionTab, #trackRidesTab, #NotifyTab').on('click', function () {
+    $('#signMeTab , #myRidesTab , #loginAgainTab, #auctionTab, #trackRidesTab, #NotifyTab, #aboutTab').on('click', function () {
 
         $('#mypanel').panel("close");
 
