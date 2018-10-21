@@ -635,11 +635,11 @@ hr {
     }
 
 .menuItem {
-    font-size: 1em;
+    font-size: 20px;
     background-color: #9cdcf9;
     color: black;
     margin: 5% auto;
-    width: 65%;
+    width: 80%;
     padding: 5px;
     box-shadow: 1px 1px #888888;
     text-align: right;

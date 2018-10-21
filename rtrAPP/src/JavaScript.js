@@ -52,6 +52,7 @@
 //הגענו ליעד dont show ride on status page
 //fix for hasCloseRide(), 3 hours before 9 hours after
 
+
 domain = '';
 if (!window.location.href.includes('http')) {
     //domain = 'https://proj.ruppin.ac.il/igroup91/test2/tar2';
@@ -261,9 +262,20 @@ function printMyRides(myRides) {
     $("#myRidesPH").empty();
 
     //sort result by datetime
-    myRides.sort(function (a, b) {
-        return a.DateTime.toString().localeCompare(b.DateTime.toString());
-    });
+    isPlanRidesSection = false;
+    if ($('#planTAB').prop("class").indexOf("ui-btn-active") != -1) {
+        isPlanRidesSection = true;
+    }
+    if (isPlanRidesSection) {
+        myRides.sort(function (a, b) {
+            return a.DateTime.toString().localeCompare(b.DateTime.toString());
+        });
+    }
+    else {
+        myRides.sort(function (a, b) {
+            return b.DateTime.toString().localeCompare(a.DateTime.toString());
+        });
+    }
 
     var myRideStr = "";
     for (var i = 0; i < myRides.length; i++) {
@@ -371,20 +383,33 @@ function myRideListItem(myRides, i) {
 //filter past/plan rides from myRides list
 function filterMyRides(myRide) {
 
-    var pastRide = true;
+    var showMyRide = false;
 
     var rideDateMillisec = myRide.DateTime;
     var nowMillisec = Date.now();
 
     //doneTAB is checked, meaning we are in the past rides section
-    if (rideDateMillisec <= nowMillisec && $('#doneTAB').prop("class").indexOf("ui-btn-active") != -1) {
-
+    if ($('#doneTAB').prop("class").indexOf("ui-btn-active") != -1) {
+        if (rideDateMillisec <= nowMillisec) {
+            showMyRide = true;
+        }
+        else if (myRide.Statuses != null && myRide.Statuses.includes("הגענו ליעד")) {
+            showMyRide = true;
+        }
     }
     //planTAB is checked, meaning we are in the planned rides section
-    else if (rideDateMillisec > nowMillisec && $('#planTAB').prop("class").indexOf("ui-btn-active") != -1) { }
-    else if (myRide.Statuses != null && myRide.Statuses.includes("הגענו ליעד") && $('#planTAB').prop("class").indexOf("ui-btn-active") != -1) { }
-    else { pastRide = false; }
-    return pastRide;
+    else if ($('#planTAB').prop("class").indexOf("ui-btn-active") != -1) {
+        if (rideDateMillisec > nowMillisec) {
+            if (myRide.Statuses == null) {
+                showMyRide = true;
+            }
+            if (myRide.Statuses != null && !myRide.Statuses.includes("הגענו ליעד")) {
+                showMyRide = true;
+            }
+        }
+    }
+
+    return showMyRide;
 }
 
 //filter past rides from sigm me page
@@ -1385,6 +1410,7 @@ $(document).one('pagebeforecreate', function () {
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="preferencesTab" href="#myPreferences" data-theme="a">העדפות</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="loginAgainTab" href="#" data-theme="a">חזור לדף הראשי</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="NotifyTab" data-theme="a">דיווחים</a> </li>'
+        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="aboutTab" data-theme="a">אודות</a> </li>'
         //+ '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="trackRidesTab" href="#trackRides" data-theme="b">מעקב הסעות</a> </li>'
         //+ '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="auctionTab" href="#auction" data-theme="b">מכרז</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-delete">'
@@ -1919,6 +1945,10 @@ function goMenu(id) {
         }
         loginToCloseRide();
     }
+    else if (id == 'aboutTab') {
+        $.mobile.pageContainer.pagecontainer("change", "#about");
+    }
+    $('#mypanel').panel("close");
 }
 
 
@@ -2668,11 +2698,8 @@ $(document).ready(function () {
         sendProblem(this);
     });
 
-
     //remember to add this event to every new page
-    $('#signMeTab , #myRidesTab , #loginAgainTab, #auctionTab, #trackRidesTab, #NotifyTab').on('click', function () {
-
-        $('#mypanel').panel("close");
+    $('#signMeTab , #myRidesTab , #loginAgainTab, #auctionTab, #trackRidesTab, #NotifyTab, #aboutTab').on('click', function () {
 
         if (window.location.href.toString().indexOf('myPreferences') == -1) {
 
@@ -2704,15 +2731,11 @@ $(document).ready(function () {
 
         if ($('#area .ui-checkbox-on').length == 0) {
             popupDialog('שגיאה', "אנא בחר איזורים", null, false, null);
-            //show dialog
-            $('#mypanel').panel("close");
             return;
         }
 
         if (activesRoutes.length == 0) {
             popupDialog('שגיאה', "אנא בחר נקודות מוצא ויעד בקווי הסעה", null, false, null);
-            //show dialog
-            $('#mypanel').panel("close");
             return;
         }
 
@@ -2830,7 +2853,7 @@ $(document).ready(function () {
         }
     });
 
-    $('#locationsPH input, #kavim input').on('click', function () {
+    $(' #kavim input').on('click', function () {
 
         autoSavePref();
     });
@@ -2994,6 +3017,9 @@ function getLocationsSCB(data) {
 
     if ($('#locationsPH').html() == "") {
         $('#locationsPH').append(buildLocationsHtml());
+        $('#locationsPH input').on('click', function () {
+            autoSavePref();
+        });
     }
 }
 
