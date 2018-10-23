@@ -1407,7 +1407,7 @@ $(document).one('pagebeforecreate', function () {
         + '<ul data-role="listview">'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="signMeTab" data-theme="a">שבץ אותי</a></li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="myRidesTab" data-theme="a">הנסיעות שלי</a> </li>'
-        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="preferencesTab" href="#myPreferences" data-theme="a">העדפות</a> </li>'
+        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="preferencesTab" data-theme="a">העדפות</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="loginAgainTab" href="#" data-theme="a">חזור לדף הראשי</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="NotifyTab" data-theme="a">דיווחים</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="aboutTab" data-theme="a">אודות</a> </li>'
@@ -1417,7 +1417,7 @@ $(document).one('pagebeforecreate', function () {
         + '<a href="#" data-rel="close">סגירת התפריט</a>'
         + '</li>'
         + '</ul>'
-        + '</div>'
+        + '</div>'   
         + '</div>';
     $.mobile.pageContainer.prepend(panel);
     $("#mypanel").panel().enhanceWithin();
@@ -1793,7 +1793,7 @@ $(document).on('pagebeforeshow', '#loginFailed', function () {
 });
 
 $(document).on('pagebeforeshow', '#myPreferences', function () {
-
+    
     autoClicks = true;
 
     $('#prefTabs li').show();
@@ -1943,11 +1943,19 @@ function goMenu(id) {
         if (window.location.href.includes('status')) {
             return;
         }
-        loginToCloseRide();
+        if (!hasCloseRide()) {
+            popupDialog('שגיאה', 'אין לך נסיעות קרובות הדורשות דיווח.', null, false, null);
+        }
+        else {
+            loginToCloseRide();
+        }
     }
     else if (id == 'aboutTab') {
         $.mobile.pageContainer.pagecontainer("change", "#about");
-    }
+    } 
+    else if (id == 'preferencesTab') {
+        $.mobile.pageContainer.pagecontainer("change", "#myPreferences");
+    } 
     $('#mypanel').panel("close");
 }
 
@@ -1958,9 +1966,8 @@ function saveAllPrefs() {
     saveRoutes();
     saveTimes();
     saveSeats();
-
+    
     //DB
-    tempID = this.id;
     setPrefs();
 }
 
@@ -2699,7 +2706,13 @@ $(document).ready(function () {
     });
 
     //remember to add this event to every new page
-    $('#signMeTab , #myRidesTab , #loginAgainTab, #auctionTab, #trackRidesTab, #NotifyTab, #aboutTab').on('click', function () {
+    $('#signMeTab , #myRidesTab , #loginAgainTab, #auctionTab, #trackRidesTab, #NotifyTab, #aboutTab, #preferencesTab').on('click', function () {
+        
+        if (window.location.href.toString().indexOf('myPreferences') != -1 && $(this).attr('id') == 'preferencesTab') {
+            justSavePrefs = true;
+            goMenu(this.id);
+            return;
+        }
 
         if (window.location.href.toString().indexOf('myPreferences') == -1) {
 
@@ -2853,12 +2866,47 @@ $(document).ready(function () {
         }
     });
 
-    $(' #kavim input').on('click', function () {
+    $('#kavim input').on('click', function () {
 
         autoSavePref();
     });
 
+    $('#requestBTN').on('click', function () {
+
+        mail('registration');
+    });
+
+    $('#problemBTN').on('click', function () {
+
+        mail('problem');
+    });
 });
+
+function mail(type_) {
+    var messege_ = type_ == 'problem' ? $('#infoTB').val() : '';
+    var phoneSelector = type_ == 'problem' ? '#problemPhoneTB' : '#requestPhoneTB';
+    var nameSelector = type_ == 'problem' ? '#problemNameTB' : '#requestNameTB';
+    var request = {
+        type: type_,
+        name: $(nameSelector).val(),
+        phoneNumber: $(phoneSelector).val(),
+        message: messege_
+    }
+
+    sendMail(request, sendMailSCB, sendMailECB);
+
+    $(phoneSelector).val('');
+    $(nameSelector).val('');
+    $('#infoTB').val('');
+}
+
+function sendMailSCB(data) {
+    popupDialog('ההודעה נשלחה בהצלחה', '', '#loginFailed', false, null);
+}
+
+function sendMailECB(e) {
+    popupDialog(e.responseJSON.toString(), '', '#loginFailed', false, null);
+}
 
 function otherDialogFunction(reaction_) {
     if (typeof dialogFunction !== 'undefined' && dialogFunction != null) {
@@ -2941,6 +2989,9 @@ function popupDialog(title, content, redirectUrl, isConfirm, dialogFunction_) {
     $('#popupContent').empty();
     $('#popupTitle').empty();
 
+    if (content == null || content == "") {
+        content == "<p></p>";
+    }
     $('#popupContent').html(content);
     $('#popupTitle').html(title);
 
