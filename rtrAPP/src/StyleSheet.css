@@ -23,9 +23,9 @@
 
 #cancelDialogBTN, #confirmDialogBTN {
     padding: 10px;
-    border: 1px solid black;
+    border: 1px solid #333;
     border-radius: 8px;
-    color: black;
+    color: #333;
     background-color: lightgrey;
 }
 
@@ -345,14 +345,14 @@ label, p {
     border-color: #44Afff;
     color: #fff;
     text-shadow: 0 1px 0 #059;
-    text-shadow: 1px 1px 1px black;
+    text-shadow: 1px 1px 1px #333;
 }
 
 
 #myPreferences #area .ui-btn-active {
     background-color: #44Afff;
     border-color: #44Afff;
-    text-shadow: 1px 1px 1px black;
+    text-shadow: 1px 1px 1px #333;
 }
 
 #auction .phone {
@@ -442,7 +442,7 @@ label, p {
 }
 
 #trackRides .realtime td {
-    border: 1px solid black;
+    border: 1px solid #333;
 }
 
 #trackRides h4 {
@@ -508,7 +508,7 @@ fieldset {
         background-color: #44afff;
         border-color: #44afff;
         color: #fff;
-        text-shadow: 1px 1px 1px black;
+        text-shadow: 1px 1px 1px #333;
     }
 
     #shiftTABS a, #myRidesTABS a {
@@ -619,7 +619,7 @@ hr {
 
     #loginPreference a {
         font-size: 20px;
-        color: black;
+        color: #333;
         margin: 5% auto;
         width: 65%;
         padding: 5px;
@@ -630,14 +630,14 @@ hr {
     }
 
     #loginPreference h2 {
-        color: black;
+        color: #333;
         margin:10px;
     }
 
 .menuItem {
     font-size: 20px;
     background-color: #9cdcf9;
-    color: black;
+    color: #333;
     margin: 5% auto;
     width: 80%;
     padding: 5px;
@@ -817,7 +817,7 @@ hr.weekSeperator {
     left: 0;
     bottom: 0;
     width: 100%;
-    color: black !important;
+    color: #333 !important;
     text-align: center;
     letter-spacing: 2px;
 }
@@ -902,4 +902,10 @@ hr.weekSeperator {
 
 .aboutPage {
     text-align:center
+}
+
+#changeServerUrlBTN {
+    position: relative;
+    top: 640px;
+    padding: 20px;
 }
