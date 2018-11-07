@@ -52,6 +52,8 @@
 //הגענו ליעד dont show ride on status page
 //fix for hasCloseRide(), 3 hours before 9 hours after
 
+//status by rides not ridepats
+//spy stuck
 
 domain = '';
 
@@ -1717,6 +1719,7 @@ function hasCloseRide() {
 
             if (myRides[i].DriverType != 'Primary') continue;
             if (typeof myRides[i].DateTime === 'undefined') continue;
+            if (closeRides.filter(r => r.rideId == myRides[i].rideId).length > 0) continue;
 
             var nowMillisecs = new Date().getTime();
 
@@ -1977,7 +1980,7 @@ function goMenu(id) {
     else if (id == 'loginAgainTab') {
         var cellphone = localStorage.cellphone;
 
-        checkUserPN(cellphone, true);
+        checkUserPN(cellphone, false);
     }
     else if (id == 'auctionTab') {
         $.mobile.pageContainer.pagecontainer("change", "#auction");
