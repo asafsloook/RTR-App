@@ -51,9 +51,11 @@
 //check filterRides with more statuses WHICH?! OPEN ON BENNY
 //הגענו ליעד dont show ride on status page
 //fix for hasCloseRide(), 3 hours before 9 hours after
-
 //status by rides not ridepats
 //spy stuck
+
+//change anonymous to ride field
+//user isActive, maybe hide signMe page?
 
 domain = '';
 
@@ -757,8 +759,8 @@ function rideStr(str, results, i) {
 
     str += '</p>';
 
-    str += '<a style="float:left;border:none;margin: 8% 3%;background: transparent;padding:0;" id="pop' + i + '" href="#signMePage"'
-        + ' class="ui-btn" '
+    str += '<a style="float:left;border:none;margin: 8% 3%;background: transparent;padding:0;" id="pop' + i + '" '
+        + ' class="signButtonCheck ui-btn" '
         + ' name="' + results[i].Id + '" onClick="info(' + results[i].Id + ')">'
         + '   <img style="width: 35px;" src="Images/reg.png"></a> '
         + "</a>";
@@ -982,6 +984,7 @@ function getRideStr(rideOBJ) {
     }
     str += '</p>';
 
+    //Backup ride - if there is patients on this ride, print them
     if (rideOBJ.RideNum > 0) {
         for (var i = 0; i < rides.length; i++) {
             if (rides[i].RideNum == rideOBJ.RideNum && rideOBJ.Id != rides[i].Id) {
@@ -2597,6 +2600,17 @@ function setStatusECB() {
 
 
 $(document).ready(function () {
+
+    $(document).on('click','.signButtonCheck.ui-btn', function () {
+        debugger;
+        if (!userInfo.Status) {
+            //if user isnt Active abort signing
+            alert('user is inactive');
+        }
+        else {
+            $.mobile.pageContainer.pagecontainer("change", "#signMePage"); 
+        }
+    });
 
     //keyup/click/focusout events, refreshing the rides when jquery list filter is on action
     $(document).on('keyup', '#signMe input[data-type="search"]', function () {

@@ -581,7 +581,7 @@ public class Volunteer
     public Volunteer getVolunteerByMobile(string mobile, string regId)
     {
         DbService db = new DbService();
-        string query = "select * from VolunteerTypeView where CellPhone = '" + mobile + "' and IsActive='true'";
+        string query = "select * from VolunteerTypeView where CellPhone = '" + mobile + "' and IsActive=1";
         DataSet ds = db.GetDataSetByQuery(query);
         Volunteer v = new Volunteer();
         foreach (DataRow dr in ds.Tables[0].Rows)
