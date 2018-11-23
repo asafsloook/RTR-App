@@ -380,7 +380,7 @@ function myRideListItem(myRides, i) {
     str += myRides[i].StartPoint + '  <i class="fa fa-arrow-left"></i>  '
         + myRides[i].EndPoint
         + '<br>'
-        + myRides[i].Person;
+        + (myRides[i].Person.includes('אנונימי') ? 'חולה' : myRides[i].Person);
 
     if (myRides[i].Melave.length > 0) {
         str += " +" + (myRides[i].Melave.length)
@@ -711,7 +711,11 @@ function printInfo(ride) {
     $('#infoPagePH').empty();
 
     var str = getRideStr(ride);
-    str += '<a href="tel:' + ride.Pat.CellPhone + '"><i class="fa fa-phone-square" style="font-size: 30px;"></i></a><br><br>'
+
+    if (!ride.Person.includes('אנונימי')) {
+        str += '<a href="tel:' + ride.Pat.CellPhone + '"><i class="fa fa-phone-square" style="font-size: 30px;"></i></a><br><br>';
+    }
+    
     //call
     //window.open("tel:" + this.id);
 
@@ -743,13 +747,14 @@ function rideStr(str, results, i) {
     str += '<i class="fa fa-info-circle" style="float:left;margin-right: 15px;"></i><br>';
 
     str += results[i].StartPoint + ' <i class="fa fa-arrow-left"></i> ' //&#11164; &#129144;
-        + '' + results[i].EndPoint
-
-        + '<br/>' + results[i].Person;
+        + '' + results[i].EndPoint + '<br/>';
+    
+    str += (results[i].Person.includes('אנונימי') ? 'חולה' : results[i].Person);
 
     if (results[i].Melave.length > 0) {
         str += " +" + (results[i].Melave.length)
     }
+
     str += '</p>';
 
     str += '<a style="float:left;border:none;margin: 8% 3%;background: transparent;padding:0;" id="pop' + i + '" href="#signMePage"'
@@ -963,17 +968,19 @@ function getRideStr(rideOBJ) {
 
     str += '<p>מ' + rideOBJ.StartPoint + ' '
         + 'ל' + rideOBJ.EndPoint
-        + '<br/><br/>' + rideOBJ.Person + '<br/>';
+        + '<br/><br/>' + (rideOBJ.Person.includes('אנונימי') ? 'חולה' : rideOBJ.Person);
 
-    if (rideOBJ.Melave.length > 0) {
-        str += 'מלווים: ';
+    if (rideOBJ.Melave.length > 0 && !rideOBJ.Person.includes('אנונימי')) {
+        str += '<br/>' + 'מלווים: ';
 
         for (var i = 0; i < rideOBJ.Melave.length; i++) {
             str += rideOBJ.Melave[i] + "<br/>";
         }
-
-        str += '</p>';
     }
+    else if (rideOBJ.Melave.length > 0 && rideOBJ.Person.includes('אנונימי')) {
+        str += ' +' + rideOBJ.Melave.length;
+    }
+    str += '</p>';
 
     if (rideOBJ.RideNum > 0) {
         for (var i = 0; i < rides.length; i++) {
@@ -2766,7 +2773,7 @@ $(document).ready(function () {
 
     //remember to add this event to every new page
     $('#signMeTab , #myRidesTab , #loginAgainTab, #auctionTab, #trackRidesTab, #NotifyTab, #aboutTab, #preferencesTab').on('click', function () {
-
+       
         if (window.location.href.toString().indexOf('myPreferences') != -1 && $(this).attr('id') == 'preferencesTab') {
             justSavePrefs = true;
             goMenu(this.id);
@@ -2874,8 +2881,8 @@ $(document).ready(function () {
             popupDialog('שגיאה', 'מספר הטלפון שהוכנס שגוי.', null, false, null);
             return;
         }
-        var temp = cellphone.substring(0, 3) + "-" + cellphone.substring(3, 10);
-        cellphone = temp;
+        //var temp = cellphone.substring(0, 3) + "-" + cellphone.substring(3, 10);
+        //cellphone = temp;
         localStorage.cellphone = cellphone;
 
         checkUserPN(cellphone, false);
