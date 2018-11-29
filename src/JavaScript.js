@@ -56,6 +56,7 @@
 
 //change anonymous to ride field
 //user isActive, maybe hide signMe page?
+//fix bug- see rides in full shift (already has ride and no available seats), checkTime
 
 domain = '';
 
@@ -382,7 +383,7 @@ function myRideListItem(myRides, i) {
     str += myRides[i].StartPoint + '  <i class="fa fa-arrow-left"></i>  '
         + myRides[i].EndPoint
         + '<br>'
-        + (myRides[i].Person.includes('אנונימי') ? 'חולה' : myRides[i].Person);
+        + (myRides[i].Pat.IsAnonymous ? 'חולה' : myRides[i].Person);
 
     if (myRides[i].Melave.length > 0) {
         str += " +" + (myRides[i].Melave.length)
@@ -714,7 +715,7 @@ function printInfo(ride) {
 
     var str = getRideStr(ride);
 
-    if (!ride.Person.includes('אנונימי')) {
+    if (!ride.Pat.IsAnonymous) {
         str += '<a href="tel:' + ride.Pat.CellPhone + '"><i class="fa fa-phone-square" style="font-size: 30px;"></i></a><br><br>';
     }
     
@@ -751,7 +752,7 @@ function rideStr(str, results, i) {
     str += results[i].StartPoint + ' <i class="fa fa-arrow-left"></i> ' //&#11164; &#129144;
         + '' + results[i].EndPoint + '<br/>';
     
-    str += (results[i].Person.includes('אנונימי') ? 'חולה' : results[i].Person);
+    str += (results[i].Pat.IsAnonymous ? 'חולה' : results[i].Person);
 
     if (results[i].Melave.length > 0) {
         str += " +" + (results[i].Melave.length)
@@ -970,16 +971,16 @@ function getRideStr(rideOBJ) {
 
     str += '<p>מ' + rideOBJ.StartPoint + ' '
         + 'ל' + rideOBJ.EndPoint
-        + '<br/><br/>' + (rideOBJ.Person.includes('אנונימי') ? 'חולה' : rideOBJ.Person);
+        + '<br/><br/>' + (rideOBJ.Pat.IsAnonymous ? 'חולה' : rideOBJ.Person);
 
-    if (rideOBJ.Melave.length > 0 && !rideOBJ.Person.includes('אנונימי')) {
+    if (rideOBJ.Melave.length > 0 && !rideOBJ.Pat.IsAnonymous) {
         str += '<br/>' + 'מלווים: ';
 
         for (var i = 0; i < rideOBJ.Melave.length; i++) {
             str += rideOBJ.Melave[i] + "<br/>";
         }
     }
-    else if (rideOBJ.Melave.length > 0 && rideOBJ.Person.includes('אנונימי')) {
+    else if (rideOBJ.Melave.length > 0 && rideOBJ.Pat.IsAnonymous) {
         str += ' +' + rideOBJ.Melave.length;
     }
     str += '</p>';
@@ -2602,8 +2603,7 @@ function setStatusECB() {
 $(document).ready(function () {
 
     $(document).on('click','.signButtonCheck.ui-btn', function () {
-        debugger;
-        if (!userInfo.Status) {
+        if (!userInfo.IsActive) {
             //if user isnt Active abort signing
             alert('user is inactive');
         }
