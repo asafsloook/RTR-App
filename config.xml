@@ -3,12 +3,12 @@
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id        = "il.Road.to.Recovery"
-        version   = "1.0.0">
+        version   = "1.1.0">
     <name>בדרך להחלמה</name>
     <description>
         R2R
     </description>
-    <author href="http://phonegap.com" email="r2r@phonegap.com">
+    <author href="http://dev.r2r.com" email="road2rdev@gmail.com">
         R2R
     </author>
 
@@ -25,6 +25,7 @@
 
   <platform name="android">
     <preference name="android-minSdkVersion" value="15"/>
+    <preference name="android-targetSdkVersion"  value="26" />
   </platform>
 
   <plugin name="cordova-plugin-console" source="npm" spec="~1.0.3" />

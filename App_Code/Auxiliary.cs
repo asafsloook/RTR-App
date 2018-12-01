@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Web;
+using System.Configuration;
 
 /// <summary>
 /// Summary description for Auxiliary
@@ -80,6 +81,11 @@ public class Auxiliary
         string[] names = { dr3[0].ToString(), dr2[0].ToString() };
 
         return names;
+    }
+
+    public List<string> getR2RServers()
+    {
+        return ConfigurationManager.AppSettings["AvailableServers"].Split(',').ToList();
     }
 
 }

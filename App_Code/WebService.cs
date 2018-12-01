@@ -1097,4 +1097,23 @@ public class WebService : System.Web.Services.WebService
         return m.backupToPrimary(ridePatId);
     }
 
+
+    [WebMethod]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public string getR2RServers()
+    {
+        
+        try
+        {
+            Auxiliary a = new Auxiliary();
+            JavaScriptSerializer j = new JavaScriptSerializer();
+            return j.Serialize(a.getR2RServers());
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Error in getServers", ex);
+            throw new Exception("שגיאה בשליפת שרתים");
+        }
+    }
+
 }

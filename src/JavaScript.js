@@ -53,10 +53,8 @@
 //fix for hasCloseRide(), 3 hours before 9 hours after
 //status by rides not ridepats
 //spy stuck
-
 //change anonymous to ride field
-//user isActive, maybe hide signMe page?
-//fix bug- see rides in full shift (already has ride and no available seats), checkTime
+//user isActive
 
 domain = '';
 
@@ -71,6 +69,22 @@ function defaultServerDomain() {
 }
 
 defaultServerDomain();
+
+function getServersSCB(data) {
+    var servers = JSON.parse(data.d);
+
+    var str = '';
+    for (var i = 0; i < servers.length; i++) {
+        str += "<option>" + servers[i] + "</option>";
+    }
+
+    $("#serverUrlInput").html(str);
+}
+
+function getServersECB(e) {
+
+}
+
 
 //get week function
 Date.prototype.getWeek = function () {
@@ -690,7 +704,7 @@ function ListItemRide(results, i) {
 
         if (i != 0 && results[i].RideNum == results[i - 1].RideNum) {
             str = str.replace('<a style="', '<a style="display:none;');
-            str += '<hr style="margin:0;border:0">';
+            str += '<hr style="margin:0;">';
         }
         else if (i + 1 == results.length) {
             str += '<hr style="margin:0;">';
@@ -1565,8 +1579,7 @@ function chooseCloseRide() {
 function getPatientsSCB(data) {
 
     var results = $.parseJSON(data.d);
-    Patients = results;
-
+    Patients = results.filter(p => !p.IsAnonymous);
 }
 
 function getPatientsECB(e) {
@@ -2605,7 +2618,7 @@ $(document).ready(function () {
     $(document).on('click','.signButtonCheck.ui-btn', function () {
         if (!userInfo.IsActive) {
             //if user isnt Active abort signing
-            alert('user is inactive');
+            popupDialog('הודעה', 'למשתמש זה אין אפשרות להשתבץ.', null, false, null);
         }
         else {
             $.mobile.pageContainer.pagecontainer("change", "#signMePage"); 
@@ -2787,7 +2800,12 @@ $(document).ready(function () {
 
     //remember to add this event to every new page
     $('#signMeTab , #myRidesTab , #loginAgainTab, #auctionTab, #trackRidesTab, #NotifyTab, #aboutTab, #preferencesTab').on('click', function () {
-       
+
+        //if (!userInfo.IsActive && $(this).attr('id') == 'signMeTab') {
+        //    //if user isnt Active abort signing
+        //    popupDialog('הודעה', 'למשתמש זה אין אפשרות להשתבץ.', null, false, null);
+        //}
+
         if (window.location.href.toString().indexOf('myPreferences') != -1 && $(this).attr('id') == 'preferencesTab') {
             justSavePrefs = true;
             goMenu(this.id);
@@ -2862,6 +2880,12 @@ $(document).ready(function () {
         autoSavePref();
     });
 
+    //$('a[href$="signMe"],#signMeTab').on('click', function () {
+    //    if (!userInfo.IsActive) {
+    //        //if user isnt Active abort signing
+    //        popupDialog('הודעה', 'למשתמש זה אין אפשרות להשתבץ.', null, false, null);
+    //    }
+    //});
 
     $('#volenteersPH').on('click', 'a', function () {
         localStorage['userId-Spy'] = localStorage.userId;
@@ -2965,8 +2989,10 @@ $(document).ready(function () {
 
         var popupContent =
             '<div style="text-align:left;">סיסמה: <input id="changeServerPassword" type="text"/><br/><br/>' +
-            'שרת: <input id="serverUrlInput" type="text"/></div>';
+            'שרת: <select id="serverUrlInput" type="text"></select></div>';
         popupDialog('שינוי שרת', popupContent, null, true, "changeServer");
+
+        getServers(getServersSCB, getServersECB);
     });
 
 });

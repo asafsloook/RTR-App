@@ -583,7 +583,7 @@ public class Volunteer
     {
         DbService db = new DbService();
         mobile = mobile.Replace("-", "");
-        string query = "select * from VolunteerTypeView where CellPhone = '" + mobile + "' and IsActive='true'";
+        string query = "select * from VolunteerTypeView where CellPhone = '" + mobile + "'";
         DataSet ds = db.GetDataSetByQuery(query);
         Volunteer v = new Volunteer();
         foreach (DataRow dr in ds.Tables[0].Rows)

@@ -1,0 +1,9 @@
+
+C:\Program Files\Android\Android Studio\jre\jre\bin
+
+keytool -genkey -v -keystore r2r.keystore -alias r2r -keyalg RSA -keysize 2048 -validity 10000
+
+r2r
+lcohenr2r
+
+generated this file: r2r.keystore

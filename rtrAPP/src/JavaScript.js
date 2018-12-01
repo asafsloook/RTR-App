@@ -51,9 +51,10 @@
 //check filterRides with more statuses WHICH?! OPEN ON BENNY
 //הגענו ליעד dont show ride on status page
 //fix for hasCloseRide(), 3 hours before 9 hours after
-
 //status by rides not ridepats
 //spy stuck
+//change anonymous to ride field
+//user isActive
 
 domain = '';
 
@@ -68,6 +69,22 @@ function defaultServerDomain() {
 }
 
 defaultServerDomain();
+
+function getServersSCB(data) {
+    var servers = JSON.parse(data.d);
+
+    var str = '';
+    for (var i = 0; i < servers.length; i++) {
+        str += "<option>" + servers[i] + "</option>";
+    }
+
+    $("#serverUrlInput").html(str);
+}
+
+function getServersECB(e) {
+
+}
+
 
 //get week function
 Date.prototype.getWeek = function () {
@@ -380,7 +397,7 @@ function myRideListItem(myRides, i) {
     str += myRides[i].StartPoint + '  <i class="fa fa-arrow-left"></i>  '
         + myRides[i].EndPoint
         + '<br>'
-        + myRides[i].Person;
+        + (myRides[i].Pat.IsAnonymous ? 'חולה' : myRides[i].Person);
 
     if (myRides[i].Melave.length > 0) {
         str += " +" + (myRides[i].Melave.length)
@@ -687,7 +704,7 @@ function ListItemRide(results, i) {
 
         if (i != 0 && results[i].RideNum == results[i - 1].RideNum) {
             str = str.replace('<a style="', '<a style="display:none;');
-            str += '<hr style="margin:0;border:0">';
+            str += '<hr style="margin:0;">';
         }
         else if (i + 1 == results.length) {
             str += '<hr style="margin:0;">';
@@ -711,7 +728,11 @@ function printInfo(ride) {
     $('#infoPagePH').empty();
 
     var str = getRideStr(ride);
-    str += '<a href="tel:' + ride.Pat.CellPhone + '"><i class="fa fa-phone-square" style="font-size: 30px;"></i></a><br><br>'
+
+    if (!ride.Pat.IsAnonymous) {
+        str += '<a href="tel:' + ride.Pat.CellPhone + '"><i class="fa fa-phone-square" style="font-size: 30px;"></i></a><br><br>';
+    }
+    
     //call
     //window.open("tel:" + this.id);
 
@@ -743,17 +764,18 @@ function rideStr(str, results, i) {
     str += '<i class="fa fa-info-circle" style="float:left;margin-right: 15px;"></i><br>';
 
     str += results[i].StartPoint + ' <i class="fa fa-arrow-left"></i> ' //&#11164; &#129144;
-        + '' + results[i].EndPoint
-
-        + '<br/>' + results[i].Person;
+        + '' + results[i].EndPoint + '<br/>';
+    
+    str += (results[i].Pat.IsAnonymous ? 'חולה' : results[i].Person);
 
     if (results[i].Melave.length > 0) {
         str += " +" + (results[i].Melave.length)
     }
+
     str += '</p>';
 
-    str += '<a style="float:left;border:none;margin: 8% 3%;background: transparent;padding:0;" id="pop' + i + '" href="#signMePage"'
-        + ' class="ui-btn" '
+    str += '<a style="float:left;border:none;margin: 8% 3%;background: transparent;padding:0;" id="pop' + i + '" '
+        + ' class="signButtonCheck ui-btn" '
         + ' name="' + results[i].Id + '" onClick="info(' + results[i].Id + ')">'
         + '   <img style="width: 35px;" src="Images/reg.png"></a> '
         + "</a>";
@@ -963,18 +985,21 @@ function getRideStr(rideOBJ) {
 
     str += '<p>מ' + rideOBJ.StartPoint + ' '
         + 'ל' + rideOBJ.EndPoint
-        + '<br/><br/>' + rideOBJ.Person + '<br/>';
+        + '<br/><br/>' + (rideOBJ.Pat.IsAnonymous ? 'חולה' : rideOBJ.Person);
 
-    if (rideOBJ.Melave.length > 0) {
-        str += 'מלווים: ';
+    if (rideOBJ.Melave.length > 0 && !rideOBJ.Pat.IsAnonymous) {
+        str += '<br/>' + 'מלווים: ';
 
         for (var i = 0; i < rideOBJ.Melave.length; i++) {
             str += rideOBJ.Melave[i] + "<br/>";
         }
-
-        str += '</p>';
     }
+    else if (rideOBJ.Melave.length > 0 && rideOBJ.Pat.IsAnonymous) {
+        str += ' +' + rideOBJ.Melave.length;
+    }
+    str += '</p>';
 
+    //Backup ride - if there is patients on this ride, print them
     if (rideOBJ.RideNum > 0) {
         for (var i = 0; i < rides.length; i++) {
             if (rides[i].RideNum == rideOBJ.RideNum && rideOBJ.Id != rides[i].Id) {
@@ -1554,8 +1579,7 @@ function chooseCloseRide() {
 function getPatientsSCB(data) {
 
     var results = $.parseJSON(data.d);
-    Patients = results;
-
+    Patients = results.filter(p => !p.IsAnonymous);
 }
 
 function getPatientsECB(e) {
@@ -2591,6 +2615,16 @@ function setStatusECB() {
 
 $(document).ready(function () {
 
+    $(document).on('click','.signButtonCheck.ui-btn', function () {
+        if (!userInfo.IsActive) {
+            //if user isnt Active abort signing
+            popupDialog('הודעה', 'למשתמש זה אין אפשרות להשתבץ.', null, false, null);
+        }
+        else {
+            $.mobile.pageContainer.pagecontainer("change", "#signMePage"); 
+        }
+    });
+
     //keyup/click/focusout events, refreshing the rides when jquery list filter is on action
     $(document).on('keyup', '#signMe input[data-type="search"]', function () {
 
@@ -2767,6 +2801,11 @@ $(document).ready(function () {
     //remember to add this event to every new page
     $('#signMeTab , #myRidesTab , #loginAgainTab, #auctionTab, #trackRidesTab, #NotifyTab, #aboutTab, #preferencesTab').on('click', function () {
 
+        //if (!userInfo.IsActive && $(this).attr('id') == 'signMeTab') {
+        //    //if user isnt Active abort signing
+        //    popupDialog('הודעה', 'למשתמש זה אין אפשרות להשתבץ.', null, false, null);
+        //}
+
         if (window.location.href.toString().indexOf('myPreferences') != -1 && $(this).attr('id') == 'preferencesTab') {
             justSavePrefs = true;
             goMenu(this.id);
@@ -2841,6 +2880,12 @@ $(document).ready(function () {
         autoSavePref();
     });
 
+    //$('a[href$="signMe"],#signMeTab').on('click', function () {
+    //    if (!userInfo.IsActive) {
+    //        //if user isnt Active abort signing
+    //        popupDialog('הודעה', 'למשתמש זה אין אפשרות להשתבץ.', null, false, null);
+    //    }
+    //});
 
     $('#volenteersPH').on('click', 'a', function () {
         localStorage['userId-Spy'] = localStorage.userId;
@@ -2874,8 +2919,8 @@ $(document).ready(function () {
             popupDialog('שגיאה', 'מספר הטלפון שהוכנס שגוי.', null, false, null);
             return;
         }
-        var temp = cellphone.substring(0, 3) + "-" + cellphone.substring(3, 10);
-        cellphone = temp;
+        //var temp = cellphone.substring(0, 3) + "-" + cellphone.substring(3, 10);
+        //cellphone = temp;
         localStorage.cellphone = cellphone;
 
         checkUserPN(cellphone, false);
@@ -2944,8 +2989,10 @@ $(document).ready(function () {
 
         var popupContent =
             '<div style="text-align:left;">סיסמה: <input id="changeServerPassword" type="text"/><br/><br/>' +
-            'שרת: <input id="serverUrlInput" type="text"/></div>';
+            'שרת: <select id="serverUrlInput" type="text"></select></div>';
         popupDialog('שינוי שרת', popupContent, null, true, "changeServer");
+
+        getServers(getServersSCB, getServersECB);
     });
 
 });
