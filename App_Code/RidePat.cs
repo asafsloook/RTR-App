@@ -674,7 +674,7 @@ public class RidePat
                     }
                     try
                     {
-                        rp.Status = rp.Statuses[0];
+                        //rp.Status = rp.Statuses[0];
                     }
                     catch (Exception err)
                     {

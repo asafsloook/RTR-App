@@ -56,6 +56,15 @@
 //change anonymous to ride field
 //user isActive
 
+//done
+//problems not cleared when switching between multipule close rides
+//fixed width ride info
+//signMe inside ride info
+//signMe as gibui button
+//green&red to #eee
+//version
+
+
 domain = '';
 
 function defaultServerDomain() {
@@ -678,7 +687,7 @@ function ListItemStart(myDate, startPointStr) {
 
     var day = numToDayHebrew(myDate.getDay());
 
-    str = '<li data-role="collapsible" data-theme="a"><hr style="margin:0;">'
+    str = '<li data-role="collapsible" class="no-padding" data-theme="a"><hr style="margin:0;">'
         + ' <h2 class="rideListHeader">יום   ' + day + "  &nbsp;  "
         + myDate.getDate() + "." + (myDate.getMonth() + 1)
         + '  ' + startPointStr + '</h2>';
@@ -751,14 +760,14 @@ function rideStr(str, results, i) {
         time = 'אחה"צ';
     }
 
-    str += '<p style="padding: 4%;float: right;margin-right: 0;text-align: right;border-radius:15px;max-width: 50%;border: 1px #ddd solid;"';
+    str += '<p style="padding: 4%;float: right;margin-right: 0;text-align: right;border-radius:15px;width: 50%;border: 1px #ddd solid;"';
 
     if (results[i].Status == "שובץ נהג") {
-        str += ' class="backup" >'
+        str += ' class="backup" onClick="info(' + results[i].Id + ')">'
             + '<b>גיבוי ' + time + '</b>';
     }
     else {
-        str += ' class="primary" >'
+        str += ' class="primary" onClick="info(' + results[i].Id + ')">'
             + '<b>הסעה ' + time + '</b>';
     }
     str += '<i class="fa fa-info-circle" style="float:left;margin-right: 15px;"></i><br>';
@@ -774,7 +783,7 @@ function rideStr(str, results, i) {
 
     str += '</p>';
 
-    str += '<a style="float:left;border:none;margin: 8% 3%;background: transparent;padding:0;" id="pop' + i + '" '
+    str += '<a style="float:left;border:none;margin: 8% 0% 0% 3%;background: transparent;padding:0;" id="pop' + i + '" '
         + ' class="signButtonCheck ui-btn" '
         + ' name="' + results[i].Id + '" onClick="info(' + results[i].Id + ')">'
         + '   <img style="width: 35px;" src="Images/reg.png"></a> '
@@ -1029,9 +1038,10 @@ function info(inputID) {
     for (var i = 0; i < rides.length; i++) {
         if (rides[i].Id == idChoose) {
             var str = getRideStr(rides[i]);
+            $('#okBTNfromInfo,#okBTN').html(rides[i].Status == 'שובץ נהג' ? 'שבץ אותי לגיבוי':'שבץ אותי');
         }
     }
-
+    
     $("#phPop").html(str);
 
 }
@@ -1737,6 +1747,7 @@ closeRideTimeAfter = 9 * hourToMillisecs;
 
 
 function hasCloseRide() {
+    debugger
     closeRides = [];
     if (myRides != null) {
         for (var i = 0; i < myRides.length; i++) {
@@ -2558,6 +2569,7 @@ $(document).on('pagebeforeshow', '#problem', function () {
 
     for (var i = 0; i < problems_.length; i++) {
         var problem_ = problems_.eq(i).children().children()[0].innerHTML;
+        problems_.eq(i).removeClass('statusActive');
 
         if (closeRide.Statuses.includes(problem_)) {
             problems_.eq(i).addClass('statusActive');
@@ -2680,7 +2692,7 @@ $(document).ready(function () {
     });
 
     //on sign me to ride click ok
-    $("#okBTN").on("click", function () {
+    $("#okBTN,#okBTNfromInfo").on("click", function () {
 
         lastRide = getRideById(idChoose);
 
