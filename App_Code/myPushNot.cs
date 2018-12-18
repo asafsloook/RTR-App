@@ -126,7 +126,7 @@ public class myPushNot
         gcmBroker.QueueNotification(new GcmNotification
         {
             RegistrationIds = registrationIDs,
-            Data = data
+            Notification = data
         });
 
         // Stop the broker, wait for it to finish   

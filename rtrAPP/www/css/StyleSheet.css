@@ -1,4 +1,4 @@
-﻿.paypalForm {
+.paypalForm {
     background: #fff;
 }
 
@@ -623,10 +623,9 @@ hr {
         margin: 5% auto;
         width: 65%;
         padding: 5px;
-        line-height: 50px;
+        line-height: 35px;
         text-decoration: none;
         vertical-align: middle;
-     
     }
 
     #loginPreference h2 {
@@ -646,10 +645,12 @@ hr {
     border-radius: 5px;
 }
 
-.menuItem img {
-    line-height: 50px;
-    vertical-align: middle;
-}
+    .menuItem img {
+        line-height: 30px;
+        vertical-align: middle;
+        height: 30px;
+        line-height: 35px;
+    }
 
 
 #rtrInfo, #loginFailed, #volunteerRequest, #volunteerProblems {
@@ -739,16 +740,16 @@ hr.weekSeperator {
     background-color: #C7DE9C;
 }
 
-#cancelBTN, #deleteokBTN, #deleteMy1, #deleteMy2, #deleteConfirmBTN, #suggestCancelBTN {
-    background-color: #ff8c8c;
-    border-color: #ff8c8c;
+#cancelBTN, #deleteokBTN, #deleteMy1, #deleteMy2, #deleteConfirmBTN, #suggestCancelBTN, #backToSignMe {
+    background-color: #eee;
+    border-color: #eee;
     color: #111;
     text-shadow: none;
 }
 
-#okBTN, #backToSignMe, #deleteMePageNOBTN, #deleteOptionsNOBTN, #deleteConfirmNOBTN, #closeInfoBTN, #suggestOkBTN, #signConfirmationOkBTN, #deleteConfirmationBTN {
-    background-color: #c2fcc7;
-    border-color: #c2fcc7;
+#okBTN, #deleteMePageNOBTN, #deleteOptionsNOBTN, #deleteConfirmNOBTN, #closeInfoBTN, #suggestOkBTN, #signConfirmationOkBTN, #deleteConfirmationBTN, #okBTNfromInfo {
+    background-color: #eee;
+    border-color: #eee;
     color: #111;
     text-shadow: none;
 }
@@ -908,4 +909,13 @@ hr.weekSeperator {
     position: relative;
     top: 640px;
     padding: 20px;
+}
+
+.no-padding .ui-collapsible-content.ui-body-inherit{
+    padding:0;
+}
+
+.signMeBtns {
+    margin: 5% auto;
+    width: 80%;
 }

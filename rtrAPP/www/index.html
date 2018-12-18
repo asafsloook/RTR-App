@@ -1,0 +1,949 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>בדרך להחלמה</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <!--<script src="src/loaderLib.js"></script>-->
+
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Assistant:600,700" rel="stylesheet">
+
+    <link href="css/StyleSheet.css" rel="stylesheet" />
+    <script src="js/AjaxCalls.js" type="text/javascript"></script>
+    <script type="text/javascript" src="cordova.js"></script>
+    <script src="js/JavaScript.js" type="text/javascript"></script>
+
+</head>
+<body>
+
+
+    <div data-role="page" id="loginLogo">
+        <img src="img/logo.png" />
+        <div class="spinner">
+            <div class="double-bounce1"></div>
+            <div class="double-bounce2"></div>
+        </div>
+        <p style="margin-top: 30%;">מהדורה 1.5 <br>מתאריך 05/12/2018</p>
+    </div>
+
+
+    <div data-role="page" id="loginFailed">
+        <img src="img/logo.png" />
+        <p>אנא הכניסו את מספר הטלפון שלכם</p>
+        <input id="userPnTB" type="tel" />
+        <a id="userPnBTN" data-role="button">חיבור</a>
+        <br /><br />
+        <a href="#volunteerProblems">לפתרון בעיות בהתחברות</a>
+        <br /><br />
+        <a href="#volunteerRequest">להרשמה</a>
+        <br /><br />
+        <a id="changeServerUrlBTN">Configuration</a>
+    </div>
+
+
+    <div data-role="page" id="loginPreference">
+        <h2 id="welcomeTitle"></h2>
+        <div class="menuItem">
+            <a id="changePrefBTN" href="#myPreferences">שינוי ההעדפות שלי</a>
+            <img src="img/settings3.png" />
+        </div>
+        <div class="menuItem">
+            <a href="#signMe">שבץ אותי</a>
+            <img src="img/reg3.png" />
+        </div>
+        <div class="menuItem">
+            <a href="#myRides">הנסיעות שלי</a>
+            <img src="img/future2.png" />
+        </div>
+        <div class="menuItem">
+            <a id="checkNeedForReport">דיווחים</a>
+            <img src="img/mihraz.png" />
+        </div>
+        <div id="rakazBTNS">
+            <div class="menuItem">
+                <a id="rakazLoginBTN" href="#rakazLogin">הכנס/י כמתנדב/ת</a>
+                <img src="img/filtereye2.png" />
+            </div>
+            <div class="menuItem">
+                <a id="allVolunteersBTN" href="#allVolunteers">רשימת מתנדבים</a>
+                <img src="img/driverlist2.png" />
+            </div>
+            <div class="menuItem">
+                <a id="allPatientsBTN" href="#allPatients">רשימת חולים</a>
+                <img src="img/illist2.png" />
+            </div>
+        </div>
+    </div>
+
+    <div id="about" data-role="page">
+        <div data-role="header">
+            <img src="img/spyIcon.png" class="spyIcon">
+            <h1>אודות</h1>
+            <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+            </a>
+
+        </div>
+
+        <div data-role="content" class="aboutPage">
+            <p style="margin-top: 30%;">מהדורה 1.5 <br>מתאריך 05/12/2018</p>
+            <a target="_blank" href="http://www.roadtorecovery.org.il/?lang=he">לאתר העמותה</a><br>
+            <a target="_blank" href="https://www.facebook.com/theroadtorecovery1/">לפייסבוק שלנו</a>
+        </div>
+           
+        </div>
+
+        <div id="rtrInfo" data-role="page">
+            <a data-rel="back" style="float:left;border:none;margin:0;margin-left:2%" href="#" class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"></a>
+
+            <img src="img/logo.png" />
+            <p>
+                הסכסוך הישראלי-פלסטיני הוא עמוק ובעל הסטוריה עקובה מדם. "בדרך להחלמה" מנסה לגשר על התהום הפעורה בין האנשים משני צדי הגבול עם חזון של תקווה, אחווה אנושית וחמלה.
+                <br /><br />
+                העמותה פועלת ללא כוונות רווח, מתוך התנדבות מלאה של חבריה המאמינים שהדרך לשלום ולאמון בין ישראלים לפלסטינים חייבת לעבור דרך מפגש אישי בין בני אדם, אנשים השמים את אנושיותם לפני כל אמונה דתית או פוליטית.
+                <br /><br />
+                כל ילד שאנו מסייעים לו, כל משפחה שאנו יוצרים איתה קשר אנושי וחם, הם זרעים לתקווה ולפיוס.
+            </p>
+            <br />
+            <a target="_blank" href="http://www.roadtorecovery.org.il/?lang=he">לאתר העמותה</a>
+            <br /><br />
+            <!-- Paypal donate btn -->
+            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" class="paypalForm">
+                <div class="paypal-donations"><input type="hidden" name="cmd" value="_donations"><input type="hidden" name="business" value="roadtorecovery10@gmail.com"><input type="hidden" name="item_name" value="Our operation is funded by donations only. Any amount you might be willing to contribute will be greatly appreciated!"><input type="hidden" name="currency_code" value="USD"><input type="image" src="http://www.roadtorecovery.org.il/wp-content/uploads/2017/06/Donate_car.jpg" name="submit" alt="PayPal - The safer, easier way to pay online."><img alt="" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1"></div>
+            </form>
+        </div>
+
+        <div id="volunteerRequest" data-role="page">
+
+            <a data-rel="back" style="float:left;border:none;margin:0;margin-left:2%" href="#" class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"></a>
+
+            <img src="img/logo.png" />
+
+            <p>
+                אנא הכנס את פרטיך ואחד מעובדי העמותה ייצור עמך קשר.
+            </p>
+
+            <table>
+                <tr>
+                    <td>
+                        <input type="text" id="requestNameTB" />
+                    </td>
+                    <td>
+                        <label>שם מלא</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input id="requestPhoneTB" type="tel" />
+                    </td>
+                    <td>
+                        <label>מספר טלפון נייד</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <br />
+                        <a id="requestBTN" href="#" style="background-color: #C7DE9C;margin:0" class="ui-btn ui-btn-inline ui-icon-check ui-btn-icon-right">שלח</a>
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <a href="#rtrInfo">עוד על העמותה</a>
+            <br>
+            <br>
+        </div>
+
+
+        <div id="volunteerProblems" data-role="page">
+
+            <a data-rel="back" style="float:left;border:none;margin:0;margin-left:2%" href="#" class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"></a>
+
+            <img src="img/logo.png" />
+
+            <p style="margin:5% 15%;">
+                בירור סטטוס ההרשמה מול העמותה בטלפון
+                <br>
+                <a href="tel:052-5555555">052-5555555</a>
+            </p>
+            <table>
+                <tr>
+                    <td>
+                        <input type="text" id="problemNameTB" />
+                    </td>
+                    <td>
+                        שם מלא
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="tel" id="problemPhoneTB" />
+                    </td>
+                    <td>
+                        מספר טלפון נייד
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        תיאור הבעיה
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td colspan="2">
+                        <textarea id="infoTB"></textarea>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <a id="problemBTN" href="#" style="background-color: #C7DE9C;margin:0" class="ui-btn ui-btn-inline ui-icon-check ui-btn-icon-right">שלח</a>
+                    </td>
+                </tr>
+            </table>
+            <br>
+        </div>
+
+
+        <div data-role="page" id="signMe">
+
+
+            <div data-role="header">
+                <img src="img/spyIcon.png" class="spyIcon">
+                <h1>שבץ אותי</h1>
+                <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+                </a>
+
+            </div>
+
+            <div data-role="content">
+
+                <div>
+                    <fieldset hidden="hidden" data-role="controlgroup" data-type="horizontal" data-icon="false" class="ui-grid-a" data-theme="a">
+
+                        <select id="shiftDDL" data-iconpos="left">
+                            <option>משמרת</option>
+                            <option>בוקר</option>
+                            <option>אחהצ</option>
+                        </select>
+
+                        <select id="dateDDL" data-iconpos="left"></select>
+
+                        <select id="dayDDL" data-iconpos="left">
+                            <option>יום</option>
+                            <option>א</option>
+                            <option>ב</option>
+                            <option>ג</option>
+                            <option>ד</option>
+                            <option>ה</option>
+                            <option>ו</option>
+                            <option>ש</option>
+                        </select>
+
+                    </fieldset>
+
+                    <fieldset hidden="hidden" data-role="controlgroup" data-type="horizontal" data-theme="a">
+
+                        <select id="endDDL" data-iconpos="left">
+                            <option>יעד</option>
+                            <option>ארז</option>
+                            <option>רמבם</option>
+                            <option>ג'למה</option>
+                            <option>אייל</option>
+                            <option>שיבא</option>
+                            <option>ירושלים</option>
+                        </select>
+
+                        <select id="startDDL" data-iconpos="left">
+                            <option>מוצא</option>
+                            <option>ארז</option>
+                            <option>רמבם</option>
+                            <option>ג'למה</option>
+                            <option>אייל</option>
+                            <option>שיבא</option>
+                            <option>ירושלים</option>
+                        </select>
+
+                        <select id="areaDDL" data-iconpos="left">
+                            <option>איזור</option>
+                            <option>דרום</option>
+                            <option>מרכז</option>
+                            <option>צפון</option>
+                        </select>
+
+                    </fieldset>
+                </div>
+
+                <div id="showAllRides">
+                    <form>
+                        <input type="checkbox" id="showAllRidesBTN">
+                        <label for="showAllRidesBTN">הצג הכל</label>
+                    </form>
+                </div>
+
+                <div data-role="navbar" id="shiftTABS">
+                    <ul>
+                        <li><a id="afternoonTAB">צהריים</a></li>
+                        <li><a id="morningTAB">בוקר</a></li>
+                    </ul>
+                </div>
+
+
+
+                <ul id="ridesPH" data-role="listview" data-filter-placeholder="חיפוש חופשי" data-inset="true" data-filter="true" data-theme="a"></ul>
+
+                <div id="counterPH" data-role="fieldcontain">
+
+                </div>
+            </div>
+
+        </div>
+
+
+        <div data-role="page" id="myRides">
+
+            <div data-role="header">
+                <img src="img/spyIcon.png" class="spyIcon">
+
+                <h1>הנסיעות שלי</h1>
+                <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+                </a>
+            </div>
+
+            <div data-role="content">
+
+                <!--<div id="myRidesCounterPH" data-role="fieldcontain">    </div>-->
+
+
+                <div data-role="navbar" id="myRidesTABS">
+                    <ul>
+                        <li><a id="doneTAB">עבר</a></li>
+                        <li><a id="planTAB" class="ui-btn-active">מתוכננות</a></li>
+                    </ul>
+                </div>
+
+                <ul id="myRidesPH" data-role="listview" data-filter-placeholder="" data-filter="true" data-inset="true" data-icon="false" data-theme="a"></ul>
+
+            </div>
+            <div data-role="footer" id="material">
+
+                <a id="plusSignMe" href="#signMe" style="border-radius:50px;background-color: #44AFEE;" class="ui-shadow ui-btn ui-corner-all ui-btn-inline ui-icon-plus ui-btn-icon-notext ui-btn-b ui-mini fab"></a>
+
+                <!--<a href="#signMe" class="ui-link ui-btn" data-role="button" role="button" style="padding: 0;border: none;background: transparent;margin: 20%;">
+
+                <img src="img/add.png">
+            </a>-->
+            </div>
+        </div>
+
+
+        <div data-role="page" id="deleteConfirm">
+            <div role="main" class="ui-corner-bottom ui-content">
+                <div id="phPopDeleteConfirm">
+                    <p style="padding: 15%;">
+                        האם לבטל את שיבוצך להסעה זו?
+                    </p>
+                </div>
+                <a data-icon="check" id="deleteConfirmNOBTN" data-rel="back" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">לא</a>
+                <a data-icon="delete" id="deleteConfirmBTN" onclick="deleteMyRide()" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">כן</a>
+            </div>
+        </div>
+
+
+        <div data-role="page" id="deleteOptions">
+            <div role="main" class="ui-corner-bottom ui-content">
+                <div>
+                    <p style="padding: 15%;">
+                        איזה נסיעה לבטל?
+                    </p>
+                </div>
+                <a data-icon="delete" id="deleteMy1" onclick="deleteMyRide()" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">ביטול נסיעה זאת בלבד</a><br>
+                <a data-icon="delete" id="deleteMy2" onclick="deleteAllFromMyRide()" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">ביטול כל הנסיעות ביום ובשעה זו</a><br>
+                <a data-icon="check" id="deleteOptionsNOBTN" data-rel="back" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">התחרטתי, לא לבטל את הנסיעה</a>
+            </div>
+        </div>
+
+
+        <div data-role="page" id="deleteMePage">
+            <div role="main" class="ui-corner-bottom ui-content">
+                <div id="phPopDelete"></div>
+                <a data-icon="check" id="deleteMePageNOBTN" data-rel="back" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">סגור</a>
+            </div>
+        </div>
+
+
+        <div data-role="page" id="trackRides">
+
+
+            <div data-role="header">
+                <h1>מעקב הסעות</h1>
+                <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+                </a>
+
+            </div>
+
+            <div data-role="content">
+
+                <div>
+                    <table>
+                        <tr>
+                            <td>ביעד</td>
+                            <td>נפגשו</td>
+                            <td>במחסום</td>
+                            <td>יצא</td>
+                            <td>שם</td>
+                        </tr>
+                    </table>
+                </div>
+
+
+                <div id="ride1">
+                    <h4>1. אייל - שיבא</h4>
+                    <table class="realtime">
+                        <tr>
+                            <td rowspan="2" style="background-color:chartreuse">V</td>
+                            <td rowspan="2">06:40</td>
+                            <td>06:36</td>
+                            <td>06:15</td>
+                            <td>מני ישראלי</td>
+                        </tr>
+                        <tr>
+                            <td>06:36</td>
+                            <td>04:15</td>
+                            <td>מוחמד ג'אוול +2</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div id="ride2">
+                    <h4>2. ארז - הדסה</h4>
+                    <table class="realtime">
+                        <tr>
+                            <td rowspan="2">-</td>
+                            <td rowspan="2">-</td>
+                            <td>06:36</td>
+                            <td>06:15</td>
+                            <td>מני ישראלי</td>
+                        </tr>
+                        <tr>
+                            <td style="background-color:tomato">!</td>
+                            <td>04:15</td>
+                            <td>מוחמד ג'אוול +2</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div id="ride3">
+                    <h4>3. אייל - וולפסון</h4>
+                    <table class="realtime">
+                        <tr>
+                            <td rowspan="2">-</td>
+                            <td rowspan="2">-</td>
+                            <td>06:36</td>
+                            <td>06:15</td>
+                            <td>מני ישראלי</td>
+                        </tr>
+                        <tr>
+                            <td style="background-color:antiquewhite">-</td>
+                            <td>04:15</td>
+                            <td>מוחמד ג'אוול +2</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+
+        </div>
+
+
+        <div data-role="page" id="auction">
+
+
+            <div data-role="header">
+                <h1>מעקב הסעות</h1>
+                <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+                </a>
+
+            </div>
+
+            <div data-role="content">
+
+                <div id="auctionPanel">
+                    <a style="float:right;padding: 1%;border-radius: 50px;" href="#" class="ui-btn ui-icon-power ui-btn-icon-notext ui-corner-all">No text</a>
+                    <a style="float:left;padding: 1%;border-radius: 50px;" href="#" class="ui-btn ui-icon-action ui-btn-icon-notext ui-corner-all action">No text</a>
+                </div>
+
+                <div id="auctionInfo">
+
+                    <img class="mihrazIcons" src="img/babyseat.png" />
+
+                    <img class="mihrazIcons" src="img/wheelchair.png" />
+
+                    <p>החולה: מוחמד ג'אוול +2</p>
+                    <p>מ: שיבא ל: נעלין</p>
+                    <p>מחר, יום ב', 26.2 בשעה 15:30</p>
+                    <p>6 מועמדים</p>
+                </div>
+
+                <ul data-role="listview" data-inset="true" data-theme="a">
+                    <li>
+                        <a href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all delete"></a>
+                        <a href="#" class="ui-btn ui-icon-action ui-btn-icon-notext ui-corner-all action"></a>
+                        <a href="#" class="ui-btn ui-icon-phone ui-btn-icon-notext ui-corner-all phone"></a>
+
+                        <p id="volenteerName">1. משה כהן</p>
+                        <br />
+                        <!--<p>16:45 לא הגיב</p>-->
+                        <p id="volenteerStatus">16:45 להתקשר עוד שעה</p>
+
+                    </li>
+
+                    <li>
+                        <a href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all delete"></a>
+                        <a href="#" class="ui-btn ui-icon-action ui-btn-icon-notext ui-corner-all action"></a>
+                        <a href="#" class="ui-btn ui-icon-phone ui-btn-icon-notext ui-corner-all phone"></a>
+
+                        <p id="volenteerName">2. משה אלפונסיחיאנו</p>
+                        <br />
+                        <!--<p>16:45 לא הגיב</p>-->
+                        <p id="volenteerStatus">16:45 להתקשר עוד שעה</p>
+
+                    </li>
+
+                    <li>
+                        <a href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all delete"></a>
+                        <a href="#" class="ui-btn ui-icon-action ui-btn-icon-notext ui-corner-all action"></a>
+                        <a href="#" class="ui-btn ui-icon-phone ui-btn-icon-notext ui-corner-all phone"></a>
+
+                        <p id="volenteerName">3. משה לוי</p>
+                        <br />
+                        <!--<p>16:45 לא הגיב</p>-->
+                        <p id="volenteerStatus">16:45 בודק</p>
+
+                    </li>
+                    <li>
+                        <a href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all delete"></a>
+                        <a href="#" class="ui-btn ui-icon-action ui-btn-icon-notext ui-corner-all action"></a>
+                        <a href="#" class="ui-btn ui-icon-phone ui-btn-icon-notext ui-corner-all phone"></a>
+
+                        <p id="volenteerName">4. משה לוי</p>
+                        <br />
+                        <!--<p>16:45 לא הגיב</p>-->
+                        <p id="volenteerStatus">16:45 בודק</p>
+
+                    </li>
+                    <li>
+                        <a href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all delete"></a>
+                        <a href="#" class="ui-btn ui-icon-action ui-btn-icon-notext ui-corner-all action"></a>
+                        <a href="#" class="ui-btn ui-icon-phone ui-btn-icon-notext ui-corner-all phone"></a>
+
+                        <p id="volenteerName">5. משה לוי</p>
+                        <br />
+                        <!--<p>16:45 לא הגיב</p>-->
+                        <p id="volenteerStatus">16:45 בודק</p>
+
+                    </li>
+                    <li>
+                        <a href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all delete"></a>
+                        <a href="#" class="ui-btn ui-icon-action ui-btn-icon-notext ui-corner-all action"></a>
+                        <a href="#" class="ui-btn ui-icon-phone ui-btn-icon-notext ui-corner-all phone"></a>
+
+                        <p id="volenteerName">6. משה לוי</p>
+                        <br />
+                        <!--<p>16:45 לא הגיב</p>-->
+                        <p id="volenteerStatus">16:45 בודק</p>
+
+                    </li>
+                </ul>
+            </div>
+            <div data-role="footer" id="material">
+                <a href="#signMe" style="border-radius:50px;background-color: grey;" class="ui-shadow ui-btn ui-corner-all ui-btn-inline ui-icon-plus ui-btn-icon-notext ui-btn-b ui-mini fab"></a>
+            </div>
+        </div>
+
+
+        <div data-role="page" id="infoPastRide">
+            <div role="main" class="ui-corner-bottom ui-content">
+                <div id="phPopInfo"></div>
+                <a data-icon="delete" onclick="" id="closeInfoBTN" href="#" data-role="button" data-rel="back" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">סגור</a>
+            </div>
+        </div>
+
+
+        <div data-role="page" id="signMePage">
+            <div role="main" class="ui-corner-bottom ui-content">
+                <div id="phPop"></div>
+                <a data-icon="check" id="okBTN" href="#" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">שבץ אותי</a><br>
+                <a data-icon="delete" id="cancelBTN" href="#" data-role="button" data-inline="true" data-rel="back" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">אל תשבצני, חזרה לרשימה</a>
+            </div>
+        </div>
+
+
+        <div data-role="page" id="infoPage">
+            <div role="main" class="ui-corner-bottom ui-content">
+                <div id="infoPagePH"></div>
+                <a data-icon="check" id="okBTNfromInfo" href="#" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b signMeBtns" role="button">שבץ אותי</a><br>
+                <a data-icon="back" id="backToSignMe" href="#" data-role="button" data-rel="back" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b signMeBtns" role="button">חזור לרשימת ההסעות</a><br>
+            </div>
+        </div>
+
+
+        <div data-role="page" id="suggest" style="text-align:center">
+
+            <h1 data-theme="b">הצעה לשיבוץ נוסף</h1>
+            <div id="phSuggest"></div>
+            <a data-icon="check" id="suggestOkBTN" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">נשמע טוב</a>
+            <a data-icon="delete" id="suggestCancelBTN" href="#signConfirmation" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-a" role="button">לא מעוניין</a>
+        </div>
+
+
+        <div data-role="page" id="signConfirmation" style="text-align:center">
+            <h1 data-theme="b">נרשמת בהצלחה</h1>
+            <div id="phConfirmation"></div>
+            <a data-icon="check" id="signConfirmationOkBTN" href="#myRides" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">עבור לנסיעות שלי</a>
+        </div>
+
+        <div data-role="page" id="deleteConfirmation" style="text-align:center">
+            <h1 data-theme="b">הנסיעה בוטלה בהצלחה</h1>
+            <div id="phDelConfirmation"></div>
+            <a data-icon="check" id="deleteConfirmationBTN" href="#myRides" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-shadow ui-corner-all ui-button-inline ui-widget ui-button-b" role="button">חזרה לנסיעות שלי</a>
+        </div>
+
+        <div id="myPreferences" data-role="page">
+
+            <div data-role="header">
+                <img src="img/spyIcon.png" class="spyIcon">
+                <h1>ההעדפות שלי</h1>
+                <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+                </a>
+            </div>
+            <div data-role="content">
+                <div data-role="tabs" id="prefTabs">
+                    <div data-role="navbar">
+                        <ul>
+                            <li><a href="#other" data-ajax="false">אחר</a></li>
+                            <li><a href="#zmanim" data-ajax="false">זמנים</a></li>
+                            <li><a href="#kavim" data-ajax="false">קווי הסעה</a></li>
+                        </ul>
+                    </div>
+                    <div id="other">
+                        <table>
+                            <tr>
+                                <td><p>מספר הנוסעים המקסימלי שבד"כ תוכלו לקחת</p></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <select id="mySeats">
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option selected="selected">4</option>
+                                        <option>5</option>
+                                        <option>6</option>
+                                        <option>7</option>
+                                        <option>8</option>
+                                        <option>9</option>
+                                        <option>10</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div id="zmanim">
+                        <p>ציינו את הזמנים שבד"כ מתאים לכם להסיע</p>
+                        <table>
+                            <tr>
+                                <td colspan="7" style="padding:10px">
+                                    בוקר
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <form class="morning">
+                                        <input type="checkbox" id="morningG">
+                                        <label for="morningG">ש</label>
+
+                                    </form>
+                                </td>
+                                <td>
+                                    <form class="morning">
+                                        <input type="checkbox" id="morningF">
+                                        <label for="morningF">ו</label>
+
+                                    </form>
+                                </td>
+                                <td>
+                                    <form class="morning">
+                                        <input type="checkbox" id="morningE">
+                                        <label for="morningE">ה</label>
+
+                                    </form>
+                                </td>
+                                <td>
+                                    <form class="morning">
+                                        <input type="checkbox" id="morningD">
+                                        <label for="morningD">ד</label>
+
+                                    </form>
+                                </td>
+                                <td>
+                                    <form class="morning">
+                                        <input type="checkbox" id="morningC">
+                                        <label for="morningC">ג</label>
+
+                                    </form>
+                                </td>
+                                <td>
+                                    <form class="morning">
+                                        <input type="checkbox" id="morningB">
+                                        <label for="morningB">ב</label>
+
+                                    </form>
+                                </td>
+                                <td>
+                                    <form class="morning">
+                                        <input type="checkbox" id="morningA">
+                                        <label for="morningA">א</label>
+
+                                    </form>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="7" style="height:50px"></td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="7" style="padding:10px">
+                                    אחה"צ
+
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <form class="evening">
+                                        <input type="checkbox" id="eveningG">
+                                        <label for="eveningG">ש</label>
+
+                                    </form>
+                                </td>
+                                <td>
+                                    <form class="evening">
+                                        <input type="checkbox" id="eveningF">
+                                        <label for="eveningF">ו</label>
+
+                                    </form>
+                                </td>
+                                <td>
+                                    <form class="evening">
+                                        <input type="checkbox" id="eveningE">
+                                        <label for="eveningE">ה</label>
+
+                                    </form>
+                                </td>
+                                <td>
+                                    <form class="evening">
+                                        <input type="checkbox" id="eveningD">
+                                        <label for="eveningD">ד</label>
+
+                                    </form>
+                                </td>
+                                <td>
+                                    <form class="evening">
+                                        <input type="checkbox" id="eveningC">
+                                        <label for="eveningC">ג</label>
+
+                                    </form>
+                                </td>
+                                <td>
+                                    <form class="evening">
+                                        <input type="checkbox" id="eveningB">
+                                        <label for="eveningB">ב</label>
+
+                                    </form>
+                                </td>
+                                <td>
+                                    <form class="evening">
+                                        <input type="checkbox" id="eveningA">
+                                        <label for="eveningA">א</label>
+
+                                    </form>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div id="kavim">
+                        <p style="margin:2%">אנא בחר את האיזורים ונקודות המוצא והיעד המועדפים עליך</p>
+                        <div id="area">
+                            <form>
+                                <input type="checkbox" id="southArea">
+                                <label for="southArea">דרום</label>
+                                <input type="checkbox" id="centerArea">
+                                <label for="centerArea">מרכז</label>
+                                <input type="checkbox" id="northArea">
+                                <label for="northArea">צפון</label>
+                            </form>
+                        </div>
+                        <div id="locationsPH"></div>
+                    </div>
+                </div>
+                <a id="continueBTN" hidden="hidden" data-role="button" data-inline="true">המשך</a>
+            </div>
+        </div>
+
+        <div id="rakazLogin" data-role="page">
+            <div data-role="header">
+                <a data-rel="back" style="float:left;border:none;margin:0;margin-left:2%" href="#" class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"></a>
+                <h1>דף רכז</h1>
+                <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+                </a>
+            </div>
+
+            <div data-role="content">
+
+                <form class="ui-filterable">
+                    <input id="autocomplete-input" data-type="search" placeholder="חפש מתנדבים">
+                </form>
+                <ul id="volenteersPH" data-inset="true" data-role="listview" data-filter="true" data-input="#autocomplete-input"></ul>
+
+            </div>
+        </div>
+
+        <div id="allVolunteers" data-role="page">
+
+            <div data-role="header">
+                <a data-rel="back" style="float:left;border:none;margin:0;margin-left:2%" href="#" class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"></a>
+                <h1>רשימת מתנדבים</h1>
+                <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+                </a>
+            </div>
+
+            <div data-role="content">
+
+                <form class="ui-filterable">
+                    <input id="autocomplete-input2" data-type="search" placeholder="חפש מתנדבים">
+                </form>
+                <ul id="allVolunteersPH" data-inset="true" data-role="listview" data-filter="true" data-input="#autocomplete-input2"></ul>
+
+            </div>
+        </div>
+
+
+        <div id="allPatients" data-role="page">
+
+            <div data-role="header">
+                <a data-rel="back" style="float:left;border:none;margin:0;margin-left:2%" href="#" class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"></a>
+                <h1>רשימת חולים</h1>
+                <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+                </a>
+            </div>
+
+            <div data-role="content">
+
+                <form class="ui-filterable">
+                    <input id="autocomplete-input3" data-type="search" placeholder="חפש חולים">
+                </form>
+                <ul id="allPatientsPH" data-inset="true" data-role="listview" data-filter="true" data-input="#autocomplete-input3"></ul>
+
+            </div>
+        </div>
+
+        <div class="modal">
+            <div class="spinner">
+                <div class="double-bounce1"></div>
+                <div class="double-bounce2"></div>
+            </div>
+        </div>
+
+
+        <div data-role="page" id="status">
+            <div data-role="header">
+                <img src="img/spyIcon.png" class="spyIcon">
+                <a style="float:left;border:none;margin:0;margin-left:2%" href="#" data-rel="back" class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"></a>
+                <h1>דיווחים</h1>
+                <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+                </a>
+            </div>
+            <div data-role="content" class="statusContent"></div>
+            <div data-role="footer" class="statusFooter">
+                <div class="notifyProblem">
+                    <a href="#problem"><h2>דווח על בעיה</h2></a>
+                </div>
+            </div>
+        </div>
+
+        <div data-role="page" id="problem">
+            <div data-role="header">
+                <img src="img/spyIcon.png" class="spyIcon">
+                <a data-rel="back" style="float:left;border:none;margin:0;margin-left:2%" href="#" class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"></a>
+                <h1>דיווח בעיה</h1>
+                <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+                </a>
+            </div>
+            <div class="problemContent" data-role="content">
+                <div class="problemItem">
+                    <div class="problemName">
+                        <div class="problemButton">
+                            <span>אני אאחר</span>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="problemItem">
+                    <div class="problemName">
+                        <div class="problemButton">
+                            <span>מתעכב במחסום</span>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="problemItem">
+                    <div class="problemName">
+                        <div class="problemButton problemKeyboard">
+                            <i class="material-icons keyIcon">keyboard</i>
+                            <span>סיבה אחרת</span>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div id="accordionMaster" class="ui-screen-hidden">
+                    <textarea class="accordion" maxlength="150"></textarea>
+                    <div class="sendButton">
+                        <span>דווח</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div data-role="popup" id="popupDialog" data-theme="a" data-overlay-theme="b" data-position-to="window" data-dismissible="false" data-history="false">
+            <div data-role="header" data-theme="a">
+                <h1 id="popupTitle"></h1>
+            </div>
+            <div role="main" class="ui-content">
+                <div id="popupContentDiv"><p id="popupContent"></p></div>
+            </div>
+            <div role="contentinfo" class="ui-footer">
+                <div class="dialogBTNS">
+                    <div id="cancelDialog">
+                        <a id="cancelDialogBTN">ביטול</a>
+                    </div>
+                    <div id="confirmDialog">
+                        <a id="confirmDialogBTN">אישור</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+</body>
+</html>
+

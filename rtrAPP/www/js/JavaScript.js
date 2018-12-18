@@ -1,4 +1,4 @@
-﻿//add to kavim+times explain text
+//add to kavim+times explain text
 //disable/hide tabs in first login
 //check all when choosing area first login
 //add haifa to south
@@ -55,6 +55,15 @@
 //spy stuck
 //change anonymous to ride field
 //user isActive
+
+//done
+//problems not cleared when switching between multipule close rides
+//fixed width ride info
+//signMe inside ride info
+//signMe as gibui button
+//green&red to #eee
+//version
+debugger;
 
 domain = '';
 
@@ -678,7 +687,7 @@ function ListItemStart(myDate, startPointStr) {
 
     var day = numToDayHebrew(myDate.getDay());
 
-    str = '<li data-role="collapsible" data-theme="a"><hr style="margin:0;">'
+    str = '<li data-role="collapsible" class="no-padding" data-theme="a"><hr style="margin:0;">'
         + ' <h2 class="rideListHeader">יום   ' + day + "  &nbsp;  "
         + myDate.getDate() + "." + (myDate.getMonth() + 1)
         + '  ' + startPointStr + '</h2>';
@@ -751,14 +760,14 @@ function rideStr(str, results, i) {
         time = 'אחה"צ';
     }
 
-    str += '<p style="padding: 4%;float: right;margin-right: 0;text-align: right;border-radius:15px;max-width: 50%;border: 1px #ddd solid;"';
+    str += '<p style="padding: 4%;float: right;margin-right: 0;text-align: right;border-radius:15px;width: 50%;border: 1px #ddd solid;"';
 
     if (results[i].Status == "שובץ נהג") {
-        str += ' class="backup" >'
+        str += ' class="backup" onClick="info(' + results[i].Id + ')">'
             + '<b>גיבוי ' + time + '</b>';
     }
     else {
-        str += ' class="primary" >'
+        str += ' class="primary" onClick="info(' + results[i].Id + ')">'
             + '<b>הסעה ' + time + '</b>';
     }
     str += '<i class="fa fa-info-circle" style="float:left;margin-right: 15px;"></i><br>';
@@ -774,7 +783,7 @@ function rideStr(str, results, i) {
 
     str += '</p>';
 
-    str += '<a style="float:left;border:none;margin: 8% 3%;background: transparent;padding:0;" id="pop' + i + '" '
+    str += '<a style="float:left;border:none;margin: 8% 0% 0% 3%;background: transparent;padding:0;" id="pop' + i + '" '
         + ' class="signButtonCheck ui-btn" '
         + ' name="' + results[i].Id + '" onClick="info(' + results[i].Id + ')">'
         + '   <img style="width: 35px;" src="Images/reg.png"></a> '
@@ -1029,9 +1038,10 @@ function info(inputID) {
     for (var i = 0; i < rides.length; i++) {
         if (rides[i].Id == idChoose) {
             var str = getRideStr(rides[i]);
+            $('#okBTNfromInfo,#okBTN').html(rides[i].Status == 'שובץ נהג' ? 'שבץ אותי לגיבוי':'שבץ אותי');
         }
     }
-
+    
     $("#phPop").html(str);
 
 }
@@ -2286,7 +2296,7 @@ function onDeviceReady() {
 
     if (typeof PushNotification !== 'undefined') {
 
-        var push = PushNotification.init({
+        const push = PushNotification.init({
             android: {
                 senderID: "148075927844",
                 forceShow: true // this identifies your application
@@ -2304,10 +2314,9 @@ function onDeviceReady() {
             windows: {}
         });
 
-        //-----------------------------------------------------------------------
-        // triggred by the notification server once the registration is completed
-        //-----------------------------------------------------------------------
+
         push.on('registration', function (data) {
+            
             // send the registration id to the server and save it in the DB
             // send also the userID
             localStorage.RegId = data.registrationId;
@@ -2316,6 +2325,24 @@ function onDeviceReady() {
 
         });
 
+
+        //create channel for Android O (8.1) and above
+        //if (typeof PushNotification.createChannel !== 'undefined'){
+        //    PushNotification.createChannel(
+        //        () => {
+        //            alert('success createChannel');
+        //        },
+        //        () => {
+        //            alert('error createChannel');
+        //        },
+        //        {
+        //            id: 'testchannel1',
+        //            description: 'My first test channel',
+        //            importance: 3,
+        //            vibration: true
+        //        }
+        //    );
+        //}
         //-------------------------------------------------------------
         // triggred by a notification sent from the notification server
         //-------------------------------------------------------------
@@ -2558,6 +2585,7 @@ $(document).on('pagebeforeshow', '#problem', function () {
 
     for (var i = 0; i < problems_.length; i++) {
         var problem_ = problems_.eq(i).children().children()[0].innerHTML;
+        problems_.eq(i).removeClass('statusActive');
 
         if (closeRide.Statuses.includes(problem_)) {
             problems_.eq(i).addClass('statusActive');
@@ -2680,7 +2708,7 @@ $(document).ready(function () {
     });
 
     //on sign me to ride click ok
-    $("#okBTN").on("click", function () {
+    $("#okBTN,#okBTNfromInfo").on("click", function () {
 
         lastRide = getRideById(idChoose);
 

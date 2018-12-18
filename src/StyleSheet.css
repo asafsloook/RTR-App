@@ -623,10 +623,9 @@ hr {
         margin: 5% auto;
         width: 65%;
         padding: 5px;
-        line-height: 50px;
+        line-height: 35px;
         text-decoration: none;
         vertical-align: middle;
-     
     }
 
     #loginPreference h2 {
@@ -646,10 +645,12 @@ hr {
     border-radius: 5px;
 }
 
-.menuItem img {
-    line-height: 50px;
-    vertical-align: middle;
-}
+    .menuItem img {
+        line-height: 30px;
+        vertical-align: middle;
+        height: 30px;
+        line-height: 35px;
+    }
 
 
 #rtrInfo, #loginFailed, #volunteerRequest, #volunteerProblems {

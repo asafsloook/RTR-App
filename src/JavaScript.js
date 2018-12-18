@@ -1,4 +1,4 @@
-﻿//add to kavim+times explain text
+//add to kavim+times explain text
 //disable/hide tabs in first login
 //check all when choosing area first login
 //add haifa to south
@@ -63,7 +63,7 @@
 //signMe as gibui button
 //green&red to #eee
 //version
-
+debugger;
 
 domain = '';
 
@@ -786,7 +786,7 @@ function rideStr(str, results, i) {
     str += '<a style="float:left;border:none;margin: 8% 0% 0% 3%;background: transparent;padding:0;" id="pop' + i + '" '
         + ' class="signButtonCheck ui-btn" '
         + ' name="' + results[i].Id + '" onClick="info(' + results[i].Id + ')">'
-        + '   <img style="width: 35px;" src="Images/reg.png"></a> '
+        + '   <img style="width: 35px;" src="img/reg.png"></a> '
         + "</a>";
 
     return str;
@@ -832,13 +832,13 @@ function RideEquipment(str, results, i) {
     }
 
     if (results[i].Pat.Equipment.includes("כסא גלגלים")) {
-        str += '<img class="ridesIcons" src="Images/wheelchair.png" /><br>';
+        str += '<img class="ridesIcons" src="img/wheelchair.png" /><br>';
     }
     if (results[i].Pat.Equipment.includes("כסא תינוק")) {
-        str += '<img class="ridesIcons" src="Images/babyseat.png" /><br>';
+        str += '<img class="ridesIcons" src="img/babyseat.png" /><br>';
     }
     if (results[i].Pat.Equipment.includes("בוסטר")) {
-        str += '<img class="ridesIcons" src="Images/booster.png" /><br>';
+        str += '<img class="ridesIcons" src="img/booster.png" /><br>';
     }
 
 
@@ -1747,7 +1747,6 @@ closeRideTimeAfter = 9 * hourToMillisecs;
 
 
 function hasCloseRide() {
-    debugger
     closeRides = [];
     if (myRides != null) {
         for (var i = 0; i < myRides.length; i++) {
@@ -2297,7 +2296,7 @@ function onDeviceReady() {
 
     if (typeof PushNotification !== 'undefined') {
 
-        var push = PushNotification.init({
+        const push = PushNotification.init({
             android: {
                 senderID: "148075927844",
                 forceShow: true // this identifies your application
@@ -2315,10 +2314,10 @@ function onDeviceReady() {
             windows: {}
         });
 
-        //-----------------------------------------------------------------------
-        // triggred by the notification server once the registration is completed
-        //-----------------------------------------------------------------------
+
         push.on('registration', function (data) {
+
+            alert('registration OK');
             // send the registration id to the server and save it in the DB
             // send also the userID
             localStorage.RegId = data.registrationId;
@@ -2327,6 +2326,24 @@ function onDeviceReady() {
 
         });
 
+
+        //create channel for Android O (8.1) and above
+        if (typeof PushNotification.createChannel !== 'undefined'){
+            PushNotification.createChannel(
+                () => {
+                    alert('success createChannel');
+                },
+                () => {
+                    alert('error createChannel');
+                },
+                {
+                    id: 'testchannel1',
+                    description: 'My first test channel',
+                    importance: 3,
+                    vibration: true
+                }
+            );
+        }
         //-------------------------------------------------------------
         // triggred by a notification sent from the notification server
         //-------------------------------------------------------------
