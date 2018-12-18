@@ -55,15 +55,21 @@
 //spy stuck
 //change anonymous to ride field
 //user isActive
-
-//done
 //problems not cleared when switching between multipule close rides
 //fixed width ride info
 //signMe inside ride info
 //signMe as gibui button
 //green&red to #eee
 //version
-debugger;
+
+
+//icons
+
+//popup size
+//filter signMe
+//errors popup
+//test push, fields...
+
 
 domain = '';
 

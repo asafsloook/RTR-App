@@ -786,7 +786,7 @@ function rideStr(str, results, i) {
     str += '<a style="float:left;border:none;margin: 8% 0% 0% 3%;background: transparent;padding:0;" id="pop' + i + '" '
         + ' class="signButtonCheck ui-btn" '
         + ' name="' + results[i].Id + '" onClick="info(' + results[i].Id + ')">'
-        + '   <img style="width: 35px;" src="Images/reg.png"></a> '
+        + '   <img style="width: 35px;" src="img/reg.png"></a> '
         + "</a>";
 
     return str;
@@ -832,13 +832,13 @@ function RideEquipment(str, results, i) {
     }
 
     if (results[i].Pat.Equipment.includes("כסא גלגלים")) {
-        str += '<img class="ridesIcons" src="Images/wheelchair.png" /><br>';
+        str += '<img class="ridesIcons" src="img/wheelchair.png" /><br>';
     }
     if (results[i].Pat.Equipment.includes("כסא תינוק")) {
-        str += '<img class="ridesIcons" src="Images/babyseat.png" /><br>';
+        str += '<img class="ridesIcons" src="img/babyseat.png" /><br>';
     }
     if (results[i].Pat.Equipment.includes("בוסטר")) {
-        str += '<img class="ridesIcons" src="Images/booster.png" /><br>';
+        str += '<img class="ridesIcons" src="img/booster.png" /><br>';
     }
 
 
