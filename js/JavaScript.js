@@ -62,13 +62,12 @@
 //green&red to #eee
 //version
 
-
 //icons
-
 //popup size
-//filter signMe
-//errors popup
 //test push, fields...
+//errors popup
+
+// filter signMe
 
 
 domain = '';
@@ -747,7 +746,7 @@ function printInfo(ride) {
     if (!ride.Pat.IsAnonymous) {
         str += '<a href="tel:' + ride.Pat.CellPhone + '"><i class="fa fa-phone-square" style="font-size: 30px;"></i></a><br><br>';
     }
-    
+
     //call
     //window.open("tel:" + this.id);
 
@@ -780,7 +779,7 @@ function rideStr(str, results, i) {
 
     str += results[i].StartPoint + ' <i class="fa fa-arrow-left"></i> ' //&#11164; &#129144;
         + '' + results[i].EndPoint + '<br/>';
-    
+
     str += (results[i].Pat.IsAnonymous ? 'חולה' : results[i].Person);
 
     if (results[i].Melave.length > 0) {
@@ -1044,10 +1043,10 @@ function info(inputID) {
     for (var i = 0; i < rides.length; i++) {
         if (rides[i].Id == idChoose) {
             var str = getRideStr(rides[i]);
-            $('#okBTNfromInfo,#okBTN').html(rides[i].Status == 'שובץ נהג' ? 'שבץ אותי לגיבוי':'שבץ אותי');
+            $('#okBTNfromInfo,#okBTN').html(rides[i].Status == 'שובץ נהג' ? 'שבץ אותי לגיבוי' : 'שבץ אותי');
         }
     }
-    
+
     $("#phPop").html(str);
 
 }
@@ -1723,7 +1722,7 @@ function checkUserSuccessCB(results) {
         //send request for volunteer
         setTimeout(function () {
             //localStorage.removeItem('cellphone');
-            popupDialog('שגיאה', 'הודעת שגיאה - מספר הטלפון אינו ידוע, אנא בדקו ונסו בשנית', '#loginFailed', false, null);
+            popupDialog('הודעה', 'שגיאה - מספר הטלפון אינו ידוע, אנא בדקו ונסו בשנית', '#loginFailed', false, null);
         }, 100);
         return;
     }
@@ -1916,7 +1915,7 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
         $('#continueBTN').on('click', function () {
 
             if ($('#area .ui-checkbox-on').length == 0) {
-                popupDialog('שגיאה', 'אנא בחר איזור אחד לפחות', null, false, null);
+                popupDialog('הודעה', 'אנא בחר איזור אחד לפחות', null, false, null);
                 //show dialog
                 return;
             }
@@ -1925,7 +1924,7 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
 
                 var actives = $('#starts .ui-checkbox-on,#ends .ui-checkbox-on');
                 if (actives.length == 0) {
-                    popupDialog('שגיאה', "אנא בחר נקודות מוצא ויעד ורק לאחר מכן לחץ על המשך", null, false, null);
+                    popupDialog('הודעה', "אנא בחר נקודות מוצא ויעד ורק לאחר מכן לחץ על המשך", null, false, null);
                     //show dialog
                     return;
                 }
@@ -2033,7 +2032,7 @@ function goMenu(id) {
             return;
         }
         if (!hasCloseRide()) {
-            popupDialog('שגיאה', 'אין לך נסיעות קרובות הדורשות דיווח.', null, false, null);
+            popupDialog('הודעה', 'אין לך נסיעות קרובות הדורשות דיווח.', null, false, null);
         }
         else {
             loginToCloseRide();
@@ -2304,7 +2303,7 @@ function onDeviceReady() {
 
         const push = PushNotification.init({
             android: {
-                senderID: "148075927844",
+                //senderID: "148075927844",
                 forceShow: true // this identifies your application
                 // it must be identical to what appears in the
                 // config.xml
@@ -2322,8 +2321,6 @@ function onDeviceReady() {
 
 
         push.on('registration', function (data) {
-
-            alert('registration OK');
             // send the registration id to the server and save it in the DB
             // send also the userID
             localStorage.RegId = data.registrationId;
@@ -2332,29 +2329,10 @@ function onDeviceReady() {
 
         });
 
-
-        //create channel for Android O (8.1) and above
-        if (typeof PushNotification.createChannel !== 'undefined'){
-            PushNotification.createChannel(
-                () => {
-                    alert('success createChannel');
-                },
-                () => {
-                    alert('error createChannel');
-                },
-                {
-                    id: 'testchannel1',
-                    description: 'My first test channel',
-                    importance: 3,
-                    vibration: true
-                }
-            );
-        }
         //-------------------------------------------------------------
         // triggred by a notification sent from the notification server
         //-------------------------------------------------------------
-        push.on('notification', function (data) {
-
+        push.on('notification', data => {
             if (data.additionalData.foreground == true) {
                 handleForeground(data);
             }
@@ -2389,6 +2367,7 @@ function onDeviceReady() {
 function handleForeground(data) {
     //OK
     alertPushMsg(data);
+    localStorage.removeItem('lastPush');
 }
 
 //-------------------------------------------------
@@ -2397,6 +2376,7 @@ function handleForeground(data) {
 function handleBackground(data) {
     //OK
     alertPushMsg(data);
+    localStorage.removeItem('lastPush');
 }
 
 //-------------------------------------------------
@@ -2650,13 +2630,13 @@ function setStatusECB() {
 
 $(document).ready(function () {
 
-    $(document).on('click','.signButtonCheck.ui-btn', function () {
+    $(document).on('click', '.signButtonCheck.ui-btn', function () {
         if (!userInfo.IsActive) {
             //if user isnt Active abort signing
             popupDialog('הודעה', 'למשתמש זה אין אפשרות להשתבץ.', null, false, null);
         }
         else {
-            $.mobile.pageContainer.pagecontainer("change", "#signMePage"); 
+            $.mobile.pageContainer.pagecontainer("change", "#signMePage");
         }
     });
 
@@ -2826,7 +2806,7 @@ $(document).ready(function () {
     $(document).on('click', '.sendButton', function () {
 
         if ($('#problem textarea').val() == '') {
-            popupDialog('שגיאה', 'לא ניתן לשלוח הודעה ריקה', null, false, null);
+            popupDialog('הודעה', 'לא ניתן לשלוח הודעה ריקה', null, false, null);
             return;
         }
 
@@ -2850,7 +2830,7 @@ $(document).ready(function () {
         if (window.location.href.toString().indexOf('myPreferences') == -1) {
 
             if ($(this).attr('id') == 'NotifyTab' && !hasCloseRide()) {
-                popupDialog('שגיאה', 'אין לך נסיעות קרובות הדורשות דיווח.', null, false, null);
+                popupDialog('הודעה', 'אין לך נסיעות קרובות הדורשות דיווח.', null, false, null);
                 //show dialog
                 return;
             }
@@ -2876,12 +2856,12 @@ $(document).ready(function () {
         activesRoutes = $(activesRoutesSelector);
 
         if ($('#area .ui-checkbox-on').length == 0) {
-            popupDialog('שגיאה', "אנא בחר איזורים", null, false, null);
+            popupDialog('הודעה', "אנא בחר איזורים", null, false, null);
             return;
         }
 
         if (activesRoutes.length == 0) {
-            popupDialog('שגיאה', "אנא בחר נקודות מוצא ויעד בקווי הסעה", null, false, null);
+            popupDialog('הודעה', "אנא בחר נקודות מוצא ויעד בקווי הסעה", null, false, null);
             return;
         }
 
@@ -2951,7 +2931,7 @@ $(document).ready(function () {
         var cellphone = $('#userPnTB').val().toString();
         //check cellphone, 10 digits only
         if (!cellphone.match(/^\d{10}$/)) {
-            popupDialog('שגיאה', 'מספר הטלפון שהוכנס שגוי.', null, false, null);
+            popupDialog('הודעה', 'מספר הטלפון שהוכנס שגוי.', null, false, null);
             return;
         }
         //var temp = cellphone.substring(0, 3) + "-" + cellphone.substring(3, 10);
@@ -2998,7 +2978,7 @@ $(document).ready(function () {
 
     $('#checkNeedForReport').on('click', function () {
         if (!hasCloseRide()) {
-            popupDialog('שגיאה', 'אין לך נסיעות קרובות הדורשות דיווח.', null, false, null);
+            popupDialog('הודעה', 'אין לך נסיעות קרובות הדורשות דיווח.', null, false, null);
         }
         else {
             loginToCloseRide();
@@ -3128,11 +3108,11 @@ function otherDialogFunction(reaction_) {
                             popupDialog('הודעה', 'השרת שונה בהצלחה.', null, false, null);
                         }
                         else {
-                            popupDialog('שגיאה', 'הסיסמא שהזנת שגויה.', null, false, null);
+                            popupDialog('הודעה', 'הסיסמא שהזנת שגויה.', null, false, null);
                         }
                     }
                     else {
-                        popupDialog('שגיאה', 'אחד מפרטי הגישה חסרים.', null, false, null);
+                        popupDialog('הודעה', 'אחד מפרטי הגישה חסרים.', null, false, null);
                     }
                 }
                 break;

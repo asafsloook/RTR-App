@@ -55,15 +55,22 @@
 //spy stuck
 //change anonymous to ride field
 //user isActive
-
-//done
 //problems not cleared when switching between multipule close rides
 //fixed width ride info
 //signMe inside ride info
 //signMe as gibui button
 //green&red to #eee
 //version
-debugger;
+
+
+//icons
+//popup size
+
+//filter signMe
+
+//errors popup
+//test push, fields...
+
 
 domain = '';
 
@@ -741,7 +748,7 @@ function printInfo(ride) {
     if (!ride.Pat.IsAnonymous) {
         str += '<a href="tel:' + ride.Pat.CellPhone + '"><i class="fa fa-phone-square" style="font-size: 30px;"></i></a><br><br>';
     }
-    
+
     //call
     //window.open("tel:" + this.id);
 
@@ -774,7 +781,7 @@ function rideStr(str, results, i) {
 
     str += results[i].StartPoint + ' <i class="fa fa-arrow-left"></i> ' //&#11164; &#129144;
         + '' + results[i].EndPoint + '<br/>';
-    
+
     str += (results[i].Pat.IsAnonymous ? 'חולה' : results[i].Person);
 
     if (results[i].Melave.length > 0) {
@@ -1038,10 +1045,10 @@ function info(inputID) {
     for (var i = 0; i < rides.length; i++) {
         if (rides[i].Id == idChoose) {
             var str = getRideStr(rides[i]);
-            $('#okBTNfromInfo,#okBTN').html(rides[i].Status == 'שובץ נהג' ? 'שבץ אותי לגיבוי':'שבץ אותי');
+            $('#okBTNfromInfo,#okBTN').html(rides[i].Status == 'שובץ נהג' ? 'שבץ אותי לגיבוי' : 'שבץ אותי');
         }
     }
-    
+
     $("#phPop").html(str);
 
 }
@@ -2298,7 +2305,7 @@ function onDeviceReady() {
 
         const push = PushNotification.init({
             android: {
-                senderID: "148075927844",
+                //senderID: "148075927844",
                 forceShow: true // this identifies your application
                 // it must be identical to what appears in the
                 // config.xml
@@ -2316,7 +2323,6 @@ function onDeviceReady() {
 
 
         push.on('registration', function (data) {
-            
             // send the registration id to the server and save it in the DB
             // send also the userID
             localStorage.RegId = data.registrationId;
@@ -2326,28 +2332,28 @@ function onDeviceReady() {
         });
 
 
-        //create channel for Android O (8.1) and above
-        //if (typeof PushNotification.createChannel !== 'undefined'){
+        //TESTING - create channel for Android O (8.1) and above
+        //if (typeof PushNotification.createChannel !== 'undefined') {
         //    PushNotification.createChannel(
         //        () => {
-        //            alert('success createChannel');
+        //            //alert('success createChannel');
         //        },
         //        () => {
-        //            alert('error createChannel');
+        //            //alert('error createChannel');
         //        },
         //        {
         //            id: 'testchannel1',
         //            description: 'My first test channel',
         //            importance: 3,
-        //            vibration: true
+        //            vibration: true,
+        //            visibility: 1
         //        }
         //    );
         //}
         //-------------------------------------------------------------
         // triggred by a notification sent from the notification server
         //-------------------------------------------------------------
-        push.on('notification', function (data) {
-
+        push.on('notification', data => {
             if (data.additionalData.foreground == true) {
                 handleForeground(data);
             }
@@ -2382,6 +2388,7 @@ function onDeviceReady() {
 function handleForeground(data) {
     //OK
     alertPushMsg(data);
+    localStorage.removeItem('lastPush');
 }
 
 //-------------------------------------------------
@@ -2390,6 +2397,7 @@ function handleForeground(data) {
 function handleBackground(data) {
     //OK
     alertPushMsg(data);
+    localStorage.removeItem('lastPush');
 }
 
 //-------------------------------------------------
@@ -2643,13 +2651,13 @@ function setStatusECB() {
 
 $(document).ready(function () {
 
-    $(document).on('click','.signButtonCheck.ui-btn', function () {
+    $(document).on('click', '.signButtonCheck.ui-btn', function () {
         if (!userInfo.IsActive) {
             //if user isnt Active abort signing
             popupDialog('הודעה', 'למשתמש זה אין אפשרות להשתבץ.', null, false, null);
         }
         else {
-            $.mobile.pageContainer.pagecontainer("change", "#signMePage"); 
+            $.mobile.pageContainer.pagecontainer("change", "#signMePage");
         }
     });
 

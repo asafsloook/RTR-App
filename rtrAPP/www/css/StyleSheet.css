@@ -11,9 +11,13 @@
 
 
 /*popup*/
-#popupDialog {
+.ui-popup-container {
     text-align: center;
     margin: 0 auto;
+    width: 80vw !important;
+    max-width: 80vw !important;
+    left: 10vw !important;
+    top: 20vh !important;
 }
 
 .dialogBTNS {
