@@ -61,12 +61,10 @@
 //signMe as gibui button
 //green&red to #eee
 //version
-
 //icons
 //popup size
 //test push, fields...
 //errors popup
-
 // filter signMe
 
 
