@@ -94,6 +94,7 @@ function defaultServerDomain() {
 
     if (localStorage.domain){
         domain = localStorage.domain;
+        
     }
     else {
         if (!window.location.href.includes('http')) {
@@ -826,8 +827,8 @@ function RideEquipment(str, results, i) {
     if (window.location.href.toString().indexOf('signMe') != -1) {
         str += '<p style="width:20%;float:right;text-align:center;';
 
-        if (EquipmentLength == 3) {
-            margin = 4;
+        if (EquipmentLength >= 3) {
+            margin = 1;
         }
         else if (EquipmentLength == 2) {
             margin = 8;
@@ -2661,8 +2662,13 @@ function setStatusECB() {
 
 $(document).ready(function () {
 
+    if (domain.indexOf('test') != -1) {
+        $('.loginToTestEnv').show();
+    }
+    else $('.loginToTestEnv').hide();
+
     $('.app-version').html('מהדורה ' + Settings.version);
-    $('#releaseNotes').append('<a href="' + Settings.releaseNotes + '">לרשימת עדכונים בגרסה זו</a>');
+    $('#releaseNotes').append('<a target="_blank" href="' + Settings.releaseNotes + '">לרשימת עדכונים בגרסה זו</a>');
 
     $(document).on('click', '.signButtonCheck.ui-btn', function () {
         if (!userInfo.IsActive) {

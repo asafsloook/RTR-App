@@ -1,6 +1,6 @@
 .paypalForm {
     background: #fff;
-}
+} 
 
 .spyIcon {
     max-height: 40px;
@@ -378,8 +378,8 @@ label, p {
 }
 
 #myRides .ridesIcons {
-    width: 50%;
-    padding: 2% 20%;
+    height: 25px;
+    /* padding: 2% 20%; */
 }
 
 
@@ -760,7 +760,7 @@ hr.weekSeperator {
 }
 
 #myRidesPH li {
-    height: 80px;
+    min-height: 80px;
     padding: 4%;
     background-color: #fff;
 }
@@ -817,7 +817,7 @@ hr.weekSeperator {
 }
 
 .statusFooter {
-    height: 75px;
+    height: 100px;
     background-color: yellow !important;
     position: fixed;
     left: 0;
@@ -826,6 +826,7 @@ hr.weekSeperator {
     color: #333 !important;
     text-align: center;
     letter-spacing: 2px;
+    line-height:100px;
 }
 
 .statusButton, .problemButton {
@@ -933,4 +934,8 @@ hr.weekSeperator {
     height: 10px;
     width: 10px;
     border-bottom-right-radius: 100%;
+}
+
+.aboutPage.ui-content a {
+    margin-top: 40px;
 }
