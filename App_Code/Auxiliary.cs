@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Web;
-using System.Configuration;
 
 /// <summary>
 /// Summary description for Auxiliary
@@ -39,7 +39,7 @@ public class Auxiliary
         string query1 = "select MainDriver from RPView where RideNum = " + rideId;
         DataSet ds1 = db.GetDataSetByQuery(query1);
         DataRow dr1 = ds1.Tables[0].Rows[0];
-
+       // coor = (string)dr1[1];
         return (int)dr1[0];
     }
     public string[] GetDriverAndCoordinatorByRidePat(int ridePatId)
@@ -49,16 +49,26 @@ public class Auxiliary
         DataSet ds1 = db.GetDataSetByQuery(query1);
         DataRow dr1 = ds1.Tables[0].Rows[0];
 
-     
-        string query2 = "select DisplayName from Volunteer where Id = " + dr1[1];
-        DataSet ds2 = db.GetDataSetByQuery(query2);
-        DataRow dr2 = ds2.Tables[0].Rows[0];
+        if (dr1[1].ToString() == "")
+        {
+            string query2 = "select UserName from Volunteer where DisplayName = N'" + dr1[0] + "'";
+            DataSet ds2 = db.GetDataSetByQuery(query2);
+            DataRow dr2 = ds2.Tables[0].Rows[0];
+        }
+        else
+        {
+            string query2 = "select DisplayName from Volunteer where Id = " + dr1[1];
+            DataSet ds2 = db.GetDataSetByQuery(query2);
+            DataRow dr2 = ds2.Tables[0].Rows[0];
+        }
 
-        string query3 = "select UserName from Volunteer where DisplayName = '" + dr1[0]+ "'";
+
+
+        string query3 = "select UserName from Volunteer where DisplayName = N'" + dr1[0]+ "'";
         DataSet ds3 = db.GetDataSetByQuery(query3);
         DataRow dr3 = ds3.Tables[0].Rows[0];
 
-        string[] names = { dr3[0].ToString(), dr2[0].ToString() };
+        string[] names = { dr3[0].ToString(), dr1[0].ToString() };
 
         return names;
     }
@@ -74,7 +84,7 @@ public class Auxiliary
         DataSet ds2 = db.GetDataSetByQuery(query2);
         DataRow dr2 = ds2.Tables[0].Rows[0];
 
-        string query3 = "select UserName from Volunteer where DisplayName = '" + dr1[0] + "'";
+        string query3 = "select UserName from Volunteer where DisplayName = N'" + dr1[0] + "'";
         DataSet ds3 = db.GetDataSetByQuery(query3);
         DataRow dr3 = ds3.Tables[0].Rows[0];
 
@@ -82,10 +92,8 @@ public class Auxiliary
 
         return names;
     }
-
     public List<string> getR2RServers()
     {
         return ConfigurationManager.AppSettings["AvailableServers"].Split(',').ToList();
     }
-
 }

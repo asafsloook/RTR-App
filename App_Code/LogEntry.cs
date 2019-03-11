@@ -52,6 +52,23 @@ public class LogEntry
         //write to log table inside the ctor. only need to init an LogEntry object.
         this.Write();
     }
+    //public LogEntry(DateTime date, string severity, string message, int code,int ridePatId, bool isRideId,string Coordinator)
+    //{
+    //    Date = date;
+    //    Severity = severity;
+    //    Message = message;
+    //    Code = code;
+        
+    //    if (isRideId)
+    //    {
+    //        RideId = ridePatId;
+    //    }
+    //    else RidePatId = ridePatId;
+
+    //    this.Coordinator = Coordinator;
+    //    //write to log table inside the ctor. only need to init an LogEntry object.
+    //    this.Write();
+    //}
     
     public void setCoordinator()
     {
@@ -79,9 +96,11 @@ public class LogEntry
             SqlCommand cmd = new SqlCommand();
             cmd.CommandType = CommandType.Text;
             SqlParameter[] cmdParams = new SqlParameter[5];
+            if (Coordinator==null)
+            {
+                Coordinator = (string)HttpContext.Current.Session["userSession"];
+            }
 
-            Coordinator = (string)HttpContext.Current.Session["userSession"];
-            
             if (Coordinator == null)
             {
                 Coordinator = "כללי";

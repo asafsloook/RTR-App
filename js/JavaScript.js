@@ -66,20 +66,38 @@
 //test push, fields...
 //errors popup
 // filter signMe
+//בירור סטטוס הרשמה
+//name required
+//phone valid
+//content 10 chars
+//תרשום אותי
+//name required
+//phone valid
+//continue after first login z-index
+
+//times
+
+//release notes
+//P@ss
+//color for header in testing mode
+//rides list in statuses radio buttons instead select
+//phone open pat list
 
 
+
+Settings = {};
+Settings.version = '1.6.2';
+Settings.releaseNotes = 'https://docs.google.com/spreadsheets/d/1jzv_lLnXRvRS_dNuhyWTuGT7cebsXX-kjflsbZim3O8';
 domain = '';
 
 function defaultServerDomain() {
     if (!window.location.href.includes('http')) {
-        //domain = 'https://proj.ruppin.ac.il/igroup91/test2/tar2';
-        domain = 'https://proj.ruppin.ac.il/igroup91/test2/tar3/road%20to%20recovery/pages/';
+        domain = 'http://40.117.122.242/prod/Road%20to%20Recovery/pages/';
     }
     else {
         domain = '..';
     }
 }
-
 defaultServerDomain();
 
 function getServersSCB(data) {
@@ -744,9 +762,6 @@ function printInfo(ride) {
     if (!ride.Pat.IsAnonymous) {
         str += '<a href="tel:' + ride.Pat.CellPhone + '"><i class="fa fa-phone-square" style="font-size: 30px;"></i></a><br><br>';
     }
-
-    //call
-    //window.open("tel:" + this.id);
 
     $('#infoPagePH').html(str);
 }
@@ -1565,7 +1580,7 @@ function loginToCloseRide() {
 
 function chooseCloseRide() {
 
-    var alertRide = '<p>המערכת זיהתה שיש לך נסיעות קרובות. <br/> האם תרצה לדווח סטטוס?</p><select id="closeRidesSelectMenu">';
+    var alertRide = '<p>המערכת זיהתה שיש לך נסיעות קרובות. <br/> האם תרצה לדווח סטטוס?</p><form id="closeRidesSelectMenu">';
 
     closeRides.sort(function (a, b) {
         return a.DateTime.toString().localeCompare(b.DateTime.toString());
@@ -1582,9 +1597,9 @@ function chooseCloseRide() {
         if (isTentative) {
             selectOptionContent = isSameDay + ', מ' + closeRides[i].StartPoint + ' ל' + closeRides[i].EndPoint + ', ' + 'אחה"צ';
         }
-        alertRide += '<option>' + selectOptionContent + '</option>';
+        alertRide += '<input type="radio" name="ride" ' + (i == 0 ? 'checked' : '') + ' value="' + selectOptionContent + '">' + selectOptionContent + '<br>';
     }
-    alertRide += '</select>';
+    alertRide += '</form>';
 
     popupDialog('הודעה', alertRide, null, true, 'multipuleCloseRides');
 }
@@ -2264,6 +2279,10 @@ function showAreas() {
 
 
 function onDeviceReady() {
+    if (localStorage['app-version'] !== Settings.version) {
+        localStorage.clear();
+    }
+    localStorage['app-version'] = Settings.version;
 
     //Handle the backbutton
     document.addEventListener("backbutton", onBackKeyDown, false);
@@ -2628,6 +2647,9 @@ function setStatusECB() {
 
 $(document).ready(function () {
 
+    $('.app-version').html('מהדורה ' + Settings.version);
+    $('#releaseNotes').append('<a target="_blank" href="' + Settings.releaseNotes + '">לרשימת עדכונים בגרסה זו</a>');
+
     $(document).on('click', '.signButtonCheck.ui-btn', function () {
         if (!userInfo.IsActive) {
             //if user isnt Active abort signing
@@ -2907,11 +2929,11 @@ $(document).ready(function () {
     });
 
     $('#allVolunteersPH').on('click', 'a', function () {
-        window.open("tel:" + this.id);
+        window.open('tel:' + this.id);
     });
 
     $('#allPatientsPH').on('click', 'a', function () {
-        window.open("tel:" + this.id);
+        window.open('tel:' + this.id);
     });
 
     //$("#nextPageBTN").on('click', function () {
@@ -3014,6 +3036,7 @@ function mail(type_) {
     var messege_ = type_ == 'problem' ? $('#infoTB').val() : '';
     var phoneSelector = type_ == 'problem' ? '#problemPhoneTB' : '#requestPhoneTB';
     var nameSelector = type_ == 'problem' ? '#problemNameTB' : '#requestNameTB';
+
     var request = {
         type: type_,
         name: $(nameSelector).val(),
@@ -3021,16 +3044,64 @@ function mail(type_) {
         message: messege_
     }
 
-    sendMail(request, sendMailSCB, sendMailECB);
+    if (validateMailRequest(request)) {
+        sendMail(request, sendMailSCB, sendMailECB);
 
-    $(phoneSelector).val('');
-    $(nameSelector).val('');
-    $('#infoTB').val('');
+        $(phoneSelector).val('');
+        $(nameSelector).val('');
+        $('#infoTB').val('');
+    }
 }
 
 function sendMailSCB(data) {
     popupDialog('ההודעה נשלחה בהצלחה', '', '#loginFailed', false, null);
 }
+
+function validateMailRequest(request) {
+    switch (request.type) {
+        case 'problem':
+            return (validateName(request.name) &&
+                validatePhone(request.phoneNumber) &&
+                validateMessage(request.message));
+        case 'registration':
+            return (validateName(request.name) &&
+                validatePhone(request.phoneNumber));
+    }
+}
+
+function validateName(value) {
+    var regex = /^[a-zA-Zא-ת]{2,30}$/;
+
+    if (regex.test(value)) {
+        return true;
+    }
+    else {
+        popupDialog('פרט שגוי', 'השם שהוכנס אינו תקין.', null, false, null);
+        return false;
+    }
+}
+
+function validatePhone(value) {
+    var phoneno = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+    if (value.match(phoneno)) {
+        return true;
+    }
+    else {
+        popupDialog('פרט שגוי', 'מספר הטלפון אינו תקין.', null, false, null);
+        return false;
+    }
+}
+
+function validateMessage(value) {
+    if (value.length > 10) {
+        return true;
+    }
+    else {
+        popupDialog('פרטים חסרים', 'תוכן ההודעה קצר מידי.', null, false, null);
+        return false;
+    }
+}
+
 
 function sendMailECB(e) {
     if (typeof e.responseJSON !== 'undefined' && typeof e.responseJSON.Message !== 'undefined') {
@@ -3075,7 +3146,8 @@ function otherDialogFunction(reaction_) {
                 if (reaction_ == 'Cancel') {
                     break;
                 }
-                var selectedIndex = $('#closeRidesSelectMenu').prop('selectedIndex');
+                var radioButtons = $("#closeRidesSelectMenu input");
+                var selectedIndex = radioButtons.index(radioButtons.filter(':checked'));
                 closeRide = closeRides[selectedIndex];
                 $.mobile.pageContainer.pagecontainer("change", "#status");
                 break;
@@ -3099,11 +3171,16 @@ function otherDialogFunction(reaction_) {
                 if (reaction_ == 'Confirm') {
                     var password = $('#changeServerPassword').val();
                     var newUrl = $('#serverUrlInput').val();
+                    $('.loginToTestEnv').hide();
 
                     if (newUrl != null && newUrl != "" && password != null && password != "") {
-                        if (password == "p@ss") {
+                        if (password == "P@ss" || password == "Peace") {
                             domain = newUrl;
                             popupDialog('הודעה', 'השרת שונה בהצלחה.', null, false, null);
+
+                            if (domain.indexOf('test') != -1) {
+                                $('.loginToTestEnv').show();
+                            }
                         }
                         else {
                             popupDialog('הודעה', 'הסיסמא שהזנת שגויה.', null, false, null);

@@ -172,14 +172,15 @@ public class WebService : System.Web.Services.WebService
         string message = "";
         try
         {
+           // string coor;
             int driverId = a.GetDriverId(rideId);
             if (driverId < 0)
             {
-                message = "  נסיעה מספר " + rideId + "שינתה סטטוס ל " + status;
+                message = " נסיעה מספר " + rideId + "שינתה סטטוס ל " + status;
             }
             else
             {
-                message = "  נסיעה מספר " + rideId + " עם הנהג " + a.getDriverName(driverId) + "שינתה סטטוס ל " + status;
+                message = "  נסיעה מספר " + rideId + " עם הנהג " + a.getDriverName(driverId) +  " שינתה סטטוס ל" + status;
             }
             LogEntry le = new LogEntry(DateTime.Now, "שינוי סטטוס", message, 2, rideId, true);
             return r.setStatus(rideId, status);
@@ -340,6 +341,10 @@ public class WebService : System.Web.Services.WebService
     {
         try
         {
+            if (displayName.IndexOf("'") != -1)
+            {
+                displayName = displayName.Replace("'", "''");
+            }
             Patient c = new Patient();
             c.DisplayName = displayName;
             c.SetPatientStatus(active);
@@ -422,6 +427,22 @@ public class WebService : System.Web.Services.WebService
         {
             Log.Error("Error in setEscorted", ex);
             throw new Exception("שגיאה בפתיחת מלווה חדש");
+        }
+
+    }
+    [WebMethod]
+    public void setNewVersion(string userName, string google, string appstore, DateTime date, string version,bool mandatory)
+    {
+        try
+        {
+            Version v = new Version();
+            //add mandatory
+            v.setNewVersion(userName, google, appstore, date, version,mandatory);
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Error in setNewVersion", ex);
+            throw new Exception("שגיאה בעדכון גרסה חדשה");
         }
 
     }
@@ -519,7 +540,7 @@ public class WebService : System.Web.Services.WebService
     {
         try
         {
-            string test = (string)HttpContext.Current.Session["userSession"];
+            //string test = (string)HttpContext.Current.Session["userSession"];
 
             RidePat rp = new RidePat();
             List<RidePat> r = rp.GetRidePatView(volunteerId);
@@ -572,6 +593,27 @@ public class WebService : System.Web.Services.WebService
         {
             Log.Error("Error in getMyRides", ex);
             throw new Exception("שגיאה בשליפת נתוני הסעות");
+        }
+
+    }
+
+    //used for getting all versions of the app both in the appstore and in google play
+    //the results order by DESC so if we want the latest version we get the first Version in the list.
+    [WebMethod]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public string getVersions()
+    {
+        try
+        {
+            Version v = new Version();
+            List<Version> vl = v.getVersions();
+            JavaScriptSerializer j = new JavaScriptSerializer();
+            return j.Serialize(vl);
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Error in getVersions", ex);
+            throw new Exception("שגיאה בשליפת נתוני גרסאות אפליקציה");
         }
 
     }
@@ -632,7 +674,11 @@ public class WebService : System.Web.Services.WebService
         catch (Exception ex)
         {
             Log.Error("Error in SignDriver", ex);
-            throw new Exception("שגיאה ברישום נהג להסעה");
+            if (ex.Message == "הנסיעה הזו בוטלה, תודה על הרצון לעזור.")
+            {
+                throw new Exception(ex.Message);
+            }
+            else throw new Exception("שגיאה ברישום נהג להסעה");
         }
 
     }
@@ -678,7 +724,11 @@ public class WebService : System.Web.Services.WebService
         catch (Exception ex)
         {
             Log.Error("Error in AssignRideToRidePat", ex);
-            throw new Exception("שגיאה בצירוף הסעה לנסיעה");
+            if (ex.Message == "נסיעה זו בוטלה, תודה על הרצון לעזור")
+            {
+                throw new Exception(ex.Message);
+            }
+            else throw new Exception("שגיאה בצירוף הסעה לנסיעה");
         }
 
     }
@@ -776,6 +826,10 @@ public class WebService : System.Web.Services.WebService
     {
         try
         {
+            if (displayName.IndexOf("'") != -1)
+            {
+                displayName = displayName.Replace("'", "''");
+            }
             Volunteer v = new Volunteer();
             v.DisplayName = displayName;
             v.deactivateCustomer(active);
@@ -819,6 +873,11 @@ public class WebService : System.Web.Services.WebService
     {
         try
         {
+            if (displayName.IndexOf("'") != -1)
+            {
+                displayName = displayName.Replace("'", "''");
+            }
+
             Location l = new Location();
             l.Name = displayName;
 
@@ -1009,7 +1068,7 @@ public class WebService : System.Web.Services.WebService
             User u = new User(uName, password);
             userInDB = u.CheckLoginDetails();
         }
-        catch (Exception)
+        catch (Exception ex)
         {
 
             throw;
@@ -1097,16 +1156,15 @@ public class WebService : System.Web.Services.WebService
         return m.backupToPrimary(ridePatId);
     }
 
-
     [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     public string getR2RServers()
     {
-        
         try
         {
             Auxiliary a = new Auxiliary();
             JavaScriptSerializer j = new JavaScriptSerializer();
+            //a.getR2RServers()
             return j.Serialize(a.getR2RServers());
         }
         catch (Exception ex)
@@ -1115,5 +1173,4 @@ public class WebService : System.Web.Services.WebService
             throw new Exception("שגיאה בשליפת שרתים");
         }
     }
-
 }

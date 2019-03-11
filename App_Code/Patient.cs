@@ -66,7 +66,7 @@ public class Patient
         patient = patient.Replace("'", "''");
         Patient p = new Patient(patient);
         p.Equipment = new List<string>();
-        string query = "select EquipmentName from EquipmentForPatientView where PatientName='" + patient + "'";
+        string query = "select EquipmentName from EquipmentForPatientView where PatientName=N'" + patient + "'";
         DbService db = new DbService();
         DataSet ds = db.GetDataSetByQuery(query);
         foreach (DataRow dr in ds.Tables[0].Rows)
@@ -485,22 +485,22 @@ public class Patient
             p.Remarks = dr["Remarks"].ToString();
 
 
-            //set equipment
-            List<string> el = new List<string>();
-            db = new DbService();
-            SqlCommand cmd= new SqlCommand();
-            cmd.Parameters.AddWithValue("@displayName", p.DisplayName);
-            cmd.CommandType = CommandType.Text;
-            query = "select EquipmentName from EquipmentForPatientView where PatientName=@displayName";
-            DataSet ds2 = db.GetDataSetByQuery(query,cmd.CommandType,cmd.Parameters[0]);
-            foreach (DataRow row in ds2.Tables[0].Rows)
-            {
-                string e = row["EquipmentName"].ToString();
-                el.Add(e);
-            }
-            p.Equipment = el;
+            ////set equipment
+            //List<string> el = new List<string>();
+            ////db = new DbService();
+            //SqlCommand cmd= new SqlCommand();
+            //cmd.Parameters.AddWithValue("@displayName", p.DisplayName);
+            //cmd.CommandType = CommandType.Text;
+            //query = "select EquipmentName from EquipmentForPatientView where PatientName=@displayName";
+            //DataSet ds2 = db.GetDataSetByQuery(query,cmd.CommandType,cmd.Parameters[0]);
+            //foreach (DataRow row in ds2.Tables[0].Rows)
+            //{
+            //    string e = row["EquipmentName"].ToString();
+            //    el.Add(e);
+            //}
+            //p.Equipment = el;
 
-            list.Add(p);
+            //list.Add(p);
         }
         #endregion
 
@@ -511,7 +511,7 @@ public class Patient
     public List<Patient> getAnonymousPatientsList(bool active,string origin,string dest)
     {
         #region DB functions
-        string query = "select * from Patient where Barrier = '" + origin + "' and Hospital = '" +dest +"' OR Barrier = '"+dest+"' and Hospital = '"+origin+"'";
+        string query = "select * from Patient where Barrier = N'" + origin + "' and Hospital = N'" +dest +"' OR Barrier = N'"+dest+"' and Hospital = N'"+origin+"'";
         if (active)
         {
             query += " and IsActive = 'true'";
@@ -579,7 +579,7 @@ public class Patient
     {
         #region DB functions
         displayName = displayName.Replace("'", "''");
-        string query = "select * from Patient where displayName ='" + displayName + "'";
+        string query = "select * from Patient where displayName =N'" + displayName + "'";
         Patient p = new Patient();
         DbService db = new DbService();
         DataSet ds = db.GetDataSetByQuery(query);
@@ -597,9 +597,7 @@ public class Patient
             p.HomePhone = dr["HomePhone"].ToString();
             p.City = dr["CityCityName"].ToString();
             p.LivingArea = dr["LivingArea"].ToString();
-            //p.Status = dr["statusPatient"].ToString();
             p.IsActive = Convert.ToBoolean(dr["IsACtive"].ToString());
-            //p.Addition = dr["addition"].ToString();
             p.BirthDate = dr["BirthDate"].ToString();
             p.History = dr["History"].ToString();
             p.Department = dr["Department"].ToString();
@@ -608,8 +606,6 @@ public class Patient
             p.Gender = dr["Gender"].ToString();
             p.Remarks = dr["Remarks"].ToString();
             p.Equipment = p.getEquipmentForPatient(p.displayName);
-            //p.IsAnonymous = Convert.ToBoolean(dr["IsAnonymous"].ToString());
-            //p.NumberOfEscort = int.Parse(dr["NumberOfEscort"].ToString());
         }
         #endregion
 
@@ -633,7 +629,7 @@ public class Patient
     public void SetPatientStatus(string active)
     {
         DbService db = new DbService();
-        db.ExecuteQuery("UPDATE Patient SET IsActive='" + active + "' WHERE DisplayName='" + DisplayName + "'");
+        db.ExecuteQuery("UPDATE Patient SET IsActive='" + active + "' WHERE DisplayName=N'" + DisplayName + "'");
 
     }
 
@@ -664,8 +660,8 @@ public class Patient
         if (func == "edit")
         {
             query = "UPDATE Patient SET FirstNameH=@firstNameH,FirstNameA=@firstNameA,LastNameH=@lastNameH,";
-            query += "CellPhone =@cellPhone,CellPhone2=@cellPhone2,HomePhone=@homePhone,CityCityName=@city,IsActive=@IsActive,BirthDate=@birthDate,";
-            query += "History=@history,Department=@department,Barrier=@barrier,Hospital=@hospital,Gender=@gender,Remarks=@remarks Where Id=" + Id;
+            query += "CellPhone=@cellPhone,CellPhone2=@cellPhone2,CityCityName=@city,IsActive=@IsActive,BirthDate=@birthDate,";
+            query += "HomePhone=@homePhone,History=@history,Department=@department,Barrier=@barrier,Hospital=@hospital,Gender=@gender,Remarks=@remarks Where Id=" + Id;
             db = new DbService();
             res = db.ExecuteQuery(query, cmd.CommandType, cmdParams);
             if (res > 0)
@@ -692,10 +688,10 @@ public class Patient
         }
         else if (func == "new")
         {
-            query = "insert into Patient (FirstNameH,FirstNameA,LastNameH,LastNameA,CellPhone,CellPhone2,";
-            query += "HomePhone,CityCityName,IsActive,BirthDate,History,Department,Barrier,Hospital,Gender,Remarks)"; 
+            query = "insert into Patient (FirstNameH,FirstNameA,LastNameH,LastNameA,CellPhone,CellPhone2, HomePhone,";
+            query += "CityCityName,IsActive,BirthDate,History,Department,Barrier,Hospital,Gender,Remarks)"; 
             query += " values (@firstNameH,@firstNameA,@lastNameH,@lastNameA,";
-            query += "@cellPhone,@cellPhone2,@homePhone,@city,@IsActive,@birthDate,";
+            query += "@cellPhone,@cellPhone2,@homephone,@city,@IsActive,@birthDate,";
             query += "@history,@department,@barrier,@hospital,@gender,@remarks); select SCOPE_IDENTITY()";
             db = new DbService();
             Id = int.Parse(db.GetObjectScalarByQuery(query, cmd.CommandType, cmdParams).ToString());
@@ -725,9 +721,9 @@ public class Patient
     {
         #region DB functions
         displayName = displayName.Replace("'", "''");
-        string query = "select * from PatientEscortView where PatientName='" + displayName + "'";
+        string query = "select * from PatientEscortView where PatientName= N'" + displayName + "'";
         if (caller == "ridePatForm") query += " and IsActive = 'True'";
-        query += " order by EscortName";
+        //query += " order by EscortName";
 
         List<Escorted> list = new List<Escorted>();
         DbService db = new DbService();

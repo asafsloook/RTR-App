@@ -425,6 +425,7 @@ public class RidePat
         rp.RidePatNum = int.Parse(dr["RidePatNum"].ToString());
         rp.OnlyEscort = Convert.ToBoolean(dr["OnlyEscort"].ToString());
         rp.pat.DisplayName = dr["DisplayName"].ToString();
+        rp.pat.IsAnonymous = dr["IsAnonymous"].ToString();
         rp.Drivers = new List<Volunteer>();
         if (dr["MainDriver"].ToString() != "")
         {
@@ -528,7 +529,7 @@ public class RidePat
         //SqlParameter[] cmdparams= new SqlParameter[1];
         cmd.CommandType = CommandType.Text;
         //cmdparams[0] = cmd.Parameters.AddWithValue("id", id);
-        string query = "select * from status_Ride";
+        string query = "select * from status_Ride order by Timestamp asc";
         DataSet ds = db.GetDataSetByQuery(query);
         DataTable dt = ds.Tables[0];
         return dt;
@@ -563,7 +564,7 @@ public class RidePat
         else if (volunteerId == -2)
             query = "select * from RPView"; //get ALL ridePats
         else
-            query = "select * from RPView where (Status<>'הסתיימה' or Status<>'בוטלה') and PickupTime>= getdate()"; //Get ALL ACTIVE RidePats (used by mobile app)
+            query = "select * from RPView where (Status<>N'הסתיימה' or Status<>N'בוטלה') and PickupTime>= getdate()"; //Get ALL ACTIVE RidePats (used by mobile app)
 
         DbService db = new DbService();
         DataSet ds = db.GetDataSetByQuery(query);
@@ -639,7 +640,7 @@ public class RidePat
                 DataRow[] equipmentRow = equipmentTable.Select(equipmentSearchExpression);
                 foreach (DataRow row in equipmentRow)
                 {
-                    rp.pat.Equipment.Add(row.ToString());
+                    rp.pat.Equipment.Add(row.ItemArray[0].ToString());
                 }
                 rp.pat.EscortedList = new List<Escorted>();
                 string escortSearchExpression = "RidePatNum = " + rp.ridePatNum;
@@ -666,7 +667,7 @@ public class RidePat
                 {
                     string searchExpression = "RideRideNum = " + rp.RideNum;
                     DataRow[] rideRow = rideTable.Select(searchExpression);
-
+                    //rideRow = rideRow.OrderBy(x => x.TimeOfDay).ToList();
                     rp.Statuses = new List<string>();
                     foreach (DataRow status in rideRow)
                     {
@@ -674,7 +675,7 @@ public class RidePat
                     }
                     try
                     {
-                        //rp.Status = rp.Statuses[0];
+                        rp.Status = rp.Statuses[rp.Statuses.Count-1];
                     }
                     catch (Exception err)
                     {
@@ -766,7 +767,7 @@ public class RidePat
         if (ds.Tables[0].Rows.Count == 0)
         {
             //There is no RidePat with that ID
-            throw new Exception("הנסיעה אליה נרשמתם בוטלה");
+            throw new Exception("נסיעה זו בוטלה, תודה על הרצון לעזור");
         }
         DataRow dr = ds.Tables[0].Rows[0];
 
@@ -926,6 +927,10 @@ public class RidePat
         DbService db = new DbService();
         string query = "select Origin, Destination, PickupTime from RidePat where ridePatNum=" + ridePatId;
         DataSet ds = db.GetDataSetByQuery(query);
+        if (ds.Tables[0].Rows.Count == 0)
+        {
+            throw new Exception("הנסיעה הזו בוטלה, תודה על הרצון לעזור.");
+        }
         int res = -1;
         foreach (DataRow row in ds.Tables[0].Rows)//Origin and Destination are the same for RidePat and Ride.
         {
@@ -945,7 +950,7 @@ public class RidePat
         {
             Origin.Name = Origin.Name.Replace("'", "''");
             Destination.Name = Destination.Name.Replace("'", "''");
-            query = "set dateformat dmy; insert into Ride (Origin, Destination, Date, MainDriver) values ('" + Origin.Name + "','" + Destination.Name + "','" + Date + "', " + driverId + ") SELECT SCOPE_IDENTITY()";
+            query = "set dateformat dmy; insert into Ride (Origin, Destination, Date, MainDriver) values (N'" + Origin.Name + "',N'" + Destination.Name + "',N'" + Date + "', " + driverId + ") SELECT SCOPE_IDENTITY()";
             RideId = int.Parse(db2.GetObjectScalarByQuery(query).ToString()); //Insert and get the new RideId
 
 

@@ -215,6 +215,7 @@ h1, h2 {
     bottom: 1%;
     margin: 0;
     left: 2%;
+    z-index:99;
 }
 
 #ends, #starts {
@@ -901,7 +902,7 @@ hr.weekSeperator {
 
 .aboutPage a {
     text-decoration: none;
-    margin-top: 10%;
+    margin-top: 1%;
     display: block;
 }
 
@@ -922,4 +923,14 @@ hr.weekSeperator {
 .signMeBtns {
     margin: 5% auto;
     width: 80%;
+}
+
+.loginToTestEnv {
+    color: red;
+    background: red;
+    position: absolute;
+    z-index: 9999;
+    height: 10px;
+    width: 10px;
+    border-bottom-right-radius: 100%;
 }

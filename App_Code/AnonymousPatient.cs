@@ -467,7 +467,7 @@ public class AnonymousPatient
         anonymousPatient = anonymousPatient.Replace("'", "''");
         AnonymousPatient p = new AnonymousPatient(anonymousPatient);
         p.Equipment = new List<string>();
-        string query = "select EquipmentName from EquipmentForPatientView where PatientName='" + anonymousPatient + "'";
+        string query = "select EquipmentName from EquipmentForPatientView where PatientName=N'" + anonymousPatient + "'";
         DbService db = new DbService();
         DataSet ds = db.GetDataSetByQuery(query);
         foreach (DataRow dr in ds.Tables[0].Rows)
@@ -481,7 +481,7 @@ public class AnonymousPatient
     {
         #region DB functions
         displayName = displayName.Replace("'", "''");
-        string query = "select * from Patient where displayName ='" + displayName + "'";
+        string query = "select * from Patient where displayName =N'" + displayName + "'";
         AnonymousPatient p = new AnonymousPatient();
         DbService db = new DbService();
         DataSet ds = db.GetDataSetByQuery(query);
@@ -496,21 +496,25 @@ public class AnonymousPatient
             p.LastNameA = dr["LastNameA"].ToString();
             p.CellPhone = dr["CellPhone"].ToString();
             p.CellPhone1 = dr["CellPhone2"].ToString();
-            p.HomePhone = dr["HomePhone"].ToString();
+            //p.HomePhone = dr["HomePhone"].ToString();
             p.City = dr["CityCityName"].ToString();
             p.LivingArea = dr["LivingArea"].ToString();
             //p.Status = dr["statusPatient"].ToString();
             p.IsActive = Convert.ToBoolean(dr["IsACtive"].ToString());
             //p.Addition = dr["addition"].ToString();
-            p.BirthDate = dr["BirthDate"].ToString();
-            p.History = dr["History"].ToString();
-            p.Department = dr["Department"].ToString();
+            //p.BirthDate = dr["BirthDate"].ToString();
+           // p.History = dr["History"].ToString();
+            //p.Department = dr["Department"].ToString();
             p.Barrier = new Location(dr["Barrier"].ToString());
             p.Hospital = new Location(dr["Hospital"].ToString());
             p.Gender = dr["Gender"].ToString();
-            p.Remarks = dr["Remarks"].ToString();     
+            //p.Remarks = dr["Remarks"].ToString();     
             p.Equipment = p.getEquipmentForPatient(p.displayName);
-            p.NumberOfEscort = int.Parse(dr["NumberOfEscort"].ToString());
+            if (dr["NumberOfEscort"].ToString() == "")
+            {
+                p.NumberOfEscort = 0;
+            }
+            else p.NumberOfEscort = int.Parse(dr["NumberOfEscort"].ToString());
         }
         #endregion
 
