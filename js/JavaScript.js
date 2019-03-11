@@ -1,5 +1,5 @@
 //add to kavim+times explain text
-//disable/hide tabs in first login
+//disable/hide tabs in first login 
 //check all when choosing area first login
 //add haifa to south
 //alef-hey checked
@@ -86,17 +86,23 @@
 
 
 Settings = {};
-Settings.version = '1.6.2';
+Settings.version = '1.6.3';
 Settings.releaseNotes = 'https://docs.google.com/spreadsheets/d/1jzv_lLnXRvRS_dNuhyWTuGT7cebsXX-kjflsbZim3O8';
 domain = '';
 
 function defaultServerDomain() {
-    if (!window.location.href.includes('http')) {
-        domain = 'http://40.117.122.242/prod/Road%20to%20Recovery/pages/';
+
+    if (localStorage.domain){
+        domain = localStorage.domain;
     }
     else {
-        domain = '..';
-    }
+        if (!window.location.href.includes('http')) {
+            domain = 'http://40.117.122.242/prod/Road%20to%20Recovery/pages/';
+        }
+        else {
+            domain = '..';
+        }
+    }    
 }
 defaultServerDomain();
 
@@ -833,7 +839,7 @@ function RideEquipment(str, results, i) {
     else if (window.location.href.toString().indexOf('myRides') != -1) {
         str += '<p style="width:20%;float:right;text-align:center;';
 
-        if (EquipmentLength == 3) {
+        if (EquipmentLength >= 3) {
             margin = 0;
         }
         else if (EquipmentLength == 2) {
@@ -849,14 +855,22 @@ function RideEquipment(str, results, i) {
         return str;
     }
 
+    var iconPrefix = 'style="height:25px"';
+    if (EquipmentLength == 4){
+       iconPrefix = 'style="height:18px"';
+    }
+
     if (results[i].Pat.Equipment.includes("כסא גלגלים")) {
-        str += '<img class="ridesIcons" src="img/wheelchair.png" /><br>';
+        str += '<img '+iconPrefix+' class="ridesIcons" src="img/wheelchair.png" /><br>';
     }
     if (results[i].Pat.Equipment.includes("כסא תינוק")) {
-        str += '<img class="ridesIcons" src="img/babyseat.png" /><br>';
+        str += '<img '+iconPrefix+' class="ridesIcons" src="img/babyseat.png" /><br>';
     }
     if (results[i].Pat.Equipment.includes("בוסטר")) {
-        str += '<img class="ridesIcons" src="img/booster.png" /><br>';
+        str += '<img '+iconPrefix+' class="ridesIcons" src="img/booster.png" /><br>';
+    }
+    if (results[i].Pat.Equipment.includes("קביים")) {
+        str += '<img ' + iconPrefix +' class="ridesIcons" src="img/Crutches.png" /><br>';
     }
 
 
@@ -2648,7 +2662,7 @@ function setStatusECB() {
 $(document).ready(function () {
 
     $('.app-version').html('מהדורה ' + Settings.version);
-    $('#releaseNotes').append('<a target="_blank" href="' + Settings.releaseNotes + '">לרשימת עדכונים בגרסה זו</a>');
+    $('#releaseNotes').append('<a href="' + Settings.releaseNotes + '">לרשימת עדכונים בגרסה זו</a>');
 
     $(document).on('click', '.signButtonCheck.ui-btn', function () {
         if (!userInfo.IsActive) {
@@ -3176,6 +3190,7 @@ function otherDialogFunction(reaction_) {
                     if (newUrl != null && newUrl != "" && password != null && password != "") {
                         if (password == "P@ss" || password == "Peace") {
                             domain = newUrl;
+                            localStorage.domain = domain;
                             popupDialog('הודעה', 'השרת שונה בהצלחה.', null, false, null);
 
                             if (domain.indexOf('test') != -1) {
