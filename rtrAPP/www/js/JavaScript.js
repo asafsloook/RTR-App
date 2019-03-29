@@ -86,9 +86,11 @@
 
 
 Settings = {};
-Settings.version = '1.6.3';
+Settings.version = '1.6.4';
 Settings.releaseNotes = 'https://docs.google.com/spreadsheets/d/1jzv_lLnXRvRS_dNuhyWTuGT7cebsXX-kjflsbZim3O8';
 domain = '';
+currentPatientName = '';
+currentPatientPhone = '';
 
 function defaultServerDomain() {
 
@@ -827,8 +829,8 @@ function RideEquipment(str, results, i) {
     if (window.location.href.toString().indexOf('signMe') != -1) {
         str += '<p style="width:20%;float:right;text-align:center;';
 
-        if (EquipmentLength == 3) {
-            margin = 4;
+        if (EquipmentLength >= 3) {
+            margin = 1;
         }
         else if (EquipmentLength == 2) {
             margin = 8;
@@ -1612,7 +1614,7 @@ function chooseCloseRide() {
         if (isTentative) {
             selectOptionContent = isSameDay + ', מ' + closeRides[i].StartPoint + ' ל' + closeRides[i].EndPoint + ', ' + 'אחה"צ';
         }
-        alertRide += '<input type="radio" name="ride" ' + (i == 0 ? 'checked' : '') + ' value="' + selectOptionContent + '">' + selectOptionContent + '<br>';
+        alertRide += '<input type="radio" name="ride" ' + (i == 0 ? 'checked' : '') + ' value="' + selectOptionContent + '">' + selectOptionContent + '<br><br>';
     }
     alertRide += '</form>';
 
@@ -1684,7 +1686,7 @@ $(document).on('pageshow', '#allPatients', function () {
 
     for (var i = 0; i < Patients.length; i++) {
 
-        $("#allPatientsPH").append('<li><a class="ui-btn ui-btn-icon-left ui-icon-phone" href="#" id="' + Patients[i].CellPhone.toString() + '" >' + Patients[i].DisplayName + '</a></li>');
+        $("#allPatientsPH").append('<li><a class="ui-btn ui-btn-icon-left ui-icon-phone" id="' + Patients[i].CellPhone.toString() + '" name="' + Patients[i].DisplayName+'" >' + Patients[i].DisplayName + '</a></li>');
     }
 
     $("#allPatientsPH").listview('refresh');
@@ -1705,7 +1707,37 @@ function checkPlanRides(myRides) {
     return false;
 }
 
+function getEscorts(patientCellphone, patientName) {
+    request = {
+        displayName: patientName,
+        patientCell: patientCellphone
+    }
+    getPatientEscorts(request, getPatientEscortsSCB, getPatientEscortsECB);
+}
+function getPatientEscortsSCB(data) {
+    var escorts = $.parseJSON(data.d);
+    var alertRide = '';
+    if (escorts.length != 0) {
+        alertRide = '<ul style="list-style-type: none;padding: unset;" data-icon="false" data-inset="true" data-role="listview" data-filter="true" id="patientAndEscortsPhones">';
+        alertRide += '<li><a class="ui-btn ui-btn-icon-left ui-icon-phone" id="' + currentPatientPhone + '" name="' + currentPatientName + '" >החולה: ' + currentPatientName + '</a></li>';
+        for (var i = 0; i < escorts.length; i++) {
+            alertRide += '<li><a class="ui-btn ui-btn-icon-left ui-icon-phone" id="' + escorts[i].CellPhone.toString() + '" name="' + escorts[i].DisplayName + '" >' + escorts[i].ContactType + ": " + escorts[i].DisplayName + '</a></li>';
+        }
+        alertRide += '</ul>';
+    }
 
+    else {
+        alertRide = '<ul style="list-style-type: none;padding: unset;"  data-inset="true" data-role="listview" data-filter="true" id="patientAndEscortsPhones">';
+        alertRide += '<li><a class="ui-btn ui-btn-icon-left ui-icon-phone" id="' + currentPatientPhone + '" name="' + currentPatientName + '" >החולה: '  +currentPatientName + '</a></li>';
+        alertRide += '</ul>';
+    }
+
+    popupDialog('אנשי קשר', alertRide, null, false, null);
+}
+function getPatientEscortsECB(error) {
+   // alert("not so great");
+    //pop up dialog here
+}
 $(document).on('pagebeforeshow', '#loginLogo', function () {
 
     //for testing first time process
@@ -2466,7 +2498,7 @@ function alertPushMsg(data) {
         isPrimaryStillCanceled();
     }
     else {
-        popupDialog(data.title, data.message, null, true, 'sendPushReaction');
+        popupDialog(data.title, data.message, null, false, 'sendPushReaction');
     }
 }
 
@@ -2533,6 +2565,7 @@ $(document).on('pagebeforeshow', '#status', function () {
 
     if ($('.statusContent').html() != "") $('.statusContent').empty();
 
+    //need to put headline right here
     var str = "";
 
     userInfo.Statusim.sort(function (a, b) {
@@ -2953,8 +2986,16 @@ $(document).ready(function () {
     });
 
     $('#allPatientsPH').on('click', 'a', function () {
+        //window.open('tel:' + this.id);
+        currentPatientName = this.name;
+        currentPatientPhone = this.id;
+        getEscorts(this.id, this.name);
+
+    });
+    $(document).on("click", "#patientAndEscortsPhones a", function () {
         window.open('tel:' + this.id);
     });
+
 
     //$("#nextPageBTN").on('click', function () {
 
@@ -3090,7 +3131,7 @@ function validateMailRequest(request) {
 }
 
 function validateName(value) {
-    var regex = /^[a-zA-Zא-ת]{2,30}$/;
+    var regex = /^[a-zA-Zא-ת ]{2,30}$/;
 
     if (regex.test(value)) {
         return true;

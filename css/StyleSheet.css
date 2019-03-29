@@ -939,3 +939,11 @@ hr.weekSeperator {
 .aboutPage.ui-content a {
     margin-top: 40px;
 }
+input[type="radio"] {
+    transform: scale(2);
+}
+
+ul#patientAndEscortsPhones {
+    list-style-type: none;
+    padding: unset;
+}

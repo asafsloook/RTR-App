@@ -300,8 +300,26 @@ public class WebService : System.Web.Services.WebService
             Log.Error("Error in getPatientEscorted", ex);
             throw new Exception("שגיאה בשליפת נתוני מלווים");
         }
-
     }
+
+    //add new to road2r
+    [WebMethod]
+    public string getescortedsListMobile(string displayName, string patientCell)
+    {
+        try
+        {
+            JavaScriptSerializer j = new JavaScriptSerializer();
+            Patient p = new Patient();
+            List<Escorted> escortedsList = p.getescortedsListMobile(displayName,patientCell);
+            return j.Serialize(escortedsList);
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Error in getPatientEscorted", ex);
+            throw new Exception("שגיאה בשליפת נתוני מלווים");
+        }
+    }
+
     [WebMethod]
     public int getSpaceInCar(int ridePatNum, int driverId)
     {
@@ -706,6 +724,7 @@ public class WebService : System.Web.Services.WebService
                     Volunteer V = new Volunteer();
                     V.getVolunteerByID(driverId);
                     m.driverCanceledRide(ridePatId,V.getVolunteerByID(driverId));
+
                 }
             }
 
