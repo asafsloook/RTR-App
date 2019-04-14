@@ -67,8 +67,7 @@ public class Version
     public List<Version> getVersions()
     {
         #region DB functions
-        string query = "select * from Version";
-        query += " order by Date DESC";
+        string query = "select top 1 * from version order by Date DESC";
 
         List<Version> versionList = new List<Version>();
         DbService db = new DbService();
@@ -92,5 +91,6 @@ public class Version
         return versionList;
 
     }
+
 
 }

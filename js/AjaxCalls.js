@@ -35,7 +35,37 @@ function GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB) {
     }) // end of ajax call
 }
 
+function GetMyPastRides(request, GetMyPastRidesSuccessCB, GetMyPastRidesErrorCB) {
 
+    // serialize the object to JSON string
+    var dataString = JSON.stringify(request);
+
+    $.ajax({ // ajax call starts
+        url: domain + '/WebService.asmx/getMyPastRides',   // server side web service method
+        data: dataString,                          // the parameters sent to the server
+        type: 'POST',                              // can be also GET
+        dataType: 'json',                          // expecting JSON datatype from the server
+        async: false,
+        contentType: 'application/json; charset = utf-8', // sent to the server
+        success: GetMyPastRidesSuccessCB,                // data.d id the Variable data contains the data we get from serverside
+        error: GetMyPastRidesErrorCB
+        //async: false
+    }) // end of ajax call
+}
+
+function GetCurrentVersion(GetVersionSuccessCB, GetVersionErrorCB) {
+    $.ajax({ // ajax call starts
+        url: domain + '/WebService.asmx/getVersions',   // server side web service method
+        //data: dataString,                          // the parameters sent to the server
+        type: 'POST',                              // can be also GET
+        dataType: 'json',                          // expecting JSON datatype from the server
+        async: false,
+        contentType: 'application/json; charset = utf-8', // sent to the server
+        success: GetVersionSuccessCB,                // data.d id the Variable data contains the data we get from serverside
+        error: GetVersionErrorCB
+        //async: false
+    }) // end of ajax call
+}
 function signDriver(request, signDriverSuccessCB, signDriverErrorCB) {
     // serialize the object to JSON string
     var dataString = JSON.stringify(request);

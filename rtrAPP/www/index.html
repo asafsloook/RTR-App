@@ -65,6 +65,7 @@
             <a id="checkNeedForReport">דיווחים</a>
             <img src="img/mihraz.png" />
         </div>
+        
         <div id="rakazBTNS">
             <div class="menuItem">
                 <a id="rakazLoginBTN" href="#rakazLogin">הכנס/י כמתנדב/ת</a>
@@ -77,6 +78,10 @@
             <div class="menuItem">
                 <a id="allPatientsBTN" href="#allPatients">רשימת חולים</a>
                 <img src="img/illist2.png" />
+            </div>
+            <div class="menuItem">
+                <a id="aboutTab">אודות</a>
+                <img src="img/about.png" />
             </div>
         </div>
     </div>
@@ -616,7 +621,6 @@
     </div>
 
     <div id="myPreferences" data-role="page">
-
         <div data-role="header">
             <img src="img/spyIcon.png" class="spyIcon">
             <h1>ההעדפות שלי</h1>
@@ -818,41 +822,40 @@
     </div>
 
     <div id="allVolunteers" data-role="page">
-
-        <div data-role="header">
+        <!--style="z-index: 3;position: fixed;width: 100%;margin-bottom: 10%;"-->
+        <div data-role="header" style="position: fixed;width: 100%;z-index:3">
             <a data-rel="back" style="float:left;border:none;margin:0;margin-left:2%" href="#" class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"></a>
             <h1>רשימת מתנדבים</h1>
             <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
             </a>
-        </div>
-
-        <div data-role="content">
-
+            <!--style="position:fixed;width:90%;z-index:2"-->
             <form class="ui-filterable">
                 <input id="autocomplete-input2" data-type="search" placeholder="חפש מתנדבים">
             </form>
-            <ul id="allVolunteersPH" data-inset="true" data-role="listview" data-filter="true" data-input="#autocomplete-input2"></ul>
-
         </div>
+
+        <div data-role="content" style="margin-top:20%">
+            <ul id="allVolunteersPH" data-inset="true" data-role="listview" data-filter="true" data-input="#autocomplete-input2"></ul>
+        </div>
+
     </div>
 
 
     <div id="allPatients" data-role="page">
 
-        <div data-role="header">
+        <div data-role="header" style="position: fixed;width: 100%;z-index:8">
             <a data-rel="back" style="float:left;border:none;margin:0;margin-left:2%" href="#" class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"></a>
             <h1>רשימת חולים</h1>
-            <a id="menuBTN"  href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+            <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
             </a>
-        </div>
-
-        <div data-role="content">
 
             <form class="ui-filterable">
                 <input id="autocomplete-input3" data-type="search" placeholder="חפש חולים">
             </form>
-            <ul id="allPatientsPH" data-inset="true" data-role="listview" data-filter="true" data-input="#autocomplete-input3"></ul>
+        </div>
 
+        <div data-role="content" style="margin-top:20%">
+            <ul id="allPatientsPH" data-inset="true" data-role="listview" data-filter="true" data-input="#autocomplete-input3"></ul>
         </div>
     </div>
 
@@ -924,7 +927,7 @@
     </div>
 
 
-    <div data-role="popup" id="popupDialog" data-theme="a" data-overlay-theme="b" data-position-to="window" data-dismissible="false" data-history="false">
+    <div data-role="popup" id="popupDialog" data-theme="a" data-overlay-theme="b" data-position-to="window" data-dismissible="false" data-history="false" style="position:fixed;width:80%">
         <div data-role="header" data-theme="a">
             <h1 id="popupTitle"></h1>
         </div>

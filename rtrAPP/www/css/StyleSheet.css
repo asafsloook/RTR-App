@@ -942,3 +942,8 @@ hr.weekSeperator {
 input[type="radio"] {
     transform: scale(2);
 }
+
+ul#patientAndEscortsPhones {
+    list-style-type: none;
+    padding: unset;
+}
