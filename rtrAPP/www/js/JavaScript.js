@@ -366,9 +366,9 @@ function GetMyPastRidesErrorCB(e) {
 
 
 function managePlusBTN() {
-    if ($('#doneTAB').prop("class").indexOf("ui-btn-active") != -1) {
+    //if ($('#doneTAB').prop("class").indexOf("ui-btn-active") != -1) {
 
-    }
+    //}
 }
 
 //print my rides
@@ -1571,6 +1571,11 @@ function getMyRideObjById(id) {
             return myRides[i];
         }
     }
+    for (var i = 0; i < myPastRides.length; i++) {
+        if (myPastRides[i].Id == id) {
+            return myPastRides[i];
+        }
+    }
 }
 
 
@@ -1887,13 +1892,15 @@ function GetVersionErrorCB() {
 function GetVersionSuccessCB(results) {
     var results = $.parseJSON(results.d);
 
-    if ($.mobile.version != results[0].VersionName) {
-        var userAgentPhone = getMobileOperatingSystem();
-        var redirect = results[0].GoogleStoreURL;
-        if (userAgentPhone == 'IOS') {
-            redirect = results[0].AppStoreURL;
+    if (results[0].IsMandatory) {
+        if (Settings.version != results[0].VersionName) {
+            var userAgentPhone = getMobileOperatingSystem();
+            var redirect = results[0].GoogleStoreURL;
+            if (userAgentPhone == 'IOS') {
+                redirect = results[0].AppStoreURL;
+            }
+            popupDialog('עידכון גרסה', 'המערכת זיהתה שקיים עידכון גרסה חדש.\nלחץ אישור על מנת לעדכן את האפליקציה.', redirect, false, null);
         }
-        popupDialog('עידכון גרסה', 'המערכת זיהתה שקיים עידכון גרסה חדש.\nלחץ אישור על מנת לעדכן את האפליקציה.', redirect, false,null);
     }
 }
 function getMobileOperatingSystem() {
@@ -2051,6 +2058,7 @@ $(document).on('pagebeforeshow', '#loginFailed', function () {
 
 $(document).on("pageshow",'#loginFailed', function () {
     //check new version:
+
     GetCurrentVersion(GetVersionSuccessCB, GetVersionErrorCB);
 });
 
@@ -2664,14 +2672,14 @@ $(document).ajaxStop(function () {
 
 
 function sendProblem(element) {
-    problem = $(element).children().html()
+    problem = $(element).children().html();
     elemProblemForSend = $(element).parent();
-    if (problem == 'דווח') {
+    if (problem == 'דיווח') {
         elemProblemForSend = $('.problemName').eq(2);
         problem = $('#problem .accordion').val();
     };
 
-    popupDialog('הודעת אישור', 'האם אתה מאשר את שליחת דיווח הסטטוס: ' + problem + '?', null, true, 'sendProblem');
+    popupDialog('הודעת אישור', 'האם אתה מאשר את שליחת דיווח הסטטוס: "' + problem + '"?', null, true, 'sendProblem');
 }
 
 
@@ -2842,7 +2850,7 @@ $(document).ready(function () {
 
     $("#closeInfoBTN").on('click', function () {
         $('#doneTAB').addClass('ui-btn-active');
-        printMyRides(myRides);
+        printMyRides(myPastRides);
     });
 
     $(document).on('click', '#doneTAB,#planTAB', function () {
