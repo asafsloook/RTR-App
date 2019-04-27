@@ -492,7 +492,7 @@ public class Ride
     //TEST 1! with for loop and without past rides
     public List<Ride> TestGetMyRides(int volunteerId)
     {
-        string query = "select * from RPView where (MainDriver=" + volunteerId + " or secondaryDriver=" + volunteerId + ") and pickuptime>=getdate()";
+        string query = "select * from RPView where (MainDriver=" + volunteerId + " or secondaryDriver=" + volunteerId + ") and CONVERT(date,pickuptime)>=CONVERT(DATE,getdate())";
         DbService db = new DbService();
         DataSet ds = db.GetDataSetByQuery(query);
         DataSet EscortDS = new DataSet(); ;
@@ -935,10 +935,10 @@ public class Ride
         }
     }
 
-    //Test 4 - divide to past rides
+    //Test 4 -  past rides
     public List<Ride> GetMyPastRides(int volunteerId)
     {
-        string query = "select * from RPView where (MainDriver=" + volunteerId + " or secondaryDriver=" + volunteerId + ") and pickuptime<getdate()";
+        string query = "select * from RPView where (MainDriver=" + volunteerId + " or secondaryDriver=" + volunteerId + ") and CONVERT(date,pickuptime)<CONVERT(DATE,getdate())";
         DbService db = new DbService();
         DataSet ds = db.GetDataSetByQuery(query);
         DataSet EscortDS = new DataSet(); ;

@@ -1922,7 +1922,9 @@ function getMobileOperatingSystem() {
 
     return "unknown";
 }
+//one hour
 hourToMillisecs = 3600000;
+
 closeRideTimeBefore = 3 * hourToMillisecs;
 closeRideTimeAfter = 9 * hourToMillisecs;
 
