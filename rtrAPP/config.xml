@@ -55,16 +55,20 @@
     <icon src="res/icon/ios/icon-50@2x.png" width="100" height="100" />
     <!-- iPad Pro -->
     <icon src="res/icon/ios/icon-83.5@2x.png" width="167" height="167" />
+
+    <resource-file src="GoogleService-Info.plist" target="app/GoogleService-Info.plist" />
   </platform>
   
   <platform name="android">
     <resource-file src="google-services.json" target="app/google-services.json" />
     <preference name="android-targetSdkVersion" value="27" />
-    <plugin name="phonegap-plugin-push" source="npm" spec="~2.2.3">
-      <variable name="ANDROID_SUPPORT_V13_VERSION" value="27.+" />
-      <variable name="FCM_VERSION" value="11.6.2" />
-    </plugin>
+
   </platform>
+
+  <plugin name="phonegap-plugin-push" source="npm" spec="~2.2.3">
+    <variable name="ANDROID_SUPPORT_V13_VERSION" value="27.+" />
+    <variable name="FCM_VERSION" value="11.6.2" />
+  </plugin>
  
   <plugin name="cordova-support-google-services" source="npm" spec="~1.1.0" />
   <plugin name="cordova-plugin-whitelist" source="npm" spec="~1.2.1" />

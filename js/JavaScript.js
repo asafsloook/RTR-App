@@ -2346,7 +2346,8 @@ function onDeviceReady() {
             ios: {
                 alert: "true",
                 badge: "true",
-                sound: "true"
+                sound: "true",
+                gcmSandBox: true
             },
             windows: {}
         });
