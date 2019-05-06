@@ -86,7 +86,7 @@ public class myPushNot
         sound = _sound;
     }
 
-    public void RunPushNotificationAll(List<Volunteer> userList, JObject data)
+    public void RunPushNotificationAll(List<Volunteer> userList, JObject data, JObject notification_)
     {
         List<string> registrationIDs = new List<string>();
 
@@ -123,11 +123,24 @@ public class myPushNot
         // Start the broker
         gcmBroker.Start();
 
-        gcmBroker.QueueNotification(new GcmNotification
+        if (notification_.HasValues)
         {
-            RegistrationIds = registrationIDs,
-            Data = data
-        });
+            gcmBroker.QueueNotification(new GcmNotification
+            {
+                RegistrationIds = registrationIDs,
+                Data = data
+            });
+        }
+        else
+        {
+            gcmBroker.QueueNotification(new GcmNotification
+            {
+                RegistrationIds = registrationIDs,
+                Notification = notification_,
+                Data = data
+            });
+        }
+       
 
         // Stop the broker, wait for it to finish   
         // This isn't done after every message, but after you're

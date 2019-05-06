@@ -61,22 +61,33 @@ public class Message
         List<Volunteer> volunteersList2 = new List<Volunteer>();
         for (int i = 0; i < volunteersList.Count; i++)
         {
-            if (volunteersList[i].RegId == "e3crs4CblL0:APA91bG10zL3np9vP0xDkGEJVmksFtlpPe_G57nXtiATj2fjgcVKE4LIpISlbT3fC1dbGVDYbzLPY_FzdGBtJC4avn4_c1BjszJh6LcyptBuM6t_5_XVBz40XwDFVUTI3sC1wPcOmptv")
+            if (volunteersList[i].Id == 14534)
             {
                 volunteersList2.Add(volunteersList[i]);
             }
         }
 
-        //create push
-        var x = new JObject();
-        x.Add("message", message);
-        x.Add("title", title);
-        x.Add("msgID", msgID);
-        x.Add("content-available", 1);
-
+        //create push ANDROID
+        var data = new JObject();
+        data.Add("message", message);
+        data.Add("title", title);
+        data.Add("msgID", msgID);
+        data.Add("content-available", 1);
         //send push
-        myPushNot push = new myPushNot();
-        push.RunPushNotificationAll(volunteersList2, x);
+        myPushNot pushANDROID = new myPushNot();
+        pushANDROID.RunPushNotificationAll(volunteersList2, data, null);
+
+
+        //create push IOS
+        var notification = new JObject();
+        notification.Add("title", title);
+        notification.Add("body", message);
+        data = new JObject();
+        data.Add("msgID", msgID);
+        data.Add("content-available", 1);
+        //send push
+        myPushNot pushIOS = new myPushNot();
+        pushIOS.RunPushNotificationAll(volunteersList2, data, notification);
     }
 
 
@@ -108,7 +119,7 @@ public class Message
         //get ride details and generate msg
         RidePat rp = new RidePat();
         var abc = rp.GetRidePat(ridePatID);
-        var msg = "מחר מתקיימת הסעה מ" + abc.Origin.Name + " ל" + abc.Destination.Name +  ", בשעה " + abc.Date.ToShortTimeString();
+        var msg = "מחר מתקיימת הסעה מ" + abc.Origin.Name + " ל" + abc.Destination.Name + ", בשעה " + abc.Date.ToShortTimeString();
 
         if (abc.Date.ToShortTimeString() == "22:14") msg = "מחר מתקיימת הסעה מ" + abc.Origin.Name + " ל" + abc.Destination.Name + " אחה\"צ";
         //insert msg to db
@@ -133,8 +144,8 @@ public class Message
         RidePat rp = new RidePat();
         var abc = rp.GetRidePat(ridePatID);
         Volunteer coor = new Volunteer();
-         coor = abc.Coordinator.getVolunteerByDisplayName(abc.Coordinator.DisplayName);
-        
+        coor = abc.Coordinator.getVolunteerByDisplayName(abc.Coordinator.DisplayName);
+
         var message = "";
         if (user.Gender == "מתנדב")
         {
@@ -208,7 +219,7 @@ public class Message
         string msg = "האם ברצונך להחליף את הנהג הראשי בנסיעה מ" + rp.Origin.Name + " ל" + rp.Destination.Name + " בתאריך " + rp.Date.ToShortDateString() + ", בשעה " + time + "?";
 
         //insert msg to db
-        int msgID = insertMsg(0, "BackupToPrimary","החלפת נהג ראשי", msg, ridePatID, DateTime.Now, v.Id, "", true, false, false);
+        int msgID = insertMsg(0, "BackupToPrimary", "החלפת נהג ראשי", msg, ridePatID, DateTime.Now, v.Id, "", true, false, false);
 
         //create push
         var x = new JObject();
