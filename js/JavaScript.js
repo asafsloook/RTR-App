@@ -2347,7 +2347,7 @@ function onDeviceReady() {
                 alert: "true",
                 badge: "true",
                 sound: "true",
-                gcmSandBox: true
+                fcmSandBox: true
             },
             windows: {}
         });
@@ -2365,7 +2365,7 @@ function onDeviceReady() {
         //-------------------------------------------------------------
         // triggred by a notification sent from the notification server
         //-------------------------------------------------------------
-        push.on('notification', data => {
+        push.on('notification', function (data) {
             if (data.additionalData.foreground == true) {
                 handleForeground(data);
             }

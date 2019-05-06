@@ -827,8 +827,8 @@ function RideEquipment(str, results, i) {
     if (window.location.href.toString().indexOf('signMe') != -1) {
         str += '<p style="width:20%;float:right;text-align:center;';
 
-        if (EquipmentLength == 3) {
-            margin = 4;
+        if (EquipmentLength >= 3) {
+            margin = 1;
         }
         else if (EquipmentLength == 2) {
             margin = 8;
@@ -2346,7 +2346,8 @@ function onDeviceReady() {
             ios: {
                 alert: "true",
                 badge: "true",
-                sound: "true"
+                sound: "true",
+                fcmSandBox: true
             },
             windows: {}
         });
@@ -2364,7 +2365,7 @@ function onDeviceReady() {
         //-------------------------------------------------------------
         // triggred by a notification sent from the notification server
         //-------------------------------------------------------------
-        push.on('notification', data => {
+        push.on('notification', function (data) {
             if (data.additionalData.foreground == true) {
                 handleForeground(data);
             }

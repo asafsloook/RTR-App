@@ -58,6 +58,15 @@ public class Message
         Volunteer v = new Volunteer();
         List<Volunteer> volunteersList = v.getVolunteersList(true);
 
+        List<Volunteer> volunteersList2 = new List<Volunteer>();
+        for (int i = 0; i < volunteersList.Count; i++)
+        {
+            if (volunteersList[i].RegId == "e3crs4CblL0:APA91bG10zL3np9vP0xDkGEJVmksFtlpPe_G57nXtiATj2fjgcVKE4LIpISlbT3fC1dbGVDYbzLPY_FzdGBtJC4avn4_c1BjszJh6LcyptBuM6t_5_XVBz40XwDFVUTI3sC1wPcOmptv")
+            {
+                volunteersList2.Add(volunteersList[i]);
+            }
+        }
+
         //create push
         var x = new JObject();
         x.Add("message", message);
@@ -67,7 +76,7 @@ public class Message
 
         //send push
         myPushNot push = new myPushNot();
-        push.RunPushNotificationAll(volunteersList, x);
+        push.RunPushNotificationAll(volunteersList2, x);
     }
 
 
