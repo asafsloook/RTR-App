@@ -140,7 +140,7 @@ public class myPushNot
                 Data = data
             });
         }
-       
+
 
         // Stop the broker, wait for it to finish   
         // This isn't done after every message, but after you're
@@ -161,13 +161,13 @@ public class myPushNot
         // Wire up events
         gcmBroker.OnNotificationFailed += (notification, aggregateEx) =>
         {
-        //Console.WriteLine("GCM Notification Failed!");
-    };
+            //Console.WriteLine("GCM Notification Failed!");
+        };
 
         gcmBroker.OnNotificationSucceeded += (notification) =>
         {
-        //Console.WriteLine("GCM Notification Sent!");
-    };
+            //Console.WriteLine("GCM Notification Sent!");
+        };
 
         // Start the broker
         gcmBroker.Start();
@@ -176,7 +176,7 @@ public class myPushNot
         {
             gcmBroker.QueueNotification(new GcmNotification
             {
-                RegistrationIds = new List<string> {user.RegId},
+                RegistrationIds = new List<string> { user.RegId },
                 Data = data
             });
         }

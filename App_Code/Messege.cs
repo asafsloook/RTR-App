@@ -118,7 +118,7 @@ public class Message
         //send push
         myPushNot pushIOS = new myPushNot();
         pushIOS.RunPushNotificationOne(user, data, notification);
-        
+
     }
 
     public void rideIsTomorrow(int ridePatID, Volunteer user)
@@ -144,7 +144,7 @@ public class Message
         //send push
         myPushNot pushANDROID = new myPushNot();
         pushANDROID.RunPushNotificationOne(user, data, null);
-        
+
         //PUSH IOS
         var notification = new JObject();
         notification.Add("title", "נסיעה קרובה");
@@ -225,7 +225,7 @@ public class Message
         if (abc.Date.ToShortTimeString() == "22:14") msg = "עודכן חולה אנונימי ל " + abc.Pat.DisplayName + "הנסיעה מ" + abc.Origin.Name + " ל" + abc.Destination.Name + " בתאריך " + abc.Date.ToShortDateString() + "אחה\"צ";
         //insert msg to db
         int msgID = insertMsg(1, "Anonymous Patient changed", "חולה אנונימי השתנה", msg, ridePatID, DateTime.Now, user.Id, "", true, false, false);
-        
+
         //PUSH ANDROID
         var data = new JObject();
         data.Add("message", msg);
@@ -267,7 +267,7 @@ public class Message
 
         //insert msg to db
         int msgID = insertMsg(0, "BackupToPrimary", "החלפת נהג ראשי", msg, ridePatID, DateTime.Now, v.Id, "", true, false, false);
-        
+
         //PUSH ANDROID
         var data = new JObject();
         data.Add("message", msg);
