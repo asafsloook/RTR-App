@@ -123,7 +123,7 @@ public class myPushNot
         // Start the broker
         gcmBroker.Start();
 
-        if (notification_.HasValues)
+        if (notification_ == null)
         {
             gcmBroker.QueueNotification(new GcmNotification
             {
@@ -148,7 +148,7 @@ public class myPushNot
         gcmBroker.Stop();
     }
 
-    public void RunPushNotificationOne(Volunteer user, JObject data)
+    public void RunPushNotificationOne(Volunteer user, JObject data, JObject notification_)
     {
 
         // Configuration
@@ -172,15 +172,23 @@ public class myPushNot
         // Start the broker
         gcmBroker.Start();
 
-        // Queue a notification to send
-        gcmBroker.QueueNotification(new GcmNotification
+        if (notification_ == null)
         {
-
-            RegistrationIds = new List<string> {
-            user.RegId
-        },
-            Data = data
-        });
+            gcmBroker.QueueNotification(new GcmNotification
+            {
+                RegistrationIds = new List<string> {user.RegId},
+                Data = data
+            });
+        }
+        else
+        {
+            gcmBroker.QueueNotification(new GcmNotification
+            {
+                RegistrationIds = new List<string> { user.RegId },
+                Notification = notification_,
+                Data = data
+            });
+        }
 
 
 
