@@ -579,15 +579,16 @@ public class Volunteer
     }
 
 
-    public Volunteer getVolunteerByMobile(string mobile, string regId)
+    public Volunteer getVolunteerByMobile(string mobile, string regId, string device)
     {
         DbService db = new DbService();
         mobile = mobile.Replace("-", "");
-        string query = "select * from VolunteerTypeView where CellPhone = '" + mobile +"'";
+        string query = "select * from VolunteerTypeView where CellPhone = '" + mobile + "'";
         DataSet ds = db.GetDataSetByQuery(query);
         Volunteer v = new Volunteer();
         foreach (DataRow dr in ds.Tables[0].Rows)
         {
+
             v.Id = int.Parse(dr["Id"].ToString());
             v.DisplayName = dr["DisplayName"].ToString();
             v.FirstNameA = dr["FirstNameA"].ToString();
@@ -652,9 +653,10 @@ public class Volunteer
             }
         }
 
-        //dont update reg id if user is rakaz on a mission
+        //dont update reg id and device type if user is rakaz on a mission
         if (regId != "i_am_spy")
         {
+            //update reg id
             db = new DbService();
             var updateRegid = "update Volunteer set pnRegId=@REGID where Id=@ID";
 
@@ -666,6 +668,18 @@ public class Volunteer
             cmdParams[1] = cmd.Parameters.AddWithValue("@ID", v.Id);
 
             int result = db.ExecuteQuery(updateRegid, cmd.CommandType, cmdParams);
+
+            //update device
+            db = new DbService();
+            var updateDevice = "update Volunteer set device=N'" + device + "' where Id=@ID";
+
+            SqlCommand cmd1 = new SqlCommand();
+            cmd1.CommandType = CommandType.Text;
+
+            SqlParameter[] cmdParams1 = new SqlParameter[1];
+            cmdParams1[0] = cmd1.Parameters.AddWithValue("@ID", v.Id);
+
+            int result1 = db.ExecuteQuery(updateDevice, cmd1.CommandType, cmdParams1);
         }
 
 

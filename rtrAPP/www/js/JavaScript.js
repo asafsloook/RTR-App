@@ -1826,6 +1826,26 @@ $(document).on('pagebeforeshow', '#loginLogo', function () {
 
 });
 
+function getMobileOperatingSystem() {
+    var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+    // Windows Phone must come first because its UA also contains "Android"
+    if (/windows phone/i.test(userAgent)) {
+        return "Windows Phone";
+    }
+
+    if (/android/i.test(userAgent)) {
+        return "Android";
+    }
+
+    // iOS detection from: http://stackoverflow.com/a/9039885/177710
+    if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+        return "iOS";
+    }
+
+    return "unknown";
+}
+
 
 function checkUserPN(cellphone, isSpy_) {
 
@@ -1838,9 +1858,12 @@ function checkUserPN(cellphone, isSpy_) {
         localStorage.RegId = "i_am_spy"
     }
 
+    var device_ = getMobileOperatingSystem();
+
     var request = {
         mobile: cellphone,
-        regId: localStorage.RegId
+        regId: localStorage.RegId,
+        device:device_
     }
     checkUser(request, checkUserSuccessCB, checkUserErrorCB);
 }
@@ -1922,7 +1945,9 @@ function getMobileOperatingSystem() {
 
     return "unknown";
 }
+//one hour
 hourToMillisecs = 3600000;
+
 closeRideTimeBefore = 3 * hourToMillisecs;
 closeRideTimeAfter = 9 * hourToMillisecs;
 
