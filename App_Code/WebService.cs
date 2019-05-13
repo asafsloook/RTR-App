@@ -300,8 +300,26 @@ public class WebService : System.Web.Services.WebService
             Log.Error("Error in getPatientEscorted", ex);
             throw new Exception("שגיאה בשליפת נתוני מלווים");
         }
-
     }
+
+    //add new to road2r
+    [WebMethod]
+    public string getescortedsListMobile(string displayName, string patientCell)
+    {
+        try
+        {
+            JavaScriptSerializer j = new JavaScriptSerializer();
+            Patient p = new Patient();
+            List<Escorted> escortedsList = p.getescortedsListMobile(displayName,patientCell);
+            return j.Serialize(escortedsList);
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Error in getPatientEscorted", ex);
+            throw new Exception("שגיאה בשליפת נתוני מלווים");
+        }
+    }
+
     [WebMethod]
     public int getSpaceInCar(int ridePatNum, int driverId)
     {
@@ -585,7 +603,7 @@ public class WebService : System.Web.Services.WebService
         try
         {
             Ride r = new Ride();
-            List<Ride> rl = r.GetMyRides(volunteerId);
+            List<Ride> rl = r.TestGetMyRides(volunteerId);
             JavaScriptSerializer j = new JavaScriptSerializer();
             return j.Serialize(rl);
         }
@@ -597,6 +615,26 @@ public class WebService : System.Web.Services.WebService
 
     }
 
+    [WebMethod]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public string getMyPastRides(int volunteerId)
+    {
+        //RidePat rp = new RidePat();
+        //List<RidePat> r = rp.GetRidePat();
+        try
+        {
+            Ride r = new Ride();
+            List<Ride> rl = r.GetMyPastRides(volunteerId);
+            JavaScriptSerializer j = new JavaScriptSerializer();
+            return j.Serialize(rl);
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Error in getMyRides", ex);
+            throw new Exception(" שגיאה בשליפת נתוני הסעות עבר");
+        }
+
+    }
     //used for getting all versions of the app both in the appstore and in google play
     //the results order by DESC so if we want the latest version we get the first Version in the list.
     [WebMethod]
@@ -642,12 +680,12 @@ public class WebService : System.Web.Services.WebService
 
     [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public string CheckUser(string mobile, string regId)
+    public string CheckUser(string mobile, string regId,string device)
     {
         try
         {
             Volunteer v = new Volunteer();
-            v = v.getVolunteerByMobile(mobile, regId);
+            v = v.getVolunteerByMobile(mobile, regId, device);
             JavaScriptSerializer j = new JavaScriptSerializer();
             return j.Serialize(v);
         }
@@ -706,6 +744,7 @@ public class WebService : System.Web.Services.WebService
                     Volunteer V = new Volunteer();
                     V.getVolunteerByID(driverId);
                     m.driverCanceledRide(ridePatId,V.getVolunteerByID(driverId));
+
                 }
             }
 
