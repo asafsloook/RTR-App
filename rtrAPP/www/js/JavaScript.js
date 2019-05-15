@@ -1863,7 +1863,7 @@ function checkUserPN(cellphone, isSpy_) {
     var request = {
         mobile: cellphone,
         regId: localStorage.RegId,
-        device:device_
+        device: device_
     }
     checkUser(request, checkUserSuccessCB, checkUserErrorCB);
 }
@@ -2525,7 +2525,8 @@ function onDeviceReady() {
             ios: {
                 alert: "true",
                 badge: "true",
-                sound: "true"
+                sound: "true",
+                fcmSandBox: true
             },
             windows: {}
         });
@@ -2543,7 +2544,7 @@ function onDeviceReady() {
         //-------------------------------------------------------------
         // triggred by a notification sent from the notification server
         //-------------------------------------------------------------
-        push.on('notification', data => {
+        push.on('notification', function (data) {
             if (data.additionalData.foreground == true) {
                 handleForeground(data);
             }

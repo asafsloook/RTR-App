@@ -8,7 +8,7 @@
 //adding some green
 //get week (if fix)
 //match (shift fix)
-//add manager to rakaz peעקאrmisions
+//add manager to rakaz permisions
 //add info btn to signme lists
 //save prefs by all ctrl change
 //notes show on all rides
@@ -94,9 +94,9 @@ currentPatientPhone = '';
 
 function defaultServerDomain() {
 
-    if (localStorage.domain){
+    if (localStorage.domain) {
         domain = localStorage.domain;
-        
+
     }
     else {
         if (!window.location.href.includes('http')) {
@@ -105,7 +105,7 @@ function defaultServerDomain() {
         else {
             domain = '..';
         }
-    }    
+    }
 }
 defaultServerDomain();
 
@@ -144,6 +144,7 @@ rides = null;
 myRides = null;
 myPastRides = null;
 suitedArr = null;
+ridesPerDay = null;
 
 
 //call the ajax function to import the rides list
@@ -154,14 +155,21 @@ function getRidesList() {
     var request = {
         volunteerId: id
     }
-
-    //if (localStorage.rides !== undefined) {
-    //    var rides = LZString.decompress(localStorage.rides);
-    //}
-
     GetRides(request, GetRidesSuccessCB, GetRidesErrorCB);
 }
 
+//array of days with rides
+function ridesPerDayFunc(results) {
+    var arr = [];
+    for (var i = 0; i < results.length; i++) {
+        var rideDate = '_' + (new Date(results[i].DateTime)).toLocaleDateString() + '_';
+        if (!arr[rideDate]) {
+            arr[rideDate] = [];
+        }
+        arr[rideDate].push(results[i]);
+    }
+    return arr;
+}
 
 //success call back function for get rides
 function GetRidesSuccessCB(results) {
@@ -170,7 +178,7 @@ function GetRidesSuccessCB(results) {
 
     results = ridesToClientStructure(results);
 
-    //localStorage.rides = LZString.compress(JSON.stringify(results));
+    ridesPerDay = ridesPerDayFunc(results);
 
     rides = results;
 
@@ -429,7 +437,7 @@ function printMyRides(myRides) {
             }
         }
     }
-    
+
 
     //var counterStr = '<p style="margin:0px;">מספר הנסיעות: ' + myRides.length + '</p>';
 
@@ -741,18 +749,16 @@ function doRideHeader(results, i) {
 
     var startPointStr = "&nbsp;&nbsp;";
     var ridesInDayCounter = 1;
-    for (var s = 0; s < results.length; s++) {
-        if ((new Date(results[i].DateTime)).toLocaleDateString() == (new Date(results[s].DateTime)).toLocaleDateString()) {
 
-            if (startPointStr.indexOf(results[s].StartPoint) == -1) {
-                startPointStr += results[s].StartPoint + ' (1) , ';
-            }
-            else {
-                startPointStr = startPointStr.replace(results[s].StartPoint + ' (' + (ridesInDayCounter) + ')', results[s].StartPoint + ' (' + (++ridesInDayCounter) + ')');
-            }
+     var rideDate = '_' + (new Date(results[i].DateTime)).toLocaleDateString() + '_';
+
+    for (var s = 0; s < ridesPerDay[rideDate].length; s++) {
+        var currentStartPoint = ridesPerDay[rideDate][s].StartPoint;
+        if (startPointStr.indexOf(currentStartPoint) == -1) {
+            startPointStr += currentStartPoint + ' (1) , ';
         }
         else {
-            ridesInDayCounter = 1;
+            startPointStr = startPointStr.replace(currentStartPoint + ' (' + (ridesInDayCounter) + ')', currentStartPoint + ' (' + (++ridesInDayCounter) + ')');
         }
     }
     //-2 delete the ', ' last string
@@ -928,21 +934,21 @@ function RideEquipment(str, results, i) {
     }
 
     var iconPrefix = 'style="height:25px"';
-    if (EquipmentLength == 4){
-       iconPrefix = 'style="height:18px"';
+    if (EquipmentLength == 4) {
+        iconPrefix = 'style="height:18px"';
     }
 
     if (results[i].Pat.Equipment.includes("כסא גלגלים")) {
-        str += '<img '+iconPrefix+' class="ridesIcons" src="img/wheelchair.png" /><br>';
+        str += '<img ' + iconPrefix + ' class="ridesIcons" src="img/wheelchair.png" /><br>';
     }
     if (results[i].Pat.Equipment.includes("כסא תינוק")) {
-        str += '<img '+iconPrefix+' class="ridesIcons" src="img/babyseat.png" /><br>';
+        str += '<img ' + iconPrefix + ' class="ridesIcons" src="img/babyseat.png" /><br>';
     }
     if (results[i].Pat.Equipment.includes("בוסטר")) {
-        str += '<img '+iconPrefix+' class="ridesIcons" src="img/booster.png" /><br>';
+        str += '<img ' + iconPrefix + ' class="ridesIcons" src="img/booster.png" /><br>';
     }
     if (results[i].Pat.Equipment.includes("קביים")) {
-        str += '<img ' + iconPrefix +' class="ridesIcons" src="img/Crutches.png" /><br>';
+        str += '<img ' + iconPrefix + ' class="ridesIcons" src="img/Crutches.png" /><br>';
     }
 
 
@@ -996,6 +1002,7 @@ function printRides(results) {
 
     //filter rides
     var results = filterRides(results);
+    ridesPerDay = ridesPerDayFunc(results);
 
 
     if (typeof showInput !== 'undefined') {
@@ -1772,7 +1779,7 @@ $(document).on('pageshow', '#allPatients', function () {
 
     for (var i = 0; i < Patients.length; i++) {
 
-        $("#allPatientsPH").append('<li><a class="ui-btn ui-btn-icon-left ui-icon-phone" id="' + Patients[i].CellPhone.toString() + '" name="' + Patients[i].DisplayName+'" >' + Patients[i].DisplayName + '</a></li>');
+        $("#allPatientsPH").append('<li><a class="ui-btn ui-btn-icon-left ui-icon-phone" id="' + Patients[i].CellPhone.toString() + '" name="' + Patients[i].DisplayName + '" >' + Patients[i].DisplayName + '</a></li>');
     }
 
     $("#allPatientsPH").listview('refresh');
@@ -1823,7 +1830,7 @@ function getPatientEscortsSCB(data) {
     popupDialog('אנשי קשר', alertRide, null, false, null);
 }
 function getPatientEscortsECB(error) {
-   // alert("not so great");
+    // alert("not so great");
     //pop up dialog here
 }
 $(document).on('pagebeforeshow', '#loginLogo', function () {
@@ -1870,7 +1877,7 @@ function checkUserPN(cellphone, isSpy_) {
     var request = {
         mobile: cellphone,
         regId: localStorage.RegId,
-        device:device_
+        device: device_
     }
     checkUser(request, checkUserSuccessCB, checkUserErrorCB);
 }
@@ -1912,24 +1919,13 @@ function checkUserSuccessCB(results) {
 
     //get all rides
     loginThread = true;
-   // getRidesList();
-    getMyRidesList();
-
-    getLocations(getLocationsSCB, getLocationsECB);
+  //  getRidesList();
     if (typeof loginThread !== 'undefined' && loginThread) {
 
-        if (localStorage.availableSeats == null || localStorage.availableSeats == "0") {
-            setTimeout(function () {
-                loginThread = false;
-                $.mobile.pageContainer.pagecontainer("change", "#myPreferences");
-            }, 1500);
-        }
-        else {
-            setTimeout(function () {
-                $.mobile.pageContainer.pagecontainer("change", "#loginPreference");
-            }, 1500);
-        }
+        getMyRidesList();
     }
+
+    getLocations(getLocationsSCB, getLocationsECB);
 }
 function GetVersionErrorCB() {
     popupDialog('שגיאה', "אירעה תקלה במערכת.", '#loginFailed', false, null);
@@ -2103,7 +2099,7 @@ $(document).on('pagebeforeshow', '#loginFailed', function () {
     }
 });
 
-$(document).on("pageshow",'#loginFailed', function () {
+$(document).on("pageshow", '#loginFailed', function () {
     //check new version:
 
     GetCurrentVersion(GetVersionSuccessCB, GetVersionErrorCB);
@@ -2547,7 +2543,8 @@ function onDeviceReady() {
             ios: {
                 alert: "true",
                 badge: "true",
-                sound: "true"
+                sound: "true",
+                fcmSandBox: true
             },
             windows: {}
         });
@@ -2565,7 +2562,7 @@ function onDeviceReady() {
         //-------------------------------------------------------------
         // triggred by a notification sent from the notification server
         //-------------------------------------------------------------
-        push.on('notification', data => {
+        push.on('notification', function (data) {
             if (data.additionalData.foreground == true) {
                 handleForeground(data);
             }
@@ -2955,7 +2952,7 @@ $(document).ready(function () {
         //}
 
         //handle case that rise if already taken
-        
+
 
     });
 
@@ -3216,8 +3213,8 @@ $(document).ready(function () {
     $("#confirmDialogBTN").on('click', function () {
         $("#popupDialog").popup('close');
         if (redirectUrlFromDialog != null) {
-            if (redirectUrlFromDialog.indexOf('http')!=-1) {
-                window.location.href= redirectUrlFromDialog;
+            if (redirectUrlFromDialog.indexOf('http') != -1) {
+                window.location.href = redirectUrlFromDialog;
             }
             if (redirectUrlFromDialog == '#loginLogo') {
                 window.location.replace('index.html');
