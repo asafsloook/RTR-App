@@ -8,7 +8,7 @@
 //adding some green
 //get week (if fix)
 //match (shift fix)
-//add manager to rakaz permisions
+//add manager to rakaz peעקאrmisions
 //add info btn to signme lists
 //save prefs by all ctrl change
 //notes show on all rides
@@ -154,6 +154,11 @@ function getRidesList() {
     var request = {
         volunteerId: id
     }
+
+    //if (localStorage.rides !== undefined) {
+    //    var rides = LZString.decompress(localStorage.rides);
+    //}
+
     GetRides(request, GetRidesSuccessCB, GetRidesErrorCB);
 }
 
@@ -164,6 +169,8 @@ function GetRidesSuccessCB(results) {
     var results = $.parseJSON(results.d);
 
     results = ridesToClientStructure(results);
+
+    //localStorage.rides = LZString.compress(JSON.stringify(results));
 
     rides = results;
 
@@ -1905,9 +1912,24 @@ function checkUserSuccessCB(results) {
 
     //get all rides
     loginThread = true;
-    getRidesList();
+   // getRidesList();
+    getMyRidesList();
 
     getLocations(getLocationsSCB, getLocationsECB);
+    if (typeof loginThread !== 'undefined' && loginThread) {
+
+        if (localStorage.availableSeats == null || localStorage.availableSeats == "0") {
+            setTimeout(function () {
+                loginThread = false;
+                $.mobile.pageContainer.pagecontainer("change", "#myPreferences");
+            }, 1500);
+        }
+        else {
+            setTimeout(function () {
+                $.mobile.pageContainer.pagecontainer("change", "#loginPreference");
+            }, 1500);
+        }
+    }
 }
 function GetVersionErrorCB() {
     popupDialog('שגיאה', "אירעה תקלה במערכת.", '#loginFailed', false, null);
