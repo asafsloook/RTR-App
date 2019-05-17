@@ -86,7 +86,7 @@
 
 
 Settings = {};
-Settings.version = '1.6.5';
+Settings.version = '1.6.6';
 Settings.releaseNotes = 'https://docs.google.com/spreadsheets/d/1jzv_lLnXRvRS_dNuhyWTuGT7cebsXX-kjflsbZim3O8';
 domain = '';
 currentPatientName = '';
@@ -94,9 +94,9 @@ currentPatientPhone = '';
 
 function defaultServerDomain() {
 
-    if (localStorage.domain){
+    if (localStorage.domain) {
         domain = localStorage.domain;
-        
+
     }
     else {
         if (!window.location.href.includes('http')) {
@@ -105,7 +105,7 @@ function defaultServerDomain() {
         else {
             domain = '..';
         }
-    }    
+    }
 }
 defaultServerDomain();
 
@@ -144,6 +144,7 @@ rides = null;
 myRides = null;
 myPastRides = null;
 suitedArr = null;
+ridesPerDay = null;
 
 
 //call the ajax function to import the rides list
@@ -157,6 +158,18 @@ function getRidesList() {
     GetRides(request, GetRidesSuccessCB, GetRidesErrorCB);
 }
 
+//array of days with rides
+function ridesPerDayFunc(results) {
+    var arr = [];
+    for (var i = 0; i < results.length; i++) {
+        var rideDate = '_' + (new Date(results[i].DateTime)).toLocaleDateString() + '_';
+        if (!arr[rideDate]) {
+            arr[rideDate] = [];
+        }
+        arr[rideDate].push(results[i]);
+    }
+    return arr;
+}
 
 //success call back function for get rides
 function GetRidesSuccessCB(results) {
@@ -164,6 +177,8 @@ function GetRidesSuccessCB(results) {
     var results = $.parseJSON(results.d);
 
     results = ridesToClientStructure(results);
+
+    ridesPerDay = ridesPerDayFunc(results);
 
     rides = results;
 
@@ -422,7 +437,7 @@ function printMyRides(myRides) {
             }
         }
     }
-    
+
 
     //var counterStr = '<p style="margin:0px;">מספר הנסיעות: ' + myRides.length + '</p>';
 
@@ -645,7 +660,7 @@ function filterRides(rides) {
     for (var i = 0; i < rides.length; i++) {
 
         var rideDate = new Date(rides[i].DateTime);
-
+        //!checkTime(rides[i])
         //for filtering past rides
         if (!isPastRide(rides[i])) {
 
@@ -653,20 +668,19 @@ function filterRides(rides) {
         else if ($('#shiftDDL').val() != "משמרת" && $('#shiftDDL').val() != rides[i].Shift) {
 
         }
-        //else if (!checkTime(rides[i])) {
-
-        //}
         else if (rides[i].Status == 'שובץ גיבוי' || rides[i].Status == "שובץ נהג וגיבוי" || userInfo.Statusim.filter(status => status.Name == rides[i].Status && status.Id >= 100).length > 0) {
 
         }
         else if (typeof showAll !== 'undefined') {
             filteredRides.push(rides[i]);
         }
+        else if (!checkMyTimes(rides[i])) {
+
+        }
         else if (!checkMySeats(rides[i])) {
 
         }
         else if (checkMyRoutes(rides[i])) {
-
         }
         else {
             filteredRides.push(rides[i]);
@@ -700,20 +714,64 @@ function checkTime(ride) {
     return true;
 }
 
+function checkMyTimes(ride) {
+    timeArr = $.parseJSON(localStorage.times);
+    var d = new Date(ride.DateTime);
+
+    var str = "";
+    if (ride.Shift == "בוקר") {
+        str += "morning";
+    }
+    else {
+        str += "evening";
+    }
+    switch (d.getDay()) {
+        case 0:
+            str += "A";
+            break;
+        case 1:
+            str += "B";
+            break;
+        case 2:
+            str += "C";
+            break;
+        case 3:
+            str += "D";
+            break;
+        case 4:
+            str += "E";
+            break;
+        case 5:
+            str += "F";
+            break;
+        case 6:
+            str += "G";
+            break;
+        default:
+            break;
+    }
+    if (timeArr.includes(str)) {
+        return true;
+    }
+    return false;
+}
 //for filtering rides with prefered volunteer routes
 function checkMyRoutes(ride) {
 
     routesArr = $.parseJSON(localStorage.routes);
-
-    for (var i = 0; i < routesArr.length; i++) {
-        if (routesArr[i] == ride.StartPoint) {
-            return false;
-        }
-        if (routesArr[i] == ride.EndPoint) {
-            return false;
-        }
+    if (routesArr.includes(ride.StartPoint) && routesArr.includes(ride.EndPoint)) {
+        return false;
     }
     return true;
+    //for (var i = 0; i < routesArr.length; i++) {
+    //    if (routesArr[i] == ride.StartPoint) {
+    //        return false;
+    //    }
+    //    if (routesArr[i] == ride.EndPoint) {
+    //        return false;
+    //    }
+    //}
+    //return true;
 }
 
 
@@ -734,26 +792,29 @@ function doRideHeader(results, i) {
 
     var startPointStr = "&nbsp;&nbsp;";
     var ridesInDayCounter = 1;
-    for (var s = 0; s < results.length; s++) {
-        if ((new Date(results[i].DateTime)).toLocaleDateString() == (new Date(results[s].DateTime)).toLocaleDateString()) {
+    var counter = 0;
 
-            if (startPointStr.indexOf(results[s].StartPoint) == -1) {
-                startPointStr += results[s].StartPoint + ' (1) , ';
-            }
-            else {
-                startPointStr = startPointStr.replace(results[s].StartPoint + ' (' + (ridesInDayCounter) + ')', results[s].StartPoint + ' (' + (++ridesInDayCounter) + ')');
-            }
+    var rideDate = '_' + (new Date(results[i].DateTime)).toLocaleDateString() + '_';
+
+    for (var s = 0; s < ridesPerDay[rideDate].length; s++) {
+        var currentStartPoint = ridesPerDay[rideDate][s].StartPoint;
+        if (startPointStr.indexOf(currentStartPoint) == -1) {
+            startPointStr += currentStartPoint + ' (1) , ';
+            counter++;
         }
         else {
-            ridesInDayCounter = 1;
+            startPointStr = startPointStr.replace(currentStartPoint + ' (' + (ridesInDayCounter) + ')', currentStartPoint + ' (' + (++ridesInDayCounter) + ')');
+            counter++;
         }
     }
     //-2 delete the ', ' last string
     startPointStr = startPointStr.substring(0, startPointStr.length - 2);
 
     //add ... if the string to long for the listview item
-    if (startPointStr.length > 40) {
-        startPointStr = startPointStr.substring(0, 35) + '...';
+    //if(startPointStr.length>40)
+    if (counter > 2) {
+      //  startPointStr = startPointStr.substring(0, 35) + '...';
+        startPointStr = "  קיימות " + counter + " הסעות ";
     }
 
     return startPointStr;
@@ -921,21 +982,21 @@ function RideEquipment(str, results, i) {
     }
 
     var iconPrefix = 'style="height:25px"';
-    if (EquipmentLength == 4){
-       iconPrefix = 'style="height:18px"';
+    if (EquipmentLength == 4) {
+        iconPrefix = 'style="height:18px"';
     }
 
     if (results[i].Pat.Equipment.includes("כסא גלגלים")) {
-        str += '<img '+iconPrefix+' class="ridesIcons" src="img/wheelchair.png" /><br>';
+        str += '<img ' + iconPrefix + ' class="ridesIcons" src="img/wheelchair.png" /><br>';
     }
     if (results[i].Pat.Equipment.includes("כסא תינוק")) {
-        str += '<img '+iconPrefix+' class="ridesIcons" src="img/babyseat.png" /><br>';
+        str += '<img ' + iconPrefix + ' class="ridesIcons" src="img/babyseat.png" /><br>';
     }
     if (results[i].Pat.Equipment.includes("בוסטר")) {
-        str += '<img '+iconPrefix+' class="ridesIcons" src="img/booster.png" /><br>';
+        str += '<img ' + iconPrefix + ' class="ridesIcons" src="img/booster.png" /><br>';
     }
     if (results[i].Pat.Equipment.includes("קביים")) {
-        str += '<img ' + iconPrefix +' class="ridesIcons" src="img/Crutches.png" /><br>';
+        str += '<img ' + iconPrefix + ' class="ridesIcons" src="img/Crutches.png" /><br>';
     }
 
 
@@ -989,6 +1050,7 @@ function printRides(results) {
 
     //filter rides
     var results = filterRides(results);
+    ridesPerDay = ridesPerDayFunc(results);
 
 
     if (typeof showInput !== 'undefined') {
@@ -1371,7 +1433,10 @@ function createSuggestPage(ride) {
 
     var myDate = new Date(ride.DateTime);
     var day = numToDayHebrew(myDate.getDay());
-
+    var EscortsLENGTH = "";
+    if (suggestedRide.Melave.length!=0) {
+        EscortsLENGTH = " +"+ suggestedRide.Melave.length;
+    }
     str += '<p>ביום ' + day
         + ', ' + myDate.getDate() + "." + (myDate.getMonth() + 1) + "." + myDate.getFullYear()
         + ', בשעה ' + myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1") + '</p>'
@@ -1381,8 +1446,8 @@ function createSuggestPage(ride) {
         //+ '<a data-icon="edit" id="updateSeatsBTN" href="#" style="background-color:#202020" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-button-inline ui-widget ui-button-a ui-link ui-btn ui-btn-b ui-icon-edit ui-btn-icon-left ui-btn-inline ui-shadow ui-corner-all" role="button">עדכן</a>'
         //+ '</p>'
 
-        + '<p style="margin: 5% 10%;">האם אתה מעוניין לצרף לנסיעה את ' + suggestedRide.Person
-        + ' +' + suggestedRide.Melave.length
+        + '<p style="margin: 5% 10%;">האם לצרף לנסיעה את ' + suggestedRide.Person
+        + EscortsLENGTH
         + "?</p>";
 
 
@@ -1765,7 +1830,7 @@ $(document).on('pageshow', '#allPatients', function () {
 
     for (var i = 0; i < Patients.length; i++) {
 
-        $("#allPatientsPH").append('<li><a class="ui-btn ui-btn-icon-left ui-icon-phone" id="' + Patients[i].CellPhone.toString() + '" name="' + Patients[i].DisplayName+'" >' + Patients[i].DisplayName + '</a></li>');
+        $("#allPatientsPH").append('<li><a class="ui-btn ui-btn-icon-left ui-icon-phone" id="' + Patients[i].CellPhone.toString() + '" name="' + Patients[i].DisplayName + '" >' + Patients[i].DisplayName + '</a></li>');
     }
 
     $("#allPatientsPH").listview('refresh');
@@ -1816,7 +1881,7 @@ function getPatientEscortsSCB(data) {
     popupDialog('אנשי קשר', alertRide, null, false, null);
 }
 function getPatientEscortsECB(error) {
-   // alert("not so great");
+    // alert("not so great");
     //pop up dialog here
 }
 $(document).on('pagebeforeshow', '#loginLogo', function () {
@@ -1905,7 +1970,11 @@ function checkUserSuccessCB(results) {
 
     //get all rides
     loginThread = true;
-    getRidesList();
+  //  getRidesList();
+    if (typeof loginThread !== 'undefined' && loginThread) {
+
+        getMyRidesList();
+    }
 
     getLocations(getLocationsSCB, getLocationsECB);
 }
@@ -2081,7 +2150,7 @@ $(document).on('pagebeforeshow', '#loginFailed', function () {
     }
 });
 
-$(document).on("pageshow",'#loginFailed', function () {
+$(document).on("pageshow", '#loginFailed', function () {
     //check new version:
 
     GetCurrentVersion(GetVersionSuccessCB, GetVersionErrorCB);
@@ -2357,7 +2426,7 @@ function saveTimes() {
         timesArr.push(actives.eq(i)[0].htmlFor);
     }
 
-    //save routesArr to DB
+    //save timesArr to DB
     localStorage.times = JSON.stringify(timesArr);
 }
 
@@ -2934,7 +3003,7 @@ $(document).ready(function () {
         //}
 
         //handle case that rise if already taken
-        
+
 
     });
 
@@ -3195,8 +3264,8 @@ $(document).ready(function () {
     $("#confirmDialogBTN").on('click', function () {
         $("#popupDialog").popup('close');
         if (redirectUrlFromDialog != null) {
-            if (redirectUrlFromDialog.indexOf('http')!=-1) {
-                window.location.href= redirectUrlFromDialog;
+            if (redirectUrlFromDialog.indexOf('http') != -1) {
+                window.location.href = redirectUrlFromDialog;
             }
             if (redirectUrlFromDialog == '#loginLogo') {
                 window.location.replace('index.html');
