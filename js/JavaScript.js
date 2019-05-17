@@ -86,7 +86,7 @@
 
 
 Settings = {};
-Settings.version = '1.6.5';
+Settings.version = '1.6.6';
 Settings.releaseNotes = 'https://docs.google.com/spreadsheets/d/1jzv_lLnXRvRS_dNuhyWTuGT7cebsXX-kjflsbZim3O8';
 domain = '';
 currentPatientName = '';
@@ -660,7 +660,7 @@ function filterRides(rides) {
     for (var i = 0; i < rides.length; i++) {
 
         var rideDate = new Date(rides[i].DateTime);
-
+        //!checkTime(rides[i])
         //for filtering past rides
         if (!isPastRide(rides[i])) {
 
@@ -668,20 +668,19 @@ function filterRides(rides) {
         else if ($('#shiftDDL').val() != "משמרת" && $('#shiftDDL').val() != rides[i].Shift) {
 
         }
-        //else if (!checkTime(rides[i])) {
-
-        //}
         else if (rides[i].Status == 'שובץ גיבוי' || rides[i].Status == "שובץ נהג וגיבוי" || userInfo.Statusim.filter(status => status.Name == rides[i].Status && status.Id >= 100).length > 0) {
 
         }
         else if (typeof showAll !== 'undefined') {
             filteredRides.push(rides[i]);
         }
+        else if (!checkMyTimes(rides[i])) {
+
+        }
         else if (!checkMySeats(rides[i])) {
 
         }
         else if (checkMyRoutes(rides[i])) {
-
         }
         else {
             filteredRides.push(rides[i]);
@@ -715,20 +714,64 @@ function checkTime(ride) {
     return true;
 }
 
+function checkMyTimes(ride) {
+    timeArr = $.parseJSON(localStorage.times);
+    var d = new Date(ride.DateTime);
+
+    var str = "";
+    if (ride.Shift == "בוקר") {
+        str += "morning";
+    }
+    else {
+        str += "evening";
+    }
+    switch (d.getDay()) {
+        case 0:
+            str += "A";
+            break;
+        case 1:
+            str += "B";
+            break;
+        case 2:
+            str += "C";
+            break;
+        case 3:
+            str += "D";
+            break;
+        case 4:
+            str += "E";
+            break;
+        case 5:
+            str += "F";
+            break;
+        case 6:
+            str += "G";
+            break;
+        default:
+            break;
+    }
+    if (timeArr.includes(str)) {
+        return true;
+    }
+    return false;
+}
 //for filtering rides with prefered volunteer routes
 function checkMyRoutes(ride) {
 
     routesArr = $.parseJSON(localStorage.routes);
-
-    for (var i = 0; i < routesArr.length; i++) {
-        if (routesArr[i] == ride.StartPoint) {
-            return false;
-        }
-        if (routesArr[i] == ride.EndPoint) {
-            return false;
-        }
+    if (routesArr.includes(ride.StartPoint) && routesArr.includes(ride.EndPoint)) {
+        return false;
     }
     return true;
+    //for (var i = 0; i < routesArr.length; i++) {
+    //    if (routesArr[i] == ride.StartPoint) {
+    //        return false;
+    //    }
+    //    if (routesArr[i] == ride.EndPoint) {
+    //        return false;
+    //    }
+    //}
+    //return true;
 }
 
 
@@ -749,24 +792,29 @@ function doRideHeader(results, i) {
 
     var startPointStr = "&nbsp;&nbsp;";
     var ridesInDayCounter = 1;
+    var counter = 0;
 
-     var rideDate = '_' + (new Date(results[i].DateTime)).toLocaleDateString() + '_';
+    var rideDate = '_' + (new Date(results[i].DateTime)).toLocaleDateString() + '_';
 
     for (var s = 0; s < ridesPerDay[rideDate].length; s++) {
         var currentStartPoint = ridesPerDay[rideDate][s].StartPoint;
         if (startPointStr.indexOf(currentStartPoint) == -1) {
             startPointStr += currentStartPoint + ' (1) , ';
+            counter++;
         }
         else {
             startPointStr = startPointStr.replace(currentStartPoint + ' (' + (ridesInDayCounter) + ')', currentStartPoint + ' (' + (++ridesInDayCounter) + ')');
+            counter++;
         }
     }
     //-2 delete the ', ' last string
     startPointStr = startPointStr.substring(0, startPointStr.length - 2);
 
     //add ... if the string to long for the listview item
-    if (startPointStr.length > 40) {
-        startPointStr = startPointStr.substring(0, 35) + '...';
+    //if(startPointStr.length>40)
+    if (counter > 2) {
+      //  startPointStr = startPointStr.substring(0, 35) + '...';
+        startPointStr = "  קיימות " + counter + " הסעות ";
     }
 
     return startPointStr;
@@ -1385,7 +1433,10 @@ function createSuggestPage(ride) {
 
     var myDate = new Date(ride.DateTime);
     var day = numToDayHebrew(myDate.getDay());
-
+    var EscortsLENGTH = "";
+    if (suggestedRide.Melave.length!=0) {
+        EscortsLENGTH = " +"+ suggestedRide.Melave.length;
+    }
     str += '<p>ביום ' + day
         + ', ' + myDate.getDate() + "." + (myDate.getMonth() + 1) + "." + myDate.getFullYear()
         + ', בשעה ' + myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1") + '</p>'
@@ -1395,8 +1446,8 @@ function createSuggestPage(ride) {
         //+ '<a data-icon="edit" id="updateSeatsBTN" href="#" style="background-color:#202020" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-button-inline ui-widget ui-button-a ui-link ui-btn ui-btn-b ui-icon-edit ui-btn-icon-left ui-btn-inline ui-shadow ui-corner-all" role="button">עדכן</a>'
         //+ '</p>'
 
-        + '<p style="margin: 5% 10%;">האם אתה מעוניין לצרף לנסיעה את ' + suggestedRide.Person
-        + ' +' + suggestedRide.Melave.length
+        + '<p style="margin: 5% 10%;">האם לצרף לנסיעה את ' + suggestedRide.Person
+        + EscortsLENGTH
         + "?</p>";
 
 
@@ -1919,7 +1970,11 @@ function checkUserSuccessCB(results) {
 
     //get all rides
     loginThread = true;
-    getRidesList();
+  //  getRidesList();
+    if (typeof loginThread !== 'undefined' && loginThread) {
+
+        getMyRidesList();
+    }
 
     getLocations(getLocationsSCB, getLocationsECB);
 }
@@ -2371,7 +2426,7 @@ function saveTimes() {
         timesArr.push(actives.eq(i)[0].htmlFor);
     }
 
-    //save routesArr to DB
+    //save timesArr to DB
     localStorage.times = JSON.stringify(timesArr);
 }
 
