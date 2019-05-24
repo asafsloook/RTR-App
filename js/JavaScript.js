@@ -100,7 +100,7 @@ function defaultServerDomain() {
     }
     else {
         if (!window.location.href.includes('http')) {
-            domain = 'http://40.117.122.242/Rocket/Road%20to%20Recovery/pages/';
+            domain = 'http://40.117.122.242/prod/Road%20to%20Recovery/pages/';
         }
         else {
             domain = '..';
