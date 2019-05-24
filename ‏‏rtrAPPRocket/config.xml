@@ -4,7 +4,7 @@
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id        = "il.Road.to.Recovery"
         version   = "1.6.6">
-  <name>בדרך להחלמה</name>
+  <name>RocketR2R</name>
   <description>
     R2R
   </description>
@@ -21,7 +21,7 @@
   <access origin="*" />
   <allow-intent href="tel:*" />
 
-  <icon src="icon.png" />
+  <icon src="iconRocket.png" />
 
   <platform name="ios">
     <!-- iOS 8.0+ -->

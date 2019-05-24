@@ -100,7 +100,7 @@ function defaultServerDomain() {
     }
     else {
         if (!window.location.href.includes('http')) {
-            domain = 'http://40.117.122.242/Rocket/Road%20to%20Recovery/pages/';
+            domain = 'http://40.117.122.242/prod/Road%20to%20Recovery/pages/';
         }
         else {
             domain = '..';
@@ -459,7 +459,7 @@ function myRideListItem(myRides, i) {
     var myDate = new Date(myRides[i].DateTime);
     var day = numToDayHebrew(myDate.getDay());
 
-    //dont show past rides as backup driver (not an actual ride)
+    //dont show past rides as backup driver (not a actual ride)
     if (myRides[i].DriverType != "Primary" && $('#doneTAB').prop("class").indexOf("ui-btn-active") != -1) {
         return;
     }
@@ -1282,85 +1282,46 @@ function checkRides() {
     var ride = lastRide;
     var availableSeats = checkAvailabilty(ride);
 
-    if (ride.Status == 'שובץ נהג') {
-        for (var i = 0; i < results.length; i++) {
-
-            var rideDate = new Date(results[i].DateTime);
-            var chooseRideDate = new Date(ride.DateTime);
-
-            var rideTime = (new Date(results[i].DateTime)).toLocaleTimeString();
-            var chooseRideTime = (new Date(ride.DateTime)).toLocaleTimeString();
-
-            if (chooseRideTime != rideTime) {
-                continue;
-            }
-            if (rideDate.toDateString() != chooseRideDate.toDateString()) {
-                continue;
-            }
-            if (results[i].Id == id) {
-                continue;
-            }
-            //if (ride.Shift != results[i].Shift) {
-            //    continue;
-            //}
-            if (ride.StartPoint != results[i].StartPoint) {
-                continue;
-            }
-            if (ride.EndPoint != results[i].EndPoint) {
-                continue;
-            }
-            if (availableSeats < (results[i].Melave.length + 1)) {
-                continue;
-            }
-            if (results[i].Status != 'שובץ נהג') {
-                continue;
-            }
-
-            suitedArr.push(results[i]);
-        }
-
-    }
-    else if (ride.Status != 'ממתינה לשיבוץ') {
+    if (ride.Status != 'ממתינה לשיבוץ') {
         return suitedArr[0];
     }
 
-    else {
-        for (var i = 0; i < results.length; i++) {
+    for (var i = 0; i < results.length; i++) {
 
-            var rideDate = new Date(results[i].DateTime);
-            var chooseRideDate = new Date(ride.DateTime);
+        var rideDate = new Date(results[i].DateTime);
+        var chooseRideDate = new Date(ride.DateTime);
 
-            var rideTime = (new Date(results[i].DateTime)).toLocaleTimeString();
-            var chooseRideTime = (new Date(ride.DateTime)).toLocaleTimeString();
+        var rideTime = (new Date(results[i].DateTime)).toLocaleTimeString();
+        var chooseRideTime = (new Date(ride.DateTime)).toLocaleTimeString();
 
-            if (chooseRideTime != rideTime) {
-                continue;
-            }
-            if (rideDate.toDateString() != chooseRideDate.toDateString()) {
-                continue;
-            }
-            if (results[i].Id == id) {
-                continue;
-            }
-            //if (ride.Shift != results[i].Shift) {
-            //    continue;
-            //}
-            if (ride.StartPoint != results[i].StartPoint) {
-                continue;
-            }
-            if (ride.EndPoint != results[i].EndPoint) {
-                continue;
-            }
-            if (availableSeats < (results[i].Melave.length + 1)) {
-                continue;
-            }
-            if (results[i].Status != 'ממתינה לשיבוץ') {
-                continue;
-            }
-
-            suitedArr.push(results[i]);
+        if (chooseRideTime != rideTime) {
+            continue;
         }
+        if (rideDate.toDateString() != chooseRideDate.toDateString()) {
+            continue;
+        }
+        if (results[i].Id == id) {
+            continue;
+        }
+        //if (ride.Shift != results[i].Shift) {
+        //    continue;
+        //}
+        if (ride.StartPoint != results[i].StartPoint) {
+            continue;
+        }
+        if (ride.EndPoint != results[i].EndPoint) {
+            continue;
+        }
+        if (availableSeats < (results[i].Melave.length + 1)) {
+            continue;
+        }
+        if (results[i].Status != 'ממתינה לשיבוץ') {
+            continue;
+        }
+
+        suitedArr.push(results[i]);
     }
+
 
     suitedArr.sort(function (a, b) {
         return b.Melave.length.toString().localeCompare(a.Melave.length.toString());
@@ -3019,18 +2980,7 @@ $(document).ready(function () {
     //after signing to ride and we suggest a suited ride, volenteer click ok
     $("#suggestOkBTN").on("click", function () {
 
-        //CombineRideRidePat(suggestedRide.Id, parseInt(localStorage.lastRideId));
-        lastRide = getRideById(suggestedRide.Id);
-
-        maxSeats = checkAvailabilty(lastRide);
-
-        mySeats = parseInt(localStorage.availableSeats);
-
-        if (/*maxSeats == mySeats || */ lastRide.Status == 'ממתינה לשיבוץ' || lastRide.Status == 'שובץ נהג') {
-            var driverType = lastRide.Status == "ממתינה לשיבוץ" ? "primary" : "";
-            signDriverToRide(suggestedRide.Id, driverType);
-        }
-
+        CombineRideRidePat(suggestedRide.Id, parseInt(localStorage.lastRideId));
 
     });
 
