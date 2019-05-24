@@ -2980,7 +2980,18 @@ $(document).ready(function () {
     //after signing to ride and we suggest a suited ride, volenteer click ok
     $("#suggestOkBTN").on("click", function () {
 
-        CombineRideRidePat(suggestedRide.Id, parseInt(localStorage.lastRideId));
+        //CombineRideRidePat(suggestedRide.Id, parseInt(localStorage.lastRideId));
+        lastRide = getRideById(suggestedRide.Id);
+
+        maxSeats = checkAvailabilty(lastRide);
+
+        mySeats = parseInt(localStorage.availableSeats);
+
+        if (/*maxSeats == mySeats || */ lastRide.Status == 'ממתינה לשיבוץ' || lastRide.Status == 'שובץ נהג') {
+            var driverType = lastRide.Status == "ממתינה לשיבוץ" ? "primary" : "";
+            signDriverToRide(suggestedRide.Id, driverType);
+        }
+
 
     });
 
