@@ -21,7 +21,7 @@
   <access origin="*" />
   <allow-intent href="tel:*" />
 
-  <icon src="icon.png" />
+  <icon src="iconRocket.png" />
 
   <platform name="ios">
     <!-- iOS 8.0+ -->
