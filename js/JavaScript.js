@@ -1282,46 +1282,85 @@ function checkRides() {
     var ride = lastRide;
     var availableSeats = checkAvailabilty(ride);
 
-    if (ride.Status != 'ממתינה לשיבוץ') {
+    if (ride.Status == 'שובץ נהג') {
+        for (var i = 0; i < results.length; i++) {
+
+            var rideDate = new Date(results[i].DateTime);
+            var chooseRideDate = new Date(ride.DateTime);
+
+            var rideTime = (new Date(results[i].DateTime)).toLocaleTimeString();
+            var chooseRideTime = (new Date(ride.DateTime)).toLocaleTimeString();
+
+            if (chooseRideTime != rideTime) {
+                continue;
+            }
+            if (rideDate.toDateString() != chooseRideDate.toDateString()) {
+                continue;
+            }
+            if (results[i].Id == id) {
+                continue;
+            }
+            //if (ride.Shift != results[i].Shift) {
+            //    continue;
+            //}
+            if (ride.StartPoint != results[i].StartPoint) {
+                continue;
+            }
+            if (ride.EndPoint != results[i].EndPoint) {
+                continue;
+            }
+            if (availableSeats < (results[i].Melave.length + 1)) {
+                continue;
+            }
+            if (results[i].Status != 'שובץ נהג') {
+                continue;
+            }
+
+            suitedArr.push(results[i]);
+        }
+
+    }
+    else if (ride.Status != 'ממתינה לשיבוץ') {
         return suitedArr[0];
     }
 
-    for (var i = 0; i < results.length; i++) {
+    else {
+        for (var i = 0; i < results.length; i++) {
 
-        var rideDate = new Date(results[i].DateTime);
-        var chooseRideDate = new Date(ride.DateTime);
+            var rideDate = new Date(results[i].DateTime);
+            var chooseRideDate = new Date(ride.DateTime);
 
-        var rideTime = (new Date(results[i].DateTime)).toLocaleTimeString();
-        var chooseRideTime = (new Date(ride.DateTime)).toLocaleTimeString();
+            var rideTime = (new Date(results[i].DateTime)).toLocaleTimeString();
+            var chooseRideTime = (new Date(ride.DateTime)).toLocaleTimeString();
 
-        if (chooseRideTime != rideTime) {
-            continue;
-        }
-        if (rideDate.toDateString() != chooseRideDate.toDateString()) {
-            continue;
-        }
-        if (results[i].Id == id) {
-            continue;
-        }
-        //if (ride.Shift != results[i].Shift) {
-        //    continue;
-        //}
-        if (ride.StartPoint != results[i].StartPoint) {
-            continue;
-        }
-        if (ride.EndPoint != results[i].EndPoint) {
-            continue;
-        }
-        if (availableSeats < (results[i].Melave.length + 1)) {
-            continue;
-        }
-        if (results[i].Status != 'ממתינה לשיבוץ') {
-            continue;
-        }
+            if (chooseRideTime != rideTime) {
+                continue;
+            }
+            if (rideDate.toDateString() != chooseRideDate.toDateString()) {
+                continue;
+            }
+            if (results[i].Id == id) {
+                continue;
+            }
+            //if (ride.Shift != results[i].Shift) {
+            //    continue;
+            //}
+            if (ride.StartPoint != results[i].StartPoint) {
+                continue;
+            }
+            if (ride.EndPoint != results[i].EndPoint) {
+                continue;
+            }
+            if (availableSeats < (results[i].Melave.length + 1)) {
+                continue;
+            }
+            if (results[i].Status != 'ממתינה לשיבוץ') {
+                continue;
+            }
 
-        suitedArr.push(results[i]);
+            suitedArr.push(results[i]);
+        }
     }
-
 
     suitedArr.sort(function (a, b) {
         return b.Melave.length.toString().localeCompare(a.Melave.length.toString());
@@ -1329,6 +1368,62 @@ function checkRides() {
 
     return suitedArr[0];
 }
+//function checkRides() {
+
+//    suitedArr = [];
+
+//    var results = rides;
+//    var id = lastRide.Id;
+//    var ride = lastRide;
+//    var availableSeats = checkAvailabilty(ride);
+
+//    if (ride.Status != 'ממתינה לשיבוץ') {
+//        return suitedArr[0];
+//    }
+
+//    for (var i = 0; i < results.length; i++) {
+
+//        var rideDate = new Date(results[i].DateTime);
+//        var chooseRideDate = new Date(ride.DateTime);
+
+//        var rideTime = (new Date(results[i].DateTime)).toLocaleTimeString();
+//        var chooseRideTime = (new Date(ride.DateTime)).toLocaleTimeString();
+
+//        if (chooseRideTime != rideTime) {
+//            continue;
+//        }
+//        if (rideDate.toDateString() != chooseRideDate.toDateString()) {
+//            continue;
+//        }
+//        if (results[i].Id == id) {
+//            continue;
+//        }
+//        //if (ride.Shift != results[i].Shift) {
+//        //    continue;
+//        //}
+//        if (ride.StartPoint != results[i].StartPoint) {
+//            continue;
+//        }
+//        if (ride.EndPoint != results[i].EndPoint) {
+//            continue;
+//        }
+//        if (availableSeats < (results[i].Melave.length + 1)) {
+//            continue;
+//        }
+//        if (results[i].Status != 'ממתינה לשיבוץ') {
+//            continue;
+//        }
+
+//        suitedArr.push(results[i]);
+//    }
+
+
+//    suitedArr.sort(function (a, b) {
+//        return b.Melave.length.toString().localeCompare(a.Melave.length.toString());
+//    });
+
+//    return suitedArr[0];
+//}
 
 //check how many seats are available in a specific day and time
 function checkAvailabilty(lastRide) {
