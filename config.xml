@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id        = "il.Road.to.Recovery"
-        version   = "1.6.6">
+        version   = "1.6.9">
   <name>בדרך להחלמה</name>
   <description>
     R2R
