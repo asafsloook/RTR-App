@@ -219,7 +219,7 @@
     <div data-role="page" id="signMe">
 
 
-        <div data-role="header">
+        <div data-role="header" style="position: fixed;width: 100%;z-index:2;">
             <img src="img/spyIcon.png" class="spyIcon">
             <h1>שבץ אותי</h1>
             <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
@@ -288,14 +288,20 @@
             <div id="showAllRides">
                 <form>
                     <input type="checkbox" id="showAllRidesBTN">
-                    <label for="showAllRidesBTN">הצג הכל</label>
+                    <label style="
+    margin-top: 45%;
+" for="showAllRidesBTN">הצג הכל</label>
                 </form>
             </div>
 
             <div data-role="navbar" id="shiftTABS">
                 <ul>
-                    <li><a id="afternoonTAB">צהריים</a></li>
-                    <li><a id="morningTAB">בוקר</a></li>
+                    <li><a style="
+    margin-top: 25%;
+" id="afternoonTAB">צהריים</a></li>
+                    <li><a style="
+    margin-top: 25%;
+" id="morningTAB">בוקר</a></li>
                 </ul>
             </div>
 
@@ -927,11 +933,11 @@
     </div>
 
 
-    <div data-role="popup" id="popupDialog" data-theme="a" data-overlay-theme="b" data-position-to="window" data-dismissible="false" data-history="false" style="position:fixed;width:80%">
+    <div data-role="popup" id="popupDialog" data-theme="a" data-overlay-theme="b" data-position-to="window" data-dismissible="false" data-history="false" style="top: 10%;position:fixed;width:80%">
         <div data-role="header" data-theme="a">
             <h1 id="popupTitle"></h1>
         </div>
-        <div role="main" class="ui-content">
+        <div  style="padding: 0;margin: 0;" role="main" class="ui-content">
             <div id="popupContentDiv"><p id="popupContent"></p></div>
         </div>
         <div role="contentinfo" class="ui-footer">

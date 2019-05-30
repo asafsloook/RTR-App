@@ -86,7 +86,7 @@
 
 
 Settings = {};
-Settings.version = '1.6.6';
+Settings.version = '1.7.0';
 Settings.releaseNotes = 'https://docs.google.com/spreadsheets/d/1jzv_lLnXRvRS_dNuhyWTuGT7cebsXX-kjflsbZim3O8';
 domain = '';
 currentPatientName = '';
@@ -124,6 +124,15 @@ function getServersECB(e) {
 
 }
 
+document.addEventListener("backbutton", onBackKeyDown, false);
+function onBackKeyDown(e) {
+    event.preventDefault();
+}
+//document.addEventListener("backbutton", function (e) {
+//    alert("back");
+//    //e.preventDefault();
+//    return false;
+//}, false);
 
 //get week function
 Date.prototype.getWeek = function () {
@@ -153,7 +162,8 @@ function getRidesList() {
     var id = parseInt(localStorage.userId);
 
     var request = {
-        volunteerId: id
+        volunteerId: id,
+        maxDays:30
     }
     GetRides(request, GetRidesSuccessCB, GetRidesErrorCB);
 }
@@ -404,9 +414,9 @@ function printMyRides(myRides) {
         });
     }
     else {
-        if (myPastRides === null) {
+        //if (myPastRides === null) {
             getMyPastRidesList();
-        }
+        //}
         myPastRides.sort(function (a, b) {
             return b.DateTime.toString().localeCompare(a.DateTime.toString());
         });
@@ -1822,11 +1832,11 @@ function loginToCloseRide() {
             closeRide = closeRides[0];
             var rideDate = new Date(closeRide.DateTime);
             var isSameDay = rideDate.getDay() == (new Date()).getDay() ? 'היום' : 'מחר';
-            var alertRide = 'המערכת זיהתה שיש לך ' + isSameDay + ' נסיעה מ' + closeRide.StartPoint + ' ל' + closeRide.EndPoint + ' בשעה ' + rideDate.getHours() + ':' + (rideDate.getMinutes() < 10 ? '0' + rideDate.getMinutes() : rideDate.getMinutes()) + '. האם תרצה לדווח סטטוס?';
+            var alertRide = 'המערכת זיהתה שיש לך ' + isSameDay + ' נסיעה מ' + closeRide.StartPoint + ' ל' + closeRide.EndPoint + ' בשעה ' + rideDate.getHours() + ':' + (rideDate.getMinutes() < 10 ? '0' + rideDate.getMinutes() : rideDate.getMinutes()) + ' עם החולה ' + closeRide.Pat.DisplayName+'. האם תרצה לדווח סטטוס?';
 
             var isTentative = rideDate.getHours() == 22 && rideDate.getMinutes() == 14;
             if (isTentative) {
-                alertRide = 'המערכת זיהתה שיש לך ' + isSameDay + ' נסיעה מ' + closeRide.StartPoint + ' ל' + closeRide.EndPoint + ' אחה"צ. ' + 'האם תרצה לדווח סטטוס?';
+                alertRide = 'המערכת זיהתה שיש לך ' + isSameDay + ' נסיעה מ' + closeRide.StartPoint + ' ל' + closeRide.EndPoint + ' אחה"צ. ' + ' עם החולה ' + closeRide.Pat.DisplayName + ' האם תרצה לדווח סטטוס? ';
             }
 
             popupDialog('הודעה', alertRide, '#status', true, null);
@@ -1836,7 +1846,7 @@ function loginToCloseRide() {
 
 function chooseCloseRide() {
 
-    var alertRide = '<p>המערכת זיהתה שיש לך נסיעות קרובות. <br/> האם תרצה לדווח סטטוס?</p><form id="closeRidesSelectMenu">';
+    var alertRide = '<p>המערכת זיהתה שיש לך נסיעות קרובות. <br/> האם תרצה לדווח סטטוס?</p><form style="padding-right:9px;" id="closeRidesSelectMenu">';
 
     closeRides.sort(function (a, b) {
         return a.DateTime.toString().localeCompare(b.DateTime.toString());
@@ -1846,14 +1856,14 @@ function chooseCloseRide() {
 
         var rideDate = new Date(closeRides[i].DateTime);
         var isSameDay = rideDate.getDay() == (new Date()).getDay() ? 'היום' : 'מחר';
-        var selectOptionContent = isSameDay + ', מ' + closeRides[i].StartPoint + ' ל' + closeRides[i].EndPoint + ', ' + rideDate.getHours() + ':' + (rideDate.getMinutes() < 10 ? '0' + rideDate.getMinutes() : rideDate.getMinutes());
+        var selectOptionContent = isSameDay + ', מ' + closeRides[i].StartPoint + ' ל' + closeRides[i].EndPoint + ', ' + rideDate.getHours() + ':' + (rideDate.getMinutes() < 10 ? '0' + rideDate.getMinutes() : rideDate.getMinutes())+ ' עם החולה ' + closeRides[i].Pat.DisplayName;
 
 
         var isTentative = rideDate.getHours() == 22 && rideDate.getMinutes() == 14;
         if (isTentative) {
-            selectOptionContent = isSameDay + ', מ' + closeRides[i].StartPoint + ' ל' + closeRides[i].EndPoint + ', ' + 'אחה"צ';
+            selectOptionContent = isSameDay + ', מ' + closeRides[i].StartPoint + ' ל' + closeRides[i].EndPoint + ', ' + 'אחה"צ, ' + ' עם החולה ' + closeRides[i].Pat.DisplayName;
         }
-        alertRide += '<input type="radio" name="ride" ' + (i == 0 ? 'checked' : '') + ' value="' + selectOptionContent + '">' + selectOptionContent + '<br><br>';
+        alertRide += '<input type="radio" name="ride" ' + (i == 0 ? 'checked' : '') + ' value="' + selectOptionContent + ' style="font-size:22px;" ">&nbsp;' + selectOptionContent + '<br><br>';
     }
     alertRide += '</form>';
 
@@ -2135,7 +2145,7 @@ function hasCloseRide() {
             var tentative = new Date(myRideMillisecs);
             var isTentative = tentative.getHours() == 22 && tentative.getMinutes() == 14;
 
-            if (isTentative && new Date().getHours() >= 9 && tentative.toLocaleDateString() == new Date().toLocaleDateString()) {
+            if (isTentative && new Date().getHours() >= 9 && tentative.toLocaleDateString() == new Date().toLocaleDateString() && !myRides[i].Statuses.includes('הגענו ליעד')) {
                 closeRides.push(myRides[i]);
             }
             else if (!isTentative && nowMillisecs >= myRideMillisecsMinusBefore && nowMillisecs <= myRideMillisecsPlusAfter && myRides[i].DriverType == 'Primary' && !myRides[i].Statuses.includes('הגענו ליעד')) {
@@ -3075,8 +3085,17 @@ $(document).ready(function () {
     //after signing to ride and we suggest a suited ride, volenteer click ok
     $("#suggestOkBTN").on("click", function () {
 
-        CombineRideRidePat(suggestedRide.Id, parseInt(localStorage.lastRideId));
+        //CombineRideRidePat(suggestedRide.Id, parseInt(localStorage.lastRideId));
+        lastRide = getRideById(suggestedRide.Id,);
 
+        maxSeats = checkAvailabilty(lastRide);
+
+        mySeats = parseInt(localStorage.availableSeats);
+
+        if (/*maxSeats == mySeats || */ lastRide.Status == 'ממתינה לשיבוץ' || lastRide.Status == 'שובץ נהג') {
+            var driverType = lastRide.Status == "ממתינה לשיבוץ" ? "primary" : "";
+            signDriverToRide(suggestedRide.Id, driverType);
+        }
     });
 
     //on sign me to ride click ok

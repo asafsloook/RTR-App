@@ -119,7 +119,22 @@ public class WebService : System.Web.Services.WebService
         }
     }
 
-
+    [WebMethod]
+    public string getescortedsListMobile(string displayName, string patientCell)
+    {
+        try
+        {
+            JavaScriptSerializer j = new JavaScriptSerializer();
+            Patient p = new Patient();
+            List<Escorted> escortedsList = p.getescortedsListMobile(displayName, patientCell);
+            return j.Serialize(escortedsList);
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Error in getPatientEscorted", ex);
+            throw new Exception("שגיאה בשליפת נתוני מלווים");
+        }
+    }
     [WebMethod]
     public string getVolunteerPrefs(int Id)
     {
@@ -139,13 +154,17 @@ public class WebService : System.Web.Services.WebService
     }
     //לסדר
     [WebMethod(EnableSession = true)]
-    public int setRidePat(RidePat RidePat, string func, bool isAnonymous)
+    public int setRidePat(RidePat RidePat, string func, bool isAnonymous,int numberOfRides, string repeatRideEvery)
     {
         try
         {
             RidePat rp = new RidePat();
-            int res = rp.setRidePat(RidePat, func,isAnonymous);
+            int res = rp.setRidePat(RidePat, func,isAnonymous, numberOfRides, repeatRideEvery);
             //write to log on delete 
+            if (res==666)
+            {
+                return res;
+            }
             if (res > 0 && func == "delete")
             {
                 string message = "";
@@ -154,7 +173,15 @@ public class WebService : System.Web.Services.WebService
             }
             return res;
         }
-        catch(Exception ex)
+        catch (ArgumentException ex)
+        {
+            JavaScriptSerializer j = new JavaScriptSerializer();
+
+            Log.Error("Error in setRidePat - same ride isue in date: ", ex);
+            throw new Exception(j.Serialize(" ההסעה בתאריך " +ex.Message+" כבר קיימת.\nאנא בחר תאריך חדש."));
+        }
+
+        catch (Exception ex)
         {
             Log.Error("Error in setRidePat", ex);
             throw new Exception("שגיאה בפתיחה/עדכון/מחיקה של הסעה חדשה");
@@ -195,10 +222,12 @@ public class WebService : System.Web.Services.WebService
     }
 
     [WebMethod]
-    public string getPatients(bool active)
+    public string getPatients(bool active=true)
     {
         try
         {
+            HttpResponse response = GzipMe();
+
             JavaScriptSerializer j = new JavaScriptSerializer();
             Patient c = new Patient();
             List<Patient> patientsList = c.getPatientsList(active);
@@ -211,7 +240,24 @@ public class WebService : System.Web.Services.WebService
         }
 
     }
-    
+    [WebMethod]
+    public string getPatients1()
+    {
+        try
+        {
+            JavaScriptSerializer j = new JavaScriptSerializer();
+            Patient c = new Patient();
+            List<Patient> patientsList = c.getPatientsList(true);
+            return j.Serialize(patientsList);
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Error in getPatients", ex);
+            throw new Exception("שגיאה בשליפת נתוני חולים");
+        }
+
+    }
+
     [WebMethod(Description ="get patients with the same origin and destination")]
     public string getPatientsForAnonymous(bool active,string origin,string dest)
     {
@@ -300,26 +346,8 @@ public class WebService : System.Web.Services.WebService
             Log.Error("Error in getPatientEscorted", ex);
             throw new Exception("שגיאה בשליפת נתוני מלווים");
         }
-    }
 
-    //add new to road2r
-    [WebMethod]
-    public string getescortedsListMobile(string displayName, string patientCell)
-    {
-        try
-        {
-            JavaScriptSerializer j = new JavaScriptSerializer();
-            Patient p = new Patient();
-            List<Escorted> escortedsList = p.getescortedsListMobile(displayName,patientCell);
-            return j.Serialize(escortedsList);
-        }
-        catch (Exception ex)
-        {
-            Log.Error("Error in getPatientEscorted", ex);
-            throw new Exception("שגיאה בשליפת נתוני מלווים");
-        }
     }
-
     [WebMethod]
     public int getSpaceInCar(int ridePatNum, int driverId)
     {
@@ -454,9 +482,11 @@ public class WebService : System.Web.Services.WebService
     {
         try
         {
+            //add global messege to all volunteers to download new app
             Version v = new Version();
             //add mandatory
             v.setNewVersion(userName, google, appstore, date, version,mandatory);
+
         }
         catch (Exception ex)
         {
@@ -554,14 +584,22 @@ public class WebService : System.Web.Services.WebService
     //This method is used for שבץ אותי
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public string GetRidePatView(int volunteerId)
+    public string GetRidePatView(int volunteerId,int maxDays)
     {
         try
         {
-            //string test = (string)HttpContext.Current.Session["userSession"];
+            HttpResponse response = GzipMe();
+            //string AcceptEncoding = HttpContext.Current.Request.Headers["Accept-Encoding"];
+            //if (AcceptEncoding.Contains("gzip"))
+            //{
+            //    HttpResponse Response = HttpContext.Current.Response;
+            //    Response.Filter = new System.IO.Compression.GZipStream(Response.Filter, System.IO.Compression.CompressionMode.Compress);
+            //    Response.Headers.Remove("Content-Encoding");
+            //    Response.AppendHeader("Content-Encoding", "gzip");
+            //} 
 
             RidePat rp = new RidePat();
-            List<RidePat> r = rp.GetRidePatView(volunteerId);
+            List<RidePat> r = rp.GetRidePatView(volunteerId, maxDays);
             JavaScriptSerializer j = new JavaScriptSerializer();
             j.MaxJsonLength = Int32.MaxValue;
             return j.Serialize(r);
@@ -603,14 +641,14 @@ public class WebService : System.Web.Services.WebService
         try
         {
             Ride r = new Ride();
-            List<Ride> rl = r.TestGetMyRides(volunteerId);
+            List<Ride> rl = r.GetMyFutureRides(volunteerId);
             JavaScriptSerializer j = new JavaScriptSerializer();
             return j.Serialize(rl);
         }
         catch (Exception ex)
         {
             Log.Error("Error in getMyRides", ex);
-            throw new Exception("שגיאה בשליפת נתוני הסעות");
+            throw new Exception("שגיאה בשליפת נתוני הסעות מתוכננות");
         }
 
     }
@@ -635,6 +673,7 @@ public class WebService : System.Web.Services.WebService
         }
 
     }
+
     //used for getting all versions of the app both in the appstore and in google play
     //the results order by DESC so if we want the latest version we get the first Version in the list.
     [WebMethod]
@@ -685,7 +724,7 @@ public class WebService : System.Web.Services.WebService
         try
         {
             Volunteer v = new Volunteer();
-            v = v.getVolunteerByMobile(mobile, regId, device);
+            v = v.getVolunteerByMobile(mobile, regId,device);
             JavaScriptSerializer j = new JavaScriptSerializer();
             return j.Serialize(v);
         }
@@ -744,7 +783,6 @@ public class WebService : System.Web.Services.WebService
                     Volunteer V = new Volunteer();
                     V.getVolunteerByID(driverId);
                     m.driverCanceledRide(ridePatId,V.getVolunteerByID(driverId));
-
                 }
             }
 
@@ -808,6 +846,8 @@ public class WebService : System.Web.Services.WebService
     {
         try
         {
+            //need to send push from here!
+
             RidePat rp = new RidePat();
             int res = rp.LeaveRidePat(ridePatId, rideId, driverId);
 
@@ -818,7 +858,15 @@ public class WebService : System.Web.Services.WebService
                 string message = " הנהג/ת " + a.getDriverName(driverId) + " נמחק/ה מנסיעה מספר " + ridePatId.ToString();
                 LogEntry le = new LogEntry(DateTime.Now, "מחיקת נהג/ת", message, 2, ridePatId, false);
             }
-
+            if (res == 911)
+            {
+                //send push notification to coordinator phone
+                Message m = new Message();
+                //get driver details 
+                Volunteer V = new Volunteer();
+                V.getVolunteerByID(driverId);
+                m.driverCanceledRide(ridePatId, V.getVolunteerByID(driverId));
+            }
             JavaScriptSerializer j = new JavaScriptSerializer();
             return j.Serialize(res);
         }
@@ -987,6 +1035,8 @@ public class WebService : System.Web.Services.WebService
     {
         try
         {
+            HttpResponse response = GzipMe();
+
             JavaScriptSerializer j = new JavaScriptSerializer();
             Volunteer c = new Volunteer();
             List<Volunteer> volunteersList = c.getVolunteersList(active);
@@ -1236,6 +1286,19 @@ public class WebService : System.Web.Services.WebService
             Log.Error("Error in getServers", ex);
             throw new Exception("שגיאה בשליפת שרתים");
         }
+    }
+    private HttpResponse GzipMe()
+    {
+        string AcceptEncoding = HttpContext.Current.Request.Headers["Accept-Encoding"];
+        HttpResponse Response = HttpContext.Current.Response;
+        if (AcceptEncoding.Contains("gzip"))
+        {
+            //HttpResponse Response = HttpContext.Current.Response;
+            Response.Filter = new System.IO.Compression.GZipStream(Response.Filter, System.IO.Compression.CompressionMode.Compress);
+            Response.Headers.Remove("Content-Encoding");
+            Response.AppendHeader("Content-Encoding", "gzip");
+        }
+        return Response;
     }
 }
 

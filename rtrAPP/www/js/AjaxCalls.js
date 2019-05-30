@@ -12,9 +12,8 @@ function GetRides(request, GetRidesSuccessCB, GetRidesErrorCB) {
         type: 'POST',                              // can be also GET
         dataType: 'json',                          // expecting JSON datatype from the server
         contentType: 'application/json; charset = utf-8', // sent to the server
-        //'Content-Encoding':'gzip',
-        headers: {
-            'Accept-Encoding': 'gzip'
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("Content-Encoding", "gzip");
         },
         success: GetRidesSuccessCB,                // data.d id the Variable data contains the data we get from serverside
         error: GetRidesErrorCB
@@ -33,6 +32,9 @@ function GetMyRides(request, GetMyRidesSuccessCB, GetMyRidesErrorCB) {
         type: 'POST',                              // can be also GET
         dataType: 'json',                          // expecting JSON datatype from the server
         contentType: 'application/json; charset = utf-8', // sent to the server
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("Content-Encoding", "gzip");
+        },
         success: GetMyRidesSuccessCB,                // data.d id the Variable data contains the data we get from serverside
         error: GetMyRidesErrorCB
         //async: false
@@ -51,6 +53,9 @@ function GetMyPastRides(request, GetMyPastRidesSuccessCB, GetMyPastRidesErrorCB)
         dataType: 'json',                          // expecting JSON datatype from the server
         async: false,
         contentType: 'application/json; charset = utf-8', // sent to the server
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("Content-Encoding", "gzip");
+        },
         success: GetMyPastRidesSuccessCB,                // data.d id the Variable data contains the data we get from serverside
         error: GetMyPastRidesErrorCB
         //async: false
@@ -180,6 +185,9 @@ function getVolunteers(request, getVolunteersSCB, getVolunteersECB) {
         type: 'POST',                              // can be also GET
         dataType: 'json',                          // expecting JSON datatype from the server
         contentType: 'application/json; charset = utf-8', // sent to the server
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("Content-Encoding", "gzip");
+        },
         success: getVolunteersSCB,                // data.d id the Variable data contains the data we get from serverside
         error: getVolunteersECB
     }) // end of ajax call
@@ -196,6 +204,9 @@ function getPatients(request, getPatientsSCB, getPatientsECB) {
         type: 'POST',                              // can be also GET
         dataType: 'json',                          // expecting JSON datatype from the server
         contentType: 'application/json; charset = utf-8', // sent to the server
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("Content-Encoding", "gzip");
+        },
         success: getPatientsSCB,                // data.d id the Variable data contains the data we get from serverside
         error: getPatientsECB
     }) // end of ajax call

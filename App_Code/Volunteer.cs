@@ -13,6 +13,7 @@ using System.Web.Script.Serialization;
 /// </summary>
 public class Volunteer
 {
+    string device;
     string displayName; //מזהה ייחודי
     string firstNameH;//שם פרטי בעברית
     string firstNameA;//שם פרטי בערבית
@@ -579,11 +580,11 @@ public class Volunteer
     }
 
 
-    public Volunteer getVolunteerByMobile(string mobile, string regId, string device)
+    public Volunteer getVolunteerByMobile(string mobile, string regId,string device)
     {
         DbService db = new DbService();
         mobile = mobile.Replace("-", "");
-        string query = "select * from VolunteerTypeView where CellPhone = '" + mobile + "'";
+        string query = "select * from VolunteerTypeView where CellPhone = '" + mobile +"'";
         DataSet ds = db.GetDataSetByQuery(query);
         Volunteer v = new Volunteer();
         foreach (DataRow dr in ds.Tables[0].Rows)
@@ -671,7 +672,7 @@ public class Volunteer
 
             //update device
             db = new DbService();
-            var updateDevice = "update Volunteer set device=N'" + device + "' where Id=@ID";
+            var updateDevice = "update Volunteer set device=N'"+device+"' where Id=@ID";
 
             SqlCommand cmd1 = new SqlCommand();
             cmd1.CommandType = CommandType.Text;
@@ -712,6 +713,19 @@ public class Volunteer
         set
         {
             status = value;
+        }
+    }
+
+    public string Device
+    {
+        get
+        {
+            return device;
+        }
+
+        set
+        {
+            device = value;
         }
     }
 
@@ -852,6 +866,7 @@ public class Volunteer
             v.Address = dr["Address"].ToString();
             v.TypeVol = dr["VolunTypeType"].ToString();
             v.Email = dr["Email"].ToString();
+            v.Device = dr["device"].ToString();
             //v.Day1 = dr["preferDay1"].ToString();
             //v.Hour1 = dr["preferHour1"].ToString();
             //v.Day2 = dr["preferDay2"].ToString();
@@ -982,6 +997,10 @@ public class Volunteer
         v.RegId = dr["pnRegId"].ToString();
         v.Address = dr["Address"].ToString();
         v.Email = dr["Email"].ToString();
+        if (dr["device"] != null)
+        {
+            v.Device = dr["device"].ToString();
+        }
         string date = dr["JoinDate"].ToString();
         if (date == "")
         {
@@ -1092,6 +1111,13 @@ public class Volunteer
     public string GetVolunteerRegById(int id)
     {
         string query = "select pnRegID from Volunteer where Id ='" + id + "'";
+        DbService db = new DbService();
+        return db.GetObjectScalarByQuery(query).ToString();
+    }
+
+    public string getDeviceByID(int id)
+    {
+        string query = "select device from Volunteer where Id ='" + id + "'";
         DbService db = new DbService();
         return db.GetObjectScalarByQuery(query).ToString();
     }

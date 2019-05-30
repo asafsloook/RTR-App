@@ -86,7 +86,7 @@ public class myPushNot
         sound = _sound;
     }
 
-    public void RunPushNotificationAll(List<Volunteer> userList, JObject data, JObject notification_)
+    public void RunPushNotificationAll(List<Volunteer> userList, JObject data,JObject notification_)
     {
         List<string> registrationIDs = new List<string>();
 
@@ -123,6 +123,7 @@ public class myPushNot
         // Start the broker
         gcmBroker.Start();
 
+
         if (notification_ == null)
         {
             gcmBroker.QueueNotification(new GcmNotification
@@ -141,14 +142,13 @@ public class myPushNot
             });
         }
 
-
         // Stop the broker, wait for it to finish   
         // This isn't done after every message, but after you're
         // done with the broker
         gcmBroker.Stop();
     }
 
-    public void RunPushNotificationOne(Volunteer user, JObject data, JObject notification_)
+    public void RunPushNotificationOne(Volunteer user, JObject data,JObject notification_)
     {
 
         // Configuration
@@ -161,16 +161,18 @@ public class myPushNot
         // Wire up events
         gcmBroker.OnNotificationFailed += (notification, aggregateEx) =>
         {
-            //Console.WriteLine("GCM Notification Failed!");
-        };
+        //Console.WriteLine("GCM Notification Failed!");
+    };
 
         gcmBroker.OnNotificationSucceeded += (notification) =>
         {
-            //Console.WriteLine("GCM Notification Sent!");
-        };
+        //Console.WriteLine("GCM Notification Sent!");
+    };
 
         // Start the broker
         gcmBroker.Start();
+
+
 
         if (notification_ == null)
         {
@@ -189,6 +191,7 @@ public class myPushNot
                 Data = data
             });
         }
+
 
 
 

@@ -51,13 +51,16 @@
     display: none;
     position: fixed;
     z-index: 1000;
-    top: 0;
+    top: 10%;
     left: 0;
     height: 100%;
     width: 100%;
     background: rgba( 255, 255, 255, .8 );
 }
-
+#closeRidesSelectMenu{
+    text-align:right;
+    font-size:22px;
+}
 /* When the body has the loading class, we turn
    the scrollbar off with overflow:hidden */
 body.loading .modal {

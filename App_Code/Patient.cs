@@ -516,7 +516,7 @@ public class Patient
             query += " where IsActive = 'true'";
         }
 
-        query += " order by id";
+        query += " order by Id";
 
         List<Patient> list = new List<Patient>();
         List<string> el = new List<string>();
@@ -572,7 +572,6 @@ public class Patient
         list.Add(p);
         return list;
     }
-
 
     //this function is for generating patients after anonymous patient is set. only patients with same locations will be assingned.
     public List<Patient> getAnonymousPatientsList(bool active,string origin,string dest)
@@ -786,7 +785,6 @@ public class Patient
         //db.ExecuteQuery(query);
     }
 
-
     //By Sufa & Matan --Get a list of all Escorts for Patient.
     public List<Escorted> getescortedsList(string displayName, string caller)
     {
@@ -825,14 +823,11 @@ public class Patient
 
         return list;
     }
-
-
-    //add to road2r
     public List<Escorted> getescortedsListMobile(string displayName, string patientCell)
     {
         #region DB functions
         displayName = displayName.Replace("'", "''");
-        string query = "select * from PatientEscortView where PatientName= N'" + displayName + "' and PatientCell='"+patientCell+"'";
+        string query = "select * from PatientEscortView where PatientName= N'" + displayName + "' and PatientCell='" + patientCell + "'";
         query += " and IsActive = 'True'";
         //query += " order by EscortName";
 
