@@ -86,7 +86,7 @@
 
 
 Settings = {};
-Settings.version = '1.7.0';
+Settings.version = '1.7.1';
 Settings.releaseNotes = 'https://docs.google.com/spreadsheets/d/1jzv_lLnXRvRS_dNuhyWTuGT7cebsXX-kjflsbZim3O8';
 domain = '';
 currentPatientName = '';
@@ -1767,6 +1767,9 @@ $(document).one('pagebeforecreate', function () {
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-delete">'
         + '<a href="#" data-rel="close">סגירת התפריט</a>'
         + '</li>'
+        //+ '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-delete">'
+        //+ '<a id="exitAppTab" >יציאה מהאפליקציה</a>'
+        //+ '</li>'
         + '</ul>'
         + '</div>'
         + '</div>';
@@ -2647,6 +2650,22 @@ function showAreas() {
 
 
 function onDeviceReady() {
+    //handle exit app from main menu
+    //document.getElementById('exitApp').addEventListener('click', exitAppRightNow, false);
+    //document.getElementById('exitAppTab').addEventListener('click', exitAppRightNow, false);
+    //function exitAppRightNow() {
+    //    alert("ss");
+    //    navigator.app.exitApp();
+    //}
+    //$('#exitApp').on('click', function () {
+    //    navigator.app.exitApp();
+    //});
+    //handle exit app from tab
+    //$('#exitAppTab').on('click', function () {
+    //    alert("ss");
+    //    navigator.app.exitApp();
+    //});
+
     if (localStorage['app-version'] !== Settings.version) {
         localStorage.clear();
     }
@@ -2666,6 +2685,7 @@ function onDeviceReady() {
 
     //Handle the resume event: login, check how much time been in background, refresh rides etc
     document.addEventListener("resume", onResume, false);
+
     function onResume() {
         if (window.location.href.includes('signMe')) {
             fromSignMe = true;
@@ -2741,6 +2761,8 @@ function onDeviceReady() {
                 popupDialog('שגיאה', "אירעה תקלה במערכת.", '#loginLogo', false, null);
             }
         });
+
+        
     }
     else {
         manualLogin();
@@ -3016,6 +3038,7 @@ function setStatusECB() {
 
 
 $(document).ready(function () {
+    
 
     if (domain.indexOf('test') != -1) {
         $('.loginToTestEnv').show();
@@ -3052,7 +3075,12 @@ $(document).ready(function () {
         $('#doneTAB').addClass('ui-btn-active');
         printMyRides(myPastRides);
     });
-
+    $("#exitApp").on('click', function () {
+        //$('#doneTAB').addClass('ui-btn-active');
+        //printMyRides(myPastRides);
+        //alert('hey');
+        navigator.app.exitApp();
+    });
     $(document).on('click', '#doneTAB,#planTAB', function () {
 
         if (this.id == "planTAB") {
@@ -3285,7 +3313,12 @@ $(document).ready(function () {
         tempID = this.id;
         setPrefs();
     });
-
+    $("#exitAppTab").on('click', function () {
+        //$('#doneTAB').addClass('ui-btn-active');
+        //printMyRides(myPastRides);
+        //alert('hey');
+        navigator.app.exitApp();
+    });
     $('a#menuBTN').on('click', function () {
         if (localStorage.userType == 'רכז' || localStorage.userType == 'מנהל') {
             $('li #loginAgainTab,li #auctionTab,li #trackRidesTab').parent().show()
