@@ -86,7 +86,7 @@
 
 
 Settings = {};
-Settings.version = '1.7.1';
+Settings.version = '1.7.2';
 Settings.releaseNotes = 'https://docs.google.com/spreadsheets/d/1jzv_lLnXRvRS_dNuhyWTuGT7cebsXX-kjflsbZim3O8';
 domain = '';
 currentPatientName = '';
@@ -2093,7 +2093,10 @@ function GetVersionSuccessCB(results) {
     var results = $.parseJSON(results.d);
 
     if (results[0].IsMandatory) {
-        if (Settings.version != results[0].VersionName) {
+
+        //var currentVer = Settings.version.replace(".", " ");
+        //var userVer = results[0].VersionName.replace(".", " ");
+        if (Settings.version < results[0].VersionName) {
             var userAgentPhone = getMobileOperatingSystem();
             var redirect = results[0].GoogleStoreURL;
             if (userAgentPhone == 'IOS') {
