@@ -86,7 +86,7 @@
 
 
 Settings = {};
-Settings.version = '1.7.2';
+Settings.version = '1.7.3';
 Settings.releaseNotes = 'https://docs.google.com/spreadsheets/d/1jzv_lLnXRvRS_dNuhyWTuGT7cebsXX-kjflsbZim3O8';
 domain = '';
 currentPatientName = '';
@@ -2723,7 +2723,7 @@ function onDeviceReady() {
                 alert: "true",
                 badge: "true",
                 sound: "true",
-                fcmSandBox: true
+                fcmSandBox: false
             },
             windows: {}
         });
