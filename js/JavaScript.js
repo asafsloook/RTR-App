@@ -678,7 +678,7 @@ function filterRides(rides) {
         else if ($('#shiftDDL').val() != "משמרת" && $('#shiftDDL').val() != rides[i].Shift) {
 
         }
-        else if (rides[i].Status == 'שובץ גיבוי' || rides[i].Status == "שובץ נהג וגיבוי" || userInfo.Statusim.filter(status => status.Name == rides[i].Status && status.Id >= 100).length > 0) {
+        else if (rides[i].Status == 'שובץ גיבוי' || rides[i].Status == "שובץ נהג וגיבוי" || userInfo.Statusim.filter(function (status) { return status.Name == rides[i].Status && status.Id >= 100 }).length > 0) {
 
         }
         else if (typeof showAll !== 'undefined') {
@@ -1876,7 +1876,7 @@ function chooseCloseRide() {
 function getPatientsSCB(data) {
 
     var results = $.parseJSON(data.d);
-    Patients = results.filter(p => !p.IsAnonymous);
+    Patients = results.filter(function (p) { return !p.IsAnonymous });
 }
 
 function getPatientsECB(e) {
@@ -2139,7 +2139,7 @@ function hasCloseRide() {
 
             if (myRides[i].DriverType != 'Primary') continue;
             if (typeof myRides[i].DateTime === 'undefined') continue;
-            if (closeRides.filter(r => r.rideId == myRides[i].rideId).length > 0) continue;
+            if (closeRides.filter(function (r) { return r.rideId == myRides[i].rideId }).length > 0) continue;
 
             var nowMillisecs = new Date().getTime();
 
@@ -2709,7 +2709,7 @@ function onDeviceReady() {
 
     if (typeof PushNotification !== 'undefined') {
 
-        const push = PushNotification.init({
+        push = PushNotification.init({
             android: {
                 //senderID: "148075927844",
                 forceShow: true // this identifies your application
@@ -2839,7 +2839,7 @@ function alertPushMsg(data) {
     else if (data.additionalData.status == "PrimaryCanceled") {
         //check first if this ride still needprimary driver
 
-        backupRide = myRides.filter(r => r.Id == data.additionalData.rideID)[0].rideId;
+        backupRide = myRides.filter(function (r) { return r.Id == data.additionalData.rideID })[0].rideId;
         backupRideMSG = data.message;
         backupRideTITLE = data.title;
         isPrimaryStillCanceled();
@@ -3117,7 +3117,7 @@ $(document).ready(function () {
     $("#suggestOkBTN").on("click", function () {
 
         //CombineRideRidePat(suggestedRide.Id, parseInt(localStorage.lastRideId));
-        lastRide = getRideById(suggestedRide.Id,);
+        lastRide = getRideById(suggestedRide.Id);
 
         maxSeats = checkAvailabilty(lastRide);
 
@@ -3727,8 +3727,8 @@ function locationsClasses(locations) {
 function getLocationsSCB(data) {
     var locations = JSON.parse(data.d);
 
-    userInfo.Barriers = locations.filter(b => b.Type == "מחסום");
-    userInfo.Hospitals = locations.filter(h => h.Type == "בית חולים");
+    userInfo.Barriers = locations.filter(function (b) { return b.Type == "מחסום" });
+    userInfo.Hospitals = locations.filter(function (h) { return h.Type == "בית חולים" });
 
 
     if ($('#locationsPH').html() == "") {

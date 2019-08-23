@@ -12,14 +12,8 @@
     R2R
   </author>
 
-  
-
   <preference name='phonegap-version' value='cli-8.1.1' />
   <preference name='pgb-builder-version' value='2' />
-
-  <allow-navigation href="*" />
-  <access origin="*" />
-  <allow-intent href="tel:*" />
 
   <icon src="icon.png" />
 
@@ -62,19 +56,28 @@
 
     <resource-file src="GoogleService-Info.plist" target="app/GoogleService-Info.plist" />
   </platform>
-  
+
   <platform name="android">
     <resource-file src="google-services.json" target="app/google-services.json" />
     <preference name="android-targetSdkVersion" value="27" />
-
   </platform>
+
+  <preference value="none" name="permissions"/>
 
   <plugin name="phonegap-plugin-push" source="npm" spec="~2.2.3">
     <variable name="ANDROID_SUPPORT_V13_VERSION" value="27.+" />
     <variable name="FCM_VERSION" value="11.6.2" />
   </plugin>
- 
-  <plugin name="cordova-support-google-services" source="npm" spec="~1.1.0" />
-  <plugin name="cordova-plugin-whitelist" source="npm" spec="~1.2.1" />
-  
+
+  <plugin name="cordova-support-google-services" source="npm" />
+  <plugin name="cordova-plugin-whitelist" source="npm" />
+
+  <allow-intent target="_blank" href="http://*/*"/>
+  <allow-intent target="_blank" href="https://*/*"/>
+  <allow-intent href="tel:*"/>
+  <allow-intent href="sms:*"/>
+  <allow-intent href="mailto:*"/>
+  <allow-intent href="geo:*"/>
+  <allow-navigation href="*" />
+  <access origin="*" subdomains="true" />
 </widget>
