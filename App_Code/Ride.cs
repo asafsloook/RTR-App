@@ -651,32 +651,38 @@ public class Ride
         {
             foreach (DataRow dr in ds.Tables[0].Rows)
             {
-                //RideExists = false;
-                //foreach (Ride ride in rl)
-                //{
-                //    if (ride.Id == int.Parse(dr["RideNum"].ToString()))
-                //    {
-                //        RideExists = true;
+                RideExists = false;
+                RidePatexists = false;
+                foreach (Ride ride in rl)
+                {
+                    if (ride.Id == int.Parse(dr["RideNum"].ToString()))
+                    {
+                        RideExists = true;
 
-                //        RidePatexists = false;
-                //        foreach (RidePat ridePat in ride.RidePats)
-                //        {
-                //            if (ridePat.RidePatNum == int.Parse(dr["RidePatNum"].ToString())) RidePatexists = true;
-                //            //if (RidePatexists && dr["Escort"].ToString() != "")
-                //            //{
-                //            //    if (EscortDS.Tables[0].Rows.Count > 0)
-                //            //    {
-                //            //        foreach (DataRow row in EscortDS.Tables[0].Rows)
-                //            //        {
-                //            //            Escorted e = new Escorted();
-                //            //            e.DisplayName = row["DisplayName"].ToString();
-                //            //            rp2.Pat.EscortedList.Add(e);
-                //            //        }
-                //            //    }
-                //            //    break;
-                //            //}
-                //        }
-                //        if (RidePatexists) continue;
+                        RidePatexists = false;
+                        foreach (RidePat ridePat in ride.RidePats)
+                        {
+                            if (ridePat.RidePatNum == int.Parse(dr["RidePatNum"].ToString())) RidePatexists = true;
+                            //if (RidePatexists && dr["Escort"].ToString() != "")
+                            //{
+                            //    if (EscortDS.Tables[0].Rows.Count > 0)
+                            //    {
+                            //        foreach (DataRow row in EscortDS.Tables[0].Rows)
+                            //        {
+                            //            Escorted e = new Escorted();
+                            //            e.DisplayName = row["DisplayName"].ToString();
+                            //            rp2.Pat.EscortedList.Add(e);
+                            //        }
+                            //    }
+                            //    break;
+                            //}
+                        }
+
+                        
+                    }
+                }
+                if (RidePatexists) continue;
+
                 //        rp2 = new RidePat();
                 //        //ride.RidePats = new List<RidePat>();
                 //        rp2.RidePatNum = int.Parse(dr["RidePatNum"].ToString());
@@ -772,7 +778,6 @@ public class Ride
                 r2.RidePats.Add(rp);
                 rl.Add(r2);
             }
-
             return rl;
         }
         catch (Exception e)

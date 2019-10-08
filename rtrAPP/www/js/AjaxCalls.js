@@ -327,7 +327,7 @@ function getServers(getServersSCB, getServersECB) {
 
     // serialize the object to JSON string
     var dataString = "";
-
+    
     $.ajax({ // ajax call starts
         url: domain + '/WebService.asmx/getR2RServers',   // server side web service method
         data: dataString,                          // the parameters sent to the server

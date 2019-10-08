@@ -7,3 +7,9 @@ r2r
 lcohenr2r
 
 generated this file: r2r.keystore
+
+phonegap pass: 
+ios: lcohen
+android:
+lcohenr2r
+lcohenr2r

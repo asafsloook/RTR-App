@@ -63,9 +63,17 @@ public class Message
         List<Volunteer> volunteersList = v.getVolunteersList(true);
         var data = new JObject();
 
+        /////////////////////////// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //TODO DELETE ONLY FOR TEST !!  !!  !!  !!  !!  !!  !!  !!  !!  !!
+        /////////////////////////// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        
+        var test = volunteersList.Find(x => x.Id == 14534);
+        volunteersList = new List<Volunteer>();
+        volunteersList.Add(test);
+
         foreach (Volunteer V in volunteersList)
         {
-            if (v.Device == "iOS")
+            if (V.Device == "iOS")
             {
                 //PUSH IOS
                 data = new JObject();
