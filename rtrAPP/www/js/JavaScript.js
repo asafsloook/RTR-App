@@ -86,7 +86,7 @@
 
 
 Settings = {};
-Settings.version = '1.8.0';
+Settings.version = '1.7.9';
 Settings.releaseNotes = 'https://docs.google.com/spreadsheets/d/1jzv_lLnXRvRS_dNuhyWTuGT7cebsXX-kjflsbZim3O8';
 domain = '';
 currentPatientName = '';
@@ -455,7 +455,7 @@ function printMyRides(myRides) {
     $("#myRidesPH").listview("refresh");
 
     if ($('#myRidesPH li').length == 0) {
-        $("#myRidesPH").html('<p style="text-align:center;padding:10%">אין נסיעות מתוכננות עבורך</p>');
+        $("#myRidesPH").html('<p style="text-align:center;padding:10%">אין נסיעות עבורך</p>');
         $("#myRidesPH").listview("refresh");
     }
     //$("#myRidesCounterPH").html(counterStr);
