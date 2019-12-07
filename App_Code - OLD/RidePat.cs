@@ -414,22 +414,8 @@ public class RidePat
     }
     public bool IsThereAnotherRidePat(RidePat rp)
     {
-        //TimeZoneInfo sourceTimeZone = TimeZoneInfo.FindSystemTimeZoneById("UTC");
-        var date = rp.Date.ToString("yyyy-MM-dd");
-        var time = rp.Date.ToShortTimeString();
-        Volunteer v = new Volunteer();
-        int c = rp.Drivers.Count;
-        if (c!=0)
-        {
-            v = rp.Drivers[0];
-            if (v == null)
-            {
-                v = rp.Drivers[1];
-            }
-        }
-        
 
-        string query = "select * from rpview where Origin=N'" + rp.Origin.Name+"' and Destination=N'"+rp.Destination.Name+"' and pickuptime='"+ date + " " +time + "' and (MainDriver="+v.Id+" or SecondaryDriver="+v.Id+")";
+        string query = "select * from ridepat where Origin=N'"+rp.Origin+"' and Destination=N'"+rp.Destination+"' and pickuptime='"+rp.Date+"'";
         DbService db = new DbService();
         DataSet ds = db.GetDataSetByQuery(query);
         if (ds.Tables[0].Rows.Count == 1)
@@ -646,7 +632,7 @@ public class RidePat
 
 
     //This method is used for שבץ אותי
-    public List<RidePat> GetRidePatView(int volunteerId,int maxDays) //VolunteerId - 1 means get ALL FUTURE ridePats // VolunteerId -2 means get ALL ridePats
+    public List<RidePat> GetRidePatView(int volunteerId, int maxDays) //VolunteerId - 1 means get ALL FUTURE ridePats // VolunteerId -2 means get ALL ridePats
     {
         DataTable driverTable = getDriver();
         DataTable equipmentTable = getEquipment();
@@ -657,11 +643,7 @@ public class RidePat
 
         if (volunteerId == -1)
         {
-            if (maxDays == -1)
-            {
-                query = "select * from RPView where Convert(date,pickuptime)>=CONVERT(date, getdate()) and Status!=N'הגענו ליעד';"; // Get ALL FUTURE RidePats, even if cancelled
-            }
-            else query = "select * from RPView where DATEDIFF(day,getdate(),pickuptime)<=" + maxDays + " and Convert(date,pickuptime)>=CONVERT(date, getdate()) and Status!=N'הגענו ליעד';";
+            query = "select * from RPView where PickupTime>= getdate()"; // Get ALL FUTURE RidePats, even if cancelled
         }
         else if (volunteerId == -2)
         {
@@ -670,9 +652,9 @@ public class RidePat
         else
         {
             //query = "select * from RPView where (Status<>N'הסתיימה' or Status<>N'בוטלה') and PickupTime>= getdate()"; //Get ALL ACTIVE RidePats (used by mobile app)
-            if (maxDays!=-1)
+            if (maxDays != -1)
             {
-                query = "select * from RPView where (Status=N'שובץ נהג' or Status=N'ממתינה לשיבוץ' or Status=N'שובץ גיבוי') and DATEDIFF(day,getdate(),pickuptime)<=" + maxDays+" and pickuptime>=getdate()"; //Get ALL ACTIVE RidePats (used by mobile app) where max days=30
+                query = "select * from RPView where (Status=N'שובץ נהג' or Status=N'ממתינה לשיבוץ' or Status=N'שובץ גיבוי') and DATEDIFF(day,getdate(),pickuptime)<=" + maxDays + " and pickuptime>=getdate()"; //Get ALL ACTIVE RidePats (used by mobile app) where max days=30
             }
             else query = "select * from RPView where (Status=N'שובץ נהג' or Status=N'ממתינה לשיבוץ' or Status=N'שובץ גיבוי') and PickupTime>= getdate()"; //Get ALL ACTIVE RidePats (used by mobile app)
         }
@@ -743,7 +725,7 @@ public class RidePat
                 rp.pat.DisplayName = dr["DisplayName"].ToString();
                 rp.pat.CellPhone = dr["CellPhone"].ToString();
                 rp.pat.IsAnonymous = dr["IsAnonymous"].ToString();
-            
+
                 rp.pat.Id = int.Parse(dr["Id"].ToString());
                 rp.pat.Equipment = new List<string>();
                 string equipmentSearchExpression = "Id = " + rp.Pat.Id;
@@ -785,7 +767,7 @@ public class RidePat
                     }
                     try
                     {
-                        rp.Status = rp.Statuses[rp.Statuses.Count-1];
+                        rp.Status = rp.Statuses[rp.Statuses.Count - 1];
                     }
                     catch (Exception err)
                     {
@@ -1048,7 +1030,7 @@ public class RidePat
         }
         if (hours <= 24)
         {
-            //it's less than 24 to the ride
+            //call the police!! it's less than 24 to the ride
             res = 911;
         }
      

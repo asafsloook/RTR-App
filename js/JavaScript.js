@@ -86,21 +86,21 @@
 
 
 Settings = {};
-Settings.version = '1.7.9';
+Settings.version = '1.8.2';
 Settings.releaseNotes = 'https://docs.google.com/spreadsheets/d/1jzv_lLnXRvRS_dNuhyWTuGT7cebsXX-kjflsbZim3O8';
 domain = '';
 currentPatientName = '';
 currentPatientPhone = '';
 
-function defaultServerDomain() {
 
+function defaultServerDomain() {
     if (localStorage.domain) {
         domain = localStorage.domain;
 
     }
     else {
         if (!window.location.href.includes('http')) {
-            domain = 'http://40.117.122.242/prod/Road%20to%20Recovery/pages/';
+            domain = 'https://roadtorecovery.org.il/prod/Road%20to%20Recovery/pages/';
         }
         else {
             domain = '..';
@@ -110,6 +110,7 @@ function defaultServerDomain() {
 defaultServerDomain();
 
 function getServersSCB(data) {
+
     var servers = JSON.parse(data.d);
 
     var str = '';
@@ -121,7 +122,6 @@ function getServersSCB(data) {
 }
 
 function getServersECB(e) {
-
 }
 
 document.addEventListener("backbutton", onBackKeyDown, false);
@@ -244,7 +244,7 @@ function GetRidesErrorCB(e) {
         popupDialog('שגיאה', e.responseJSON.Message, '#loginLogo', false, null);
     }
     else {
-        popupDialog('שגיאה', "אירעה תקלה במערכת.", '#loginLogo', false, null);
+        popupDialog('שגיאה', "אירעה תקלה במערכת1.", '#loginLogo', false, null);
     }
 }
 
@@ -374,7 +374,7 @@ function GetMyRidesErrorCB(e) {
         popupDialog('שגיאה', e.responseJSON.Message, '#loginLogo', false, null);
     }
     else {
-        popupDialog('שגיאה', "אירעה תקלה במערכת.", '#loginLogo', false, null);
+        popupDialog('שגיאה', "2אירעה תקלה במערכת.", '#loginLogo', false, null);
     }
 }
 
@@ -383,7 +383,7 @@ function GetMyPastRidesErrorCB(e) {
         popupDialog('שגיאה', e.responseJSON.Message, '#loginLogo', false, null);
     }
     else {
-        popupDialog('שגיאה', "אירעה תקלה במערכת.", '#loginLogo', false, null);
+        popupDialog('שגיאה', "3אירעה תקלה במערכת.", '#loginLogo', false, null);
     }
 }
 
@@ -632,7 +632,7 @@ function deleteAllRideErrorCB(e) {
         popupDialog('שגיאה', e.responseJSON.Message, '#myRides', false, null);
     }
     else {
-        popupDialog('שגיאה', "אירעה תקלה במערכת.", '#myRides', false, null);
+        popupDialog('שגיאה', "אירעה תקלה במערכת4.", '#myRides', false, null);
     }
 }
 
@@ -656,7 +656,7 @@ function deleteRideErrorCB(e) {
         popupDialog('שגיאה', e.responseJSON.Message, '#myRides', false, null);
     }
     else {
-        popupDialog('שגיאה', "אירעה תקלה במערכת.", '#myRides', false, null);
+        popupDialog('שגיאה', "אירעה תקלה במערכת5.", '#myRides', false, null);
     }
 }
 
@@ -1233,7 +1233,7 @@ function signDriverErrorCB(e) {
         popupDialog('שגיאה', e.responseJSON.Message, '#myRides', false, null);
     }
     else {
-        popupDialog('שגיאה', "אירעה תקלה במערכת.", '#myRides', false, null);
+        popupDialog('שגיאה', "6אירעה תקלה במערכת.", '#myRides', false, null);
     }
 }
 
@@ -1883,7 +1883,7 @@ function getPatientsECB(e) {
         popupDialog('שגיאה', e.responseJSON.Message, '#loginLogo', false, null);
     }
     else {
-        popupDialog('שגיאה', "אירעה תקלה במערכת.", '#loginLogo', false, null);
+        popupDialog('שגיאה', "אירעה תקלה במערכת7.", '#loginLogo', false, null);
     }
 }
 
@@ -1900,7 +1900,7 @@ function getVolunteersECB(e) {
         popupDialog('שגיאה', e.responseJSON.Message, '#loginLogo', false, null);
     }
     else {
-        popupDialog('שגיאה', "אירעה תקלה במערכת.", '#loginLogo', false, null);
+        popupDialog('שגיאה', "8אירעה תקלה במערכת.", '#loginLogo', false, null);
     }
 }
 
@@ -2086,7 +2086,7 @@ function checkUserSuccessCB(results) {
     getLocations(getLocationsSCB, getLocationsECB);
 }
 function GetVersionErrorCB() {
-    popupDialog('שגיאה', "אירעה תקלה במערכת.", '#loginFailed', false, null);
+    popupDialog('שגיאה', "9אירעה תקלה במערכת.", '#loginFailed', false, null);
 }
 function GetVersionSuccessCB(results) {
     var results = $.parseJSON(results.d);
@@ -2245,7 +2245,7 @@ function checkUserErrorCB(e) {
         popupDialog('שגיאה', e.responseJSON.Message, '#loginFailed', false, null);
     }
     else {
-        popupDialog('שגיאה', "אירעה תקלה במערכת.", '#loginFailed', false, null);
+        popupDialog('שגיאה', "10אירעה תקלה במערכת.", '#loginFailed', false, null);
     }
     defaultServerDomain();
 }
@@ -2506,7 +2506,7 @@ function setVolunteerPrefsECB(e) {
         popupDialog('שגיאה', e.responseJSON.Message, '#myPreferences', false, null);
     }
     else {
-        popupDialog('שגיאה', "אירעה תקלה במערכת.", '#myPreferences', false, null);
+        popupDialog('שגיאה', "11אירעה תקלה במערכת.", '#myPreferences', false, null);
     }
 }
 
@@ -2671,6 +2671,8 @@ function onDeviceReady() {
     //    navigator.app.exitApp();
     //});
 
+
+
     if (localStorage['app-version'] !== Settings.version) {
         localStorage.clear();
     }
@@ -2763,7 +2765,7 @@ function onDeviceReady() {
                 popupDialog('שגיאה', e.responseJSON.Message, '#loginLogo', false, null);
             }
             else {
-                popupDialog('שגיאה', "אירעה תקלה במערכת.", '#loginLogo', false, null);
+                popupDialog('שגיאה', "אירעה תקלה במערכת12.", '#loginLogo', false, null);
             }
         });
 
@@ -2880,7 +2882,7 @@ function isPrimaryStillCanceledECB() {
 if (window.location.href.toString().indexOf('http') == -1) {
 
     document.addEventListener("deviceready", onDeviceReady, false);
-
+    
 
 }
 else {
@@ -3460,6 +3462,8 @@ $(document).ready(function () {
             'שרת: <select style="width: -webkit-fill-available;" id="serverUrlInput" type="text"></select></div>';
         popupDialog('שינוי שרת', popupContent, null, true, "changeServer");
 
+
+
         getServers(getServersSCB, getServersECB);
     });
 
@@ -3541,7 +3545,7 @@ function sendMailECB(e) {
         popupDialog(e.responseJSON.toString(), '', '#loginFailed', false, null);
     }
     else {
-        popupDialog('שגיאה', "אירעה תקלה במערכת.", '#loginFailed', false, null);
+        popupDialog('שגיאה', "אירעה תקלה במערכת13.", '#loginFailed', false, null);
     }
 }
 
@@ -3640,7 +3644,7 @@ function backupToPrimaryECB(e) {
         popupDialog('שגיאה', e.responseJSON.Message, null, false, null);
     }
     else {
-        popupDialog('שגיאה', "אירעה תקלה במערכת.", null, false, null);
+        popupDialog('שגיאה', "אירעה תקלה במערכת14.", null, false, null);
     }
 }
 
@@ -3715,6 +3719,9 @@ function locationsClasses(locations) {
                 break;
             case 'מרכז-דרום':
                 locations[i].Area = 'south center';
+                break;
+            case 'מרכז - ירושליים':
+                locations[i].Area = 'jerusalem center';
                 break;
             default:
                 break;

@@ -12,7 +12,6 @@ using System.Web.Script.Serialization;
 /// </summary>
 public class Patient
 {
-    string englishName;//שם באנגלית
     string displayName; //מזהה ייחודי
     string firstNameH;// שם פרטי בעברית
     string firstNameA;// שם פרטי בערבית
@@ -37,7 +36,6 @@ public class Patient
     string numberOfEscort;
     string isAnonymous;
     int id;
-    int patientIdentity;
     List<string> equipment;
 
     public bool IsActive { get; set; }
@@ -365,32 +363,6 @@ public class Patient
         }
     }
 
-    public string EnglishName
-    {
-        get
-        {
-            return englishName;
-        }
-
-        set
-        {
-            englishName = value;
-        }
-    }
-
-    public int PatientIdentity
-    {
-        get
-        {
-            return patientIdentity;
-        }
-
-        set
-        {
-            patientIdentity = value;
-        }
-    }
-
     public Patient()
     {
         //
@@ -587,7 +559,6 @@ public class Patient
                 p.Hospital = new Location(dr["Hospital"].ToString());
                 p.Gender = dr["Gender"].ToString();
                 p.Remarks = dr["Remarks"].ToString();
-                p.EnglishName = dr["EnglishName"].ToString();
                 el = new List<string>();
             }
             //get equipment for patient from the same view
@@ -646,12 +617,7 @@ public class Patient
             p.Hospital = new Location(dr["Hospital"].ToString());
             p.Gender = dr["Gender"].ToString();
             p.Remarks = dr["Remarks"].ToString();
-            p.EnglishName = dr["EnglishName"].ToString();
-            if (dr["PatientIdentity"].ToString()=="")
-            {
-                p.PatientIdentity = 0;
-            }
-            else p.PatientIdentity = int.Parse(dr["PatientIdentity"].ToString());
+
 
             //set equipment
             List<string> el = new List<string>();
@@ -705,13 +671,6 @@ public class Patient
             p.Hospital = new Location(dr["Hospital"].ToString());
             p.Gender = dr["Gender"].ToString();
             p.Remarks = dr["Remarks"].ToString();
-            p.EnglishName = dr["EnglishName"].ToString();
-            if (dr["PatientIdentity"].ToString() == "")
-            {
-                p.PatientIdentity = 0;
-            }
-            else p.PatientIdentity = int.Parse(dr["PatientIdentity"].ToString());
-
             p.Equipment = p.getEquipmentForPatient(p.displayName);
         }
         #endregion
@@ -742,13 +701,12 @@ public class Patient
 
     public void setPatient(string func)
     {
-        //patient id
         int res = 0;
         DbService db;
         SqlCommand cmd = new SqlCommand();
         cmd.CommandType = CommandType.Text;
-        SqlParameter[] cmdParams = new SqlParameter[19];
-
+        SqlParameter[] cmdParams = new SqlParameter[17];
+        
         cmdParams[0] = cmd.Parameters.AddWithValue("@firstNameH", FirstNameH);
         cmdParams[1] = cmd.Parameters.AddWithValue("@lastNameH", LastNameH);
         cmdParams[2] = cmd.Parameters.AddWithValue("@firstNameA", FirstNameA);
@@ -765,19 +723,14 @@ public class Patient
         cmdParams[13] = cmd.Parameters.AddWithValue("@hospital", Hospital.Name);
         cmdParams[14] = cmd.Parameters.AddWithValue("@gender", Gender);
         cmdParams[15] = cmd.Parameters.AddWithValue("@remarks", Remarks);
-        string displayName = FirstNameH + " " + LastNameH;
-        cmdParams[16] = cmd.Parameters.AddWithValue("@displayName", displayName.Trim());
-        cmdParams[17] = cmd.Parameters.AddWithValue("@englishName", EnglishName);
-        cmdParams[18] = cmd.Parameters.AddWithValue("@patientIdentity", PatientIdentity);
-
+        cmdParams[16] = cmd.Parameters.AddWithValue("@displayName", FirstNameH + " " + LastNameH);
         string query = "";
         if (func == "edit")
         {
             //DisplayName=@displayName,
-            cmdParams[16].ToString().Trim();
             query = "UPDATE Patient SET FirstNameH=@firstNameH,FirstNameA=@firstNameA,LastNameH=@lastNameH,";
             query += "CellPhone=@cellPhone,CellPhone2=@cellPhone2,CityCityName=@city,IsActive=@IsActive,BirthDate=@birthDate,";
-            query += "HomePhone=@homePhone,History=@history,Department=@department,Barrier=@barrier,Hospital=@hospital,Gender=@gender,Remarks=@remarks,EnglishName=@englishName,PatientIdentity=@patientIdentity Where Id=" + Id;
+            query += "HomePhone=@homePhone,History=@history,Department=@department,Barrier=@barrier,Hospital=@hospital,Gender=@gender,Remarks=@remarks Where Id=" + Id;
             db = new DbService();
             res = db.ExecuteQuery(query, cmd.CommandType, cmdParams);
             if (res > 0)
@@ -805,10 +758,10 @@ public class Patient
         else if (func == "new")
         {
             query = "insert into Patient (FirstNameH,FirstNameA,LastNameH,LastNameA,CellPhone,CellPhone2, HomePhone,";
-            query += "CityCityName,IsActive,BirthDate,History,Department,Barrier,Hospital,Gender,Remarks,EnglishName,PatientIdentity)";
+            query += "CityCityName,IsActive,BirthDate,History,Department,Barrier,Hospital,Gender,Remarks)"; 
             query += " values (@firstNameH,@firstNameA,@lastNameH,@lastNameA,";
             query += "@cellPhone,@cellPhone2,@homephone,@city,@IsActive,@birthDate,";
-            query += "@history,@department,@barrier,@hospital,@gender,@remarks,@englishName,@patientIdentity); select SCOPE_IDENTITY()";
+            query += "@history,@department,@barrier,@hospital,@gender,@remarks); select SCOPE_IDENTITY()";
             db = new DbService();
             Id = int.Parse(db.GetObjectScalarByQuery(query, cmd.CommandType, cmdParams).ToString());
 
@@ -863,7 +816,6 @@ public class Patient
             e.Gender = dr["Gender"].ToString();
             e.City = dr["City"].ToString();
             e.ContactType = dr["Relationship"].ToString();
-            e.EnglishName = dr["EnglishName"].ToString();
 
             list.Add(e);
         }
@@ -901,7 +853,6 @@ public class Patient
             e.Gender = dr["Gender"].ToString();
             e.City = dr["City"].ToString();
             e.ContactType = dr["Relationship"].ToString();
-            e.EnglishName = dr["EnglishName"].ToString();
 
             list.Add(e);
         }

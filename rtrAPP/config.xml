@@ -3,7 +3,7 @@
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id        = "il.Road.to.Recovery"
-        version   = "1.7.9">
+        version   = "1.8.3">
   <name>בדרך להחלמה</name>
   <description>
     R2R
@@ -12,7 +12,8 @@
     R2R
   </author>
 
-  <preference name='phonegap-version' value='cli-8.1.1' />
+  <!-- <preference name='phonegap-version' value='cli-8.1.1' /> -->
+  <preference name="phonegap-version" value="cli-9.0.0" />
   <preference name='pgb-builder-version' value='2' />
 
   <icon src="icon.png" />

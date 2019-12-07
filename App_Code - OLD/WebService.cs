@@ -161,10 +161,10 @@ public class WebService : System.Web.Services.WebService
             RidePat rp = new RidePat();
             int res = rp.setRidePat(RidePat, func,isAnonymous, numberOfRides, repeatRideEvery);
             //write to log on delete 
-            //if (res>=10019)
-            //{
-            //    return res;
-            //}
+            if (res==666)
+            {
+                return res;
+            }
             if (res > 0 && func == "delete")
             {
                 string message = "";
@@ -446,21 +446,6 @@ public class WebService : System.Web.Services.WebService
 
     }
     [WebMethod]
-    public void setAnonymousEscorted(string func,int patientId,int numberOfEscort)
-    {
-        try
-        {
-            Escorted escorted = new Escorted();
-            escorted.setAnonymousEscorted(func, patientId, numberOfEscort);
-        }
-        catch (Exception ex)
-        {
-            Log.Error("Error in setAnonymousEscorted", ex);
-            throw new Exception("שגיאה בפתיחת מלווים אנונימיים חדשים");
-        }
-
-    }
-    [WebMethod]
     public void setUserPassword(string userName, string password)
     {
         try
@@ -599,8 +584,7 @@ public class WebService : System.Web.Services.WebService
     //This method is used for שבץ אותי
     [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-
-    public string GetRidePatView(int volunteerId, int maxDays)
+    public string GetRidePatView(int volunteerId,int maxDays)
     {
         try
         {
@@ -612,10 +596,10 @@ public class WebService : System.Web.Services.WebService
             //    Response.Filter = new System.IO.Compression.GZipStream(Response.Filter, System.IO.Compression.CompressionMode.Compress);
             //    Response.Headers.Remove("Content-Encoding");
             //    Response.AppendHeader("Content-Encoding", "gzip");
-            //}
+            //} 
 
             RidePat rp = new RidePat();
-            List<RidePat> r = rp.GetRidePatView(volunteerId,maxDays);
+            List<RidePat> r = rp.GetRidePatView(volunteerId, maxDays);
             JavaScriptSerializer j = new JavaScriptSerializer();
             j.MaxJsonLength = Int32.MaxValue;
             return j.Serialize(r);
@@ -656,7 +640,6 @@ public class WebService : System.Web.Services.WebService
         //List<RidePat> r = rp.GetRidePat();
         try
         {
-            GzipMe();
             Ride r = new Ride();
             List<Ride> rl = r.GetMyFutureRides(volunteerId);
             JavaScriptSerializer j = new JavaScriptSerializer();
@@ -678,7 +661,6 @@ public class WebService : System.Web.Services.WebService
         //List<RidePat> r = rp.GetRidePat();
         try
         {
-            GzipMe();
             Ride r = new Ride();
             List<Ride> rl = r.GetMyPastRides(volunteerId);
             JavaScriptSerializer j = new JavaScriptSerializer();
@@ -1297,8 +1279,7 @@ public class WebService : System.Web.Services.WebService
             Auxiliary a = new Auxiliary();
             JavaScriptSerializer j = new JavaScriptSerializer();
             //a.getR2RServers()
-            List<string> l = a.getR2RServers();
-            return j.Serialize(l);
+            return j.Serialize(a.getR2RServers());
         }
         catch (Exception ex)
         {
@@ -1306,7 +1287,6 @@ public class WebService : System.Web.Services.WebService
             throw new Exception("שגיאה בשליפת שרתים");
         }
     }
-
     private HttpResponse GzipMe()
     {
         string AcceptEncoding = HttpContext.Current.Request.Headers["Accept-Encoding"];

@@ -1,0 +1,15 @@
+The folder is called rtrAPP.
+
+Change version in JavaScript.js and in config.xml
+
+Copy the relevant files (only the files that was changed) to rtrAPP\www (and copy also config.xml)
+
+
+Go to build.phonegap.com
+
+road2rdev@gmail.com
+lcohenr2r
+
+Key:
+lcohenr2r
+lcohenr2r

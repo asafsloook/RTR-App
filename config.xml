@@ -3,7 +3,7 @@
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id        = "il.Road.to.Recovery"
-        version   = "1.8.0">
+        version   = "1.8.2">
   <name>בדרך להחלמה</name>
   <description>
     R2R
@@ -59,7 +59,7 @@
 
   <platform name="android">
     <resource-file src="google-services.json" target="app/google-services.json" />
-    <preference name="android-targetSdkVersion" value="27" />
+    <preference name="android-targetSdkVersion" value="28" />
   </platform>
 
   <preference value="none" name="permissions"/>
