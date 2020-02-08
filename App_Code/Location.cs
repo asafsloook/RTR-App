@@ -196,20 +196,20 @@ public class Location
         Name = _name;
     }
 
-    //public DataTable read()
-    //{
-    //    DBservices dbs = new DBservices();
-    //    dbs = dbs.ReadFromDataBase("RoadDBconnectionString", "Destination");
-    //    return dbs.dt;
-    //}
+    public List<string> getAreas()
+    {
 
-    //public List<Destination> getListdestination()
-    //{
-    //    DBservices dbs = new DBservices();
-    //    List<Destination> listd = new List<Destination>();
-    //    listd = dbs.getListdestination("RoadDBconnectionString", "Destination");
-    //    return listd;
-    //}
+        string query = "select * from Area ";
+        List<string> areas = new List<string>();
+        DbService db = new DbService();
+        DataSet ds = db.GetDataSetByQuery(query);
+
+        foreach (DataRow dr in ds.Tables[0].Rows)
+        {
+            areas.Add(dr["AreaName"].ToString());
+        }
+        return areas;
+    }
 
     public List<Location> getDestinationsListForView(bool active)
     {
@@ -262,7 +262,7 @@ public class Location
         return list;
 
     }
-
+    
     public List<Location> getHospitalListForView(bool active)
     {
         #region DB functions
@@ -285,10 +285,6 @@ public class Location
             tmp.Responsible = new Volunteer(dr["Responsible"].ToString());
             tmp.IsActive = Convert.ToBoolean(dr["IsActive"].ToString());
             tmp.Remarks = dr["Remarks"].ToString();
-            //tmp.ManagerName = dr["managerName"].ToString();
-            //tmp.ManagerLastName = dr["managerLastName"].ToString();
-            //tmp.ManagerPhones = dr["managerPhones1"].ToString();
-            //tmp.ManagerPhones2 = dr["managerPhones2"].ToString();
             list.Add(tmp);
         }
         #endregion
