@@ -3650,6 +3650,7 @@ function backupToPrimaryECB(e) {
 
 
 function popupDialog(title, content, redirectUrl, isConfirm, dialogFunction_) {
+    
     redirectUrlFromDialog = redirectUrl;
     dialogFunction = dialogFunction_;
     if (isConfirm) $('#cancelDialogBTN').show();
