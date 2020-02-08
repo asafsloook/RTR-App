@@ -391,17 +391,17 @@ public class Volunteer
         query += "delete from PreferredLocation_Volunteer where VolunteerId = " + id + "; ";
         db.ExecuteQuery(query);
 
-        foreach (string location in PrefLocation) //insert Location Preferences to DB
-        {
-            db = new DbService();
-            cmd = new SqlCommand();
-            cmd.CommandType = CommandType.Text;
-            SqlParameter[] locationParams = new SqlParameter[2];
-            locationParams[0] = cmd.Parameters.AddWithValue("@location", location);
-            locationParams[1] = cmd.Parameters.AddWithValue("@Id", id);
-            query = "insert into PreferredLocation_Volunteer (PreferredLocation,VolunteerId) values (@location,@id);";
-            res += db.ExecuteQuery(query, cmd.CommandType, locationParams);
-        }
+        //foreach (string location in PrefLocation) //insert Location Preferences to DB
+        //{
+        //    db = new DbService();
+        //    cmd = new SqlCommand();
+        //    cmd.CommandType = CommandType.Text;
+        //    SqlParameter[] locationParams = new SqlParameter[2];
+        //    locationParams[0] = cmd.Parameters.AddWithValue("@location", location);
+        //    locationParams[1] = cmd.Parameters.AddWithValue("@Id", id);
+        //    query = "insert into PreferredLocation_Volunteer (PreferredLocation,VolunteerId) values (@location,@id);";
+        //    res += db.ExecuteQuery(query, cmd.CommandType, locationParams);
+        //}
 
         foreach (string area in PrefArea) //insert Area Preferences to DB
         {
@@ -470,7 +470,21 @@ public class Volunteer
         res += db.ExecuteQuery(query);
         return res;
     }
+    public List<string> getPrefArea(int id)
+    {
+        List<string> areas = new List<string>();
+        DbService db = new DbService();
+        //Get Preferred Area for Volunteer
+        string query = "select PreferredArea from PreferredArea_Volunteer where VolunteerId=" + id;
+        DataSet ds = db.GetDataSetByQuery(query);
+        foreach (DataRow dr in ds.Tables[0].Rows)
+        {
+            string area = dr["PreferredArea"].ToString();
+            areas.Add(area);
+        }
+        return areas;
 
+    }
     public Volunteer getVolunteerPrefs(int id)
     {
         PrefTime = new List<string[]>();
@@ -500,14 +514,14 @@ public class Volunteer
         }
 
         //Get Preferred Location for Volunteer
-        query = "select PreferredLocation from PreferredLocation_Volunteer where VolunteerId=" + id;
-        db = new DbService();
-        ds = db.GetDataSetByQuery(query);
-        foreach (DataRow dr in ds.Tables[0].Rows)
-        {
-            string location = dr["PreferredLocation"].ToString();
-            PrefLocation.Add(location);
-        }
+        //query = "select PreferredLocation from PreferredLocation_Volunteer where VolunteerId=" + id;
+        //db = new DbService();
+        //ds = db.GetDataSetByQuery(query);
+        //foreach (DataRow dr in ds.Tables[0].Rows)
+        //{
+        //    string location = dr["PreferredLocation"].ToString();
+        //    PrefLocation.Add(location);
+        //}
 
         //Get AvailabeSeats for Volunteer
         query = "select AvailableSeats from Volunteer where Id=" + id;

@@ -174,10 +174,22 @@ a, p, span, label, td, #volunteerRequest label, #volunteerProblems label {
 }
 
 #area .ui-checkbox {
-    max-width: 30%;
+    width: 45vw;
     display: inline-block;
 }
-
+.ui-checkbox .ui-btn, .ui-radio .ui-btn{
+    text-align:right;
+}
+.ui-page-theme-a .ui-btn, html .ui-bar-a .ui-btn, html .ui-body-a .ui-btn, html body .ui-group-theme-a .ui-btn, html head + body .ui-btn.ui-btn-a, .ui-page-theme-a .ui-btn:visited, html .ui-bar-a .ui-btn:visited, html .ui-body-a .ui-btn:visited, html body .ui-group-theme-a .ui-btn:visited, html head + body .ui-btn.ui-btn-a:visited {
+    height: 33px;
+}
+.ui-btn.ui-checkbox-off:after, .ui-btn.ui-checkbox-on:after, .ui-btn.ui-radio-off:after, .ui-btn.ui-radio-on:after {
+    width: 24px;
+    height: 24px;
+}
+.ui-checkbox, .ui-radio {
+    margin: .1em 0;
+}
 #area {
     text-align: center;
 }

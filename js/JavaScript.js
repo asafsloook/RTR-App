@@ -86,7 +86,7 @@
 
 
 Settings = {};
-Settings.version = '1.8.2';
+Settings.version = '1.8.5';
 Settings.releaseNotes = 'https://docs.google.com/spreadsheets/d/1jzv_lLnXRvRS_dNuhyWTuGT7cebsXX-kjflsbZim3O8';
 domain = '';
 currentPatientName = '';
@@ -163,7 +163,7 @@ function getRidesList() {
 
     var request = {
         volunteerId: id,
-        maxDays:30
+        maxDays: 30
     }
     GetRides(request, GetRidesSuccessCB, GetRidesErrorCB);
 }
@@ -180,7 +180,18 @@ function ridesPerDayFunc(results) {
     }
     return arr;
 }
-
+//check if preferred areas are missing for current volunteer
+function checkAreaPrefs() {
+    var id = parseInt(localStorage.userId);
+    GetVolunteerPrefArea(id,GetVolunteerPrefAreaSuccessCB, GetVolunteerPrefAreaErrorCB);
+}
+function GetVolunteerPrefAreaSuccessCB(results) {
+    var areas = JSON.parse(results.d);
+    localStorage.areasNew = areas.length;
+}
+function GetVolunteerPrefAreaErrorCB(err) {
+    console.log(err.responseText);
+}
 //success call back function for get rides
 function GetRidesSuccessCB(results) {
 
@@ -218,6 +229,7 @@ function ridesToClientStructure(before) {
         results[i].DateTime = parseInt(results[i].Date.replace('/Date(', ''));
         results[i].StartPoint = results[i].Origin.Name;
         results[i].EndPoint = results[i].Destination.Name;
+        results[i].Area = results[i].Area;
 
         var rideTime = (new Date(results[i].DateTime)).toLocaleTimeString();
 
@@ -269,7 +281,7 @@ function GetMyRidesSuccessCB(results) {
 
     if (typeof loginThread !== 'undefined' && loginThread) {
 
-        if (localStorage.availableSeats == null || localStorage.availableSeats == "0") {
+        if (localStorage.availableSeats == null || localStorage.availableSeats == "0" || localStorage.areasNew == "0" ) {
             setTimeout(function () {
                 loginThread = false;
                 $.mobile.pageContainer.pagecontainer("change", "#myPreferences");
@@ -281,6 +293,7 @@ function GetMyRidesSuccessCB(results) {
             }, 1000);
         }
     }
+    
 }
 
 function GetMyPastRidesSuccessCB(results) {
@@ -414,7 +427,7 @@ function printMyRides(myRides) {
     }
     else {
         //if (myPastRides === null) {
-            getMyPastRidesList();
+        getMyPastRidesList();
         //}
         myPastRides.sort(function (a, b) {
             return b.DateTime.toString().localeCompare(a.DateTime.toString());
@@ -664,10 +677,11 @@ function deleteRideErrorCB(e) {
 //function for filtering the rides by the drop down lists
 function filterRides(rides) {
 
+   
     var filteredRides = [];
 
     for (var i = 0; i < rides.length; i++) {
-
+        console.log(rides[i].Area)
         var rideDate = new Date(rides[i].DateTime);
         //!checkTime(rides[i])
         //for filtering past rides
@@ -677,7 +691,7 @@ function filterRides(rides) {
         else if ($('#shiftDDL').val() != "משמרת" && $('#shiftDDL').val() != rides[i].Shift) {
 
         }
-        else if (rides[i].Status == 'שובץ גיבוי' || rides[i].Status == "שובץ נהג וגיבוי" || userInfo.Statusim.filter(function (status) { return status.Name == rides[i].Status && status.Id >= 100 }).length > 0) {
+        else if (rides[i].Status == 'שובץ גיבוי' || rides[i].Status == 'שובץ נהג' || rides[i].Status == "שובץ נהג וגיבוי" || userInfo.Statusim.filter(function (status) { return status.Name == rides[i].Status && status.Id >= 100 }).length > 0) {
 
         }
         else if (typeof showAll !== 'undefined') {
@@ -768,22 +782,47 @@ function checkMyTimes(ride) {
 function checkMyRoutes(ride) {
 
     routesArr = $.parseJSON(localStorage.routes);
-    if (routesArr.includes(ride.StartPoint) && routesArr.includes(ride.EndPoint)) {
+    var areas = [];
+    if (routesArr[0].north) {
+        areas.push("צפון");
+    }
+    if (routesArr[0].center) {
+        areas.push("מרכז");
+    }
+    if (routesArr[0].centerNorth) {
+        areas.push("צפון - מרכז");
+    }
+    if (routesArr[0].centerJeruz) {
+        areas.push("מרכז - ירושלים");
+    }
+    if (routesArr[0].northJeruz) {
+        areas.push("צפון - ירושלים");
+    }
+    if (routesArr[0].erezNorth) {
+        areas.push("ארז - צפון");
+    }
+    if (routesArr[0].erezCenter) {
+        areas.push("ארז - מרכז");
+    }
+    if (routesArr[0].erezTarkumia) {
+        areas.push("ארז - תרקומיא");
+    }
+    if (routesArr[0].erezJeruz) {
+        areas.push("ארז - ירושלים");
+    }
+    if (routesArr[0].tarkumiaCenter) {
+        areas.push("תרקומיא - מרכז");
+    }
+    if (routesArr[0].tarkumiaNorth) {
+        areas.push("תרקומיא - צפון");
+    }
+    
+    console.log(ride.Area);
+    if (routesArr.includes(ride.Area) || areas.includes(ride.Area) /*&& routesArr.includes(ride.EndPoint)*/) {
         return false;
     }
     return true;
-    //for (var i = 0; i < routesArr.length; i++) {
-    //    if (routesArr[i] == ride.StartPoint) {
-    //        return false;
-    //    }
-    //    if (routesArr[i] == ride.EndPoint) {
-    //        return false;
-    //    }
-    //}
-    //return true;
 }
-
-
 //for filtering rides with more seats than the volunteer has
 function checkMySeats(ride) {
 
@@ -806,15 +845,17 @@ function doRideHeader(results, i) {
     var rideDate = '_' + (new Date(results[i].DateTime)).toLocaleDateString() + '_';
 
     for (var s = 0; s < ridesPerDay[rideDate].length; s++) {
-        var currentStartPoint = ridesPerDay[rideDate][s].StartPoint;
-        if (startPointStr.indexOf(currentStartPoint) == -1) {
-            startPointStr += currentStartPoint + ' (1) , ';
-            counter++;
-        }
-        else {
-            startPointStr = startPointStr.replace(currentStartPoint + ' (' + (ridesInDayCounter) + ')', currentStartPoint + ' (' + (++ridesInDayCounter) + ')');
-            counter++;
-        }
+        //if (results[i].Status !== "ממתינה לשיבוץ"){
+            var currentStartPoint = ridesPerDay[rideDate][s].StartPoint;
+            if (startPointStr.indexOf(currentStartPoint) == -1) {
+                startPointStr += currentStartPoint + ' (1) , ';
+                counter++;
+            }
+            else {
+                startPointStr = startPointStr.replace(currentStartPoint + ' (' + (ridesInDayCounter) + ')', currentStartPoint + ' (' + (++ridesInDayCounter) + ')');
+                counter++;
+            }
+        //}
     }
     //-2 delete the ', ' last string
     startPointStr = startPointStr.substring(0, startPointStr.length - 2);
@@ -822,7 +863,7 @@ function doRideHeader(results, i) {
     //add ... if the string to long for the listview item
     //if(startPointStr.length>40)
     if (counter > 2) {
-      //  startPointStr = startPointStr.substring(0, 35) + '...';
+        //  startPointStr = startPointStr.substring(0, 35) + '...';
         startPointStr = "  קיימות " + counter + " הסעות ";
     }
 
@@ -1071,42 +1112,44 @@ function printRides(results) {
 
 
     for (var i = 0; i < results.length; i++) {
+        //not showing backup:
+        //if (results[i].Status !== "שובץ נהג") {
 
-        //heading for rides in the same day
-        var startPointStr = doRideHeader(results, i);
-
-
-        var myDate = new Date(results[i].DateTime);
-
-        if (i == 0) {
-            lastDate = results[i].DateTime;
-        }
-        else {
-            lastDate = results[i - 1].DateTime;
-        }
-
-        var checkDate = new Date(lastDate);
+            //heading for rides in the same day
+            var startPointStr = doRideHeader(results, i);
 
 
-        if (checkDate.toLocaleDateString() != myDate.toLocaleDateString() || i == 0) {
-            if (i != 0) {
-                str += "</li>";
+            var myDate = new Date(results[i].DateTime);
 
-                //space between rides in different weeks  <hr>
-                str += weekSpace(results, i);
-
+            if (i == 0) {
+                lastDate = results[i].DateTime;
+            }
+            else {
+                lastDate = results[i - 1].DateTime;
             }
 
-            //create the begining of the list item control
-            str += ListItemStart(myDate, startPointStr);
+            var checkDate = new Date(lastDate);
 
-        }
 
-        //create the content of one ride
-        str += ListItemRide(results, i);
+            //if (checkDate.toLocaleDateString() != myDate.toLocaleDateString() || i == 0) {
+                if (i != 0) {
+                    str += "</li>";
 
-        ridesCounter++;
+                    //space between rides in different weeks  <hr>
+                    str += weekSpace(results, i);
 
+                }
+
+                //create the begining of the list item control
+                str += ListItemStart(myDate, startPointStr);
+
+            //}
+
+            //create the content of one ride
+            str += ListItemRide(results, i);
+
+            ridesCounter++;
+        //}
 
     }
 
@@ -1351,15 +1394,15 @@ function checkRides() {
             if (results[i].Id == id) {
                 continue;
             }
-            //if (ride.Shift != results[i].Shift) {
+            if (ride.Area != results[i].Area) {
+                continue;
+            }
+            //if (ride.StartPoint != results[i].StartPoint) {
             //    continue;
             //}
-            if (ride.StartPoint != results[i].StartPoint) {
-                continue;
-            }
-            if (ride.EndPoint != results[i].EndPoint) {
-                continue;
-            }
+            //if (ride.EndPoint != results[i].EndPoint) {
+            //    continue;
+            //}
             if (availableSeats < (results[i].Melave.length + 1)) {
                 continue;
             }
@@ -1538,8 +1581,8 @@ function createSuggestPage(ride) {
     var myDate = new Date(ride.DateTime);
     var day = numToDayHebrew(myDate.getDay());
     var EscortsLENGTH = "";
-    if (suggestedRide.Melave.length!=0) {
-        EscortsLENGTH = " +"+ suggestedRide.Melave.length;
+    if (suggestedRide.Melave.length != 0) {
+        EscortsLENGTH = " +" + suggestedRide.Melave.length;
     }
     str += '<p>ביום ' + day
         + ', ' + myDate.getDate() + "." + (myDate.getMonth() + 1) + "." + myDate.getFullYear()
@@ -1766,9 +1809,9 @@ $(document).one('pagebeforecreate', function () {
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-delete">'
         + '<a href="#" data-rel="close">סגירת התפריט</a>'
         + '</li>'
-        //+ '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-delete">'
-        //+ '<a id="exitAppTab" >יציאה מהאפליקציה</a>'
-        //+ '</li>'
+        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-delete">'
+        + '<a id="exitAppTab" >יציאה מהאפליקציה</a>'
+        + '</li>'
         + '</ul>'
         + '</div>'
         + '</div>';
@@ -1834,7 +1877,7 @@ function loginToCloseRide() {
             closeRide = closeRides[0];
             var rideDate = new Date(closeRide.DateTime);
             var isSameDay = rideDate.getDay() == (new Date()).getDay() ? 'היום' : 'מחר';
-            var alertRide = 'המערכת זיהתה שיש לך ' + isSameDay + ' נסיעה מ' + closeRide.StartPoint + ' ל' + closeRide.EndPoint + ' בשעה ' + rideDate.getHours() + ':' + (rideDate.getMinutes() < 10 ? '0' + rideDate.getMinutes() : rideDate.getMinutes()) + ' עם החולה ' + closeRide.Pat.DisplayName+'. האם תרצה לדווח סטטוס?';
+            var alertRide = 'המערכת זיהתה שיש לך ' + isSameDay + ' נסיעה מ' + closeRide.StartPoint + ' ל' + closeRide.EndPoint + ' בשעה ' + rideDate.getHours() + ':' + (rideDate.getMinutes() < 10 ? '0' + rideDate.getMinutes() : rideDate.getMinutes()) + ' עם החולה ' + closeRide.Pat.DisplayName + '. האם תרצה לדווח סטטוס?';
 
             var isTentative = rideDate.getHours() == 22 && rideDate.getMinutes() == 14;
             if (isTentative) {
@@ -1858,7 +1901,7 @@ function chooseCloseRide() {
 
         var rideDate = new Date(closeRides[i].DateTime);
         var isSameDay = rideDate.getDay() == (new Date()).getDay() ? 'היום' : 'מחר';
-        var selectOptionContent = isSameDay + ', מ' + closeRides[i].StartPoint + ' ל' + closeRides[i].EndPoint + ', ' + rideDate.getHours() + ':' + (rideDate.getMinutes() < 10 ? '0' + rideDate.getMinutes() : rideDate.getMinutes())+ ' עם החולה ' + closeRides[i].Pat.DisplayName;
+        var selectOptionContent = isSameDay + ', מ' + closeRides[i].StartPoint + ' ל' + closeRides[i].EndPoint + ', ' + rideDate.getHours() + ':' + (rideDate.getMinutes() < 10 ? '0' + rideDate.getMinutes() : rideDate.getMinutes()) + ' עם החולה ' + closeRides[i].Pat.DisplayName;
 
 
         var isTentative = rideDate.getHours() == 22 && rideDate.getMinutes() == 14;
@@ -2027,7 +2070,7 @@ function checkUserPN(cellphone, isSpy_) {
     }
 
     if (isSpy_) {
-        localStorage.RegId = "i_am_spy"
+        localStorage.RegId = "i_am_spy";
     }
 
     var device_ = getMobileOperatingSystem();
@@ -2049,7 +2092,7 @@ function manualLogin() {
 
 
 function checkUserSuccessCB(results) {
-
+    
     var results = $.parseJSON(results.d);
 
 
@@ -2066,6 +2109,7 @@ function checkUserSuccessCB(results) {
 
     userInfo = results;
     localStorage.userId = userInfo.Id;
+    checkAreaPrefs();
     //get personal info: name, photo, address etc.
     //get preferences routes and seats
     getPrefs();
@@ -2077,7 +2121,7 @@ function checkUserSuccessCB(results) {
 
     //get all rides
     loginThread = true;
-  //  getRidesList();
+    //  getRidesList();
     if (typeof loginThread !== 'undefined' && loginThread) {
 
         getMyRidesList();
@@ -2140,7 +2184,7 @@ function hasCloseRide() {
             if (myRides[i].DriverType != 'Primary') continue;
             if (typeof myRides[i].DateTime === 'undefined') continue;
             //plus 12 hours
-            if ((myRides[i].DateTime+twelveHourDifference) < (Date.now())) continue;
+            if ((myRides[i].DateTime + twelveHourDifference) < (Date.now())) continue;
             if (closeRides.filter(function (r) { return r.rideId == myRides[i].rideId }).length > 0) continue;
 
             var nowMillisecs = new Date().getTime();
@@ -2176,23 +2220,47 @@ function getPrefs() {
 
     //get areas
     var area = {};
+    if (userInfo.PrefArea.includes("ירושלים - צפון")) {
+        area.northJeruz = true;
+    }
+    if (userInfo.PrefArea.includes("ירושלים - מרכז")) {
+        area.centerJeruz = true;
+    }
+    if (userInfo.PrefArea.includes("צפון - מרכז")) {
+        area.centerNorth = true;
+    }
+    if (userInfo.PrefArea.includes("ארז - צפון")) {
+        area.erezNorth = true;
+    }
+    if (userInfo.PrefArea.includes("ארז – ירושלים")) {
+        area.erezJeruz = true;
+    }
+    if (userInfo.PrefArea.includes("ארז - מרכז")) {
+        area.erezCenter = true;
+    }
+    if (userInfo.PrefArea.includes("ארז - תרקומיא")) {
+        area.erezTarkumia = true;
+    }
+    if (userInfo.PrefArea.includes("תרקומיא – מרכז")) {
+        area.tarkumiaCenter = true;
+    }
+    if (userInfo.PrefArea.includes("תרקומיא – צפון")) {
+        area.tarkumiaNorth = true;
+    }
     if (userInfo.PrefArea.includes('מרכז')) {
         area.center = true;
     }
     if (userInfo.PrefArea.includes('צפון')) {
         area.north = true;
     }
-    if (userInfo.PrefArea.includes('דרום')) {
-        area.south = true;
-    }
 
     var dbRoutes = [];
     dbRoutes.push(area);
 
     //get locations
-    for (var i = 0; i < userInfo.PrefLocation.length; i++) {
-        dbRoutes.push(userInfo.PrefLocation[i]);
-    }
+    //for (var i = 0; i < userInfo.PrefLocation.length; i++) {
+    //    dbRoutes.push(userInfo.PrefLocation[i]);
+    //}
 
     localStorage.routes = JSON.stringify(dbRoutes);
 
@@ -2275,7 +2343,6 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
 
     $('#prefTabs li').show();
     var checkboxes = $('#myPreferences .ui-checkbox label');
-
     for (var i = 0; i < checkboxes.length; i++) {
         if (checkboxes.eq(i)[0].classList.contains("ui-checkbox-on")) {
 
@@ -2298,7 +2365,7 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
         }
 
         $('#prefTabs li').hide();
-        $('a#menuBTN').hide()
+        $('a#menuBTN').hide();
         $('#continueBTN').show();
 
         $('#continueBTN').on('click', function () {
@@ -2311,12 +2378,12 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
 
             if ($('#prefTabs a').eq(2).hasClass('ui-btn-active')) {
 
-                var actives = $('#starts .ui-checkbox-on,#ends .ui-checkbox-on');
-                if (actives.length == 0) {
-                    popupDialog('הודעה', "אנא בחר נקודות מוצא ויעד ורק לאחר מכן לחץ על המשך", null, false, null);
-                    //show dialog
-                    return;
-                }
+                //var actives = $('#starts .ui-checkbox-on,#ends .ui-checkbox-on');
+                //if (actives.length == 0) {
+                //    popupDialog('הודעה', "אנא בחר נקודות מוצא ויעד ורק לאחר מכן לחץ על המשך", null, false, null);
+                //    //show dialog
+                //    return;
+                //}
 
                 $('#prefTabs a').eq(1).click().addClass('ui-btn-active');
                 $('#prefTabs a').eq(2).removeClass('ui-btn-active');
@@ -2352,29 +2419,42 @@ $(document).on('pagebeforeshow', '#myPreferences', function () {
     else {
         //user have saved routes
         $('#continueBTN').hide();
-
         var routes = $.parseJSON(localStorage.routes);
-
-        if (routes[0].south && !$('#southArea').is(':checked')) {
-
-            $('#myPreferences #area .ui-checkbox label').eq(0).click();
-            $('.south').show();
-        }
         if (routes[0].center && !$('#centerArea').is(':checked')) {
-
-            $('#myPreferences #area .ui-checkbox label').eq(1).click();
-            $('.center').show();
+            $('#myPreferences #area .ui-checkbox label').eq(0).click();
         }
         if (routes[0].north && !$('#northArea').is(':checked')) {
-
-            $('#myPreferences #area .ui-checkbox label').eq(2).click();
-            $('.north').show();
+            $('#myPreferences #area .ui-checkbox label').eq(1).click();
         }
-
-
+        if (routes[0].centerNorth && !$('#centerNorth').is(':checked')) {
+            $('#myPreferences #area .ui-checkbox label').eq(2).click();
+        }
+        if (routes[0].erezTarkumia && !$('#erezTarkumia').is(':checked')) {
+            $('#myPreferences #area .ui-checkbox label').eq(3).click();
+        }
+        if (routes[0].erezCenter && !$('#erezCenter').is(':checked')) {
+            $('#myPreferences #area .ui-checkbox label').eq(4).click();
+        }
+        if (routes[0].erezJeruz && !$('#erezJeruz').is(':checked')) {
+            $('#myPreferences #area .ui-checkbox label').eq(5).click();
+        }
+        if (routes[0].erezNorth && !$('#erezNorth').is(':checked')) {
+            $('#myPreferences #area .ui-checkbox label').eq(6).click();
+        }
+        
+        if (routes[0].centerJeruz && !$('#centerJeruz').is(':checked')) {
+            $('#myPreferences #area .ui-checkbox label').eq(7).click();
+        }
+        if (routes[0].northJeruz && !$('#northJeruz').is(':checked')) {
+            $('#myPreferences #area .ui-checkbox label').eq(8).click();
+        }
+        if (routes[0].tarkumiaCenter && !$('#tarkumiaCenter').is(':checked')) {
+            $('#myPreferences #area .ui-checkbox label').eq(9).click();
+        }
+        if (routes[0].tarkumiaNorth && !$('#tarkumiaNorth').is(':checked')) {
+            $('#myPreferences #area .ui-checkbox label').eq(10).click();
+        }
         showSavedRoutes(routes);
-
-
         var times = $.parseJSON(localStorage.times);
         showSavedTimes(times);
 
@@ -2457,7 +2537,7 @@ function setPrefs() {
     for (var i = 1; i < routes.length; i++) {
         locations.push(routes[i]);
     }
-
+    
     var areas = [];
     if (routes[0].north) {
         areas.push("צפון");
@@ -2465,10 +2545,36 @@ function setPrefs() {
     if (routes[0].center) {
         areas.push("מרכז");
     }
-    if (routes[0].south) {
-        areas.push("דרום");
+    if (routes[0].centerJeruz) {
+        areas.push("מרכז - ירושלים");
     }
-
+    if (routes[0].northJeruz) {
+        areas.push("צפון - ירושלים");
+    }
+    if (routes[0].centerNorth) {
+        areas.push("צפון - מרכז");
+    }
+    if (routes[0].erezNorth) {
+        areas.push("ארז - צפון");
+    }
+    if (routes[0].erezJeruz) {
+        areas.push("ארז - ירושלים");
+    }
+    if (routes[0].erezCenter) {
+        areas.push("ארז - מרכז");
+    }
+    if (routes[0].erezTarkumia) {
+        areas.push("ארז - תרקומיא");
+    }
+    if (routes[0].tarkumiaCenter) {
+        areas.push("תרקומיא - מרכז");
+    }
+    if (routes[0].tarkumiaNorth) {
+        areas.push("תרקומיא - צפון");
+    }
+    
+    
+    
     var times = JSON.parse(localStorage.times);
 
     var request = {
@@ -2556,28 +2662,40 @@ function saveRoutes() {
     routesArr = [];
 
     var area = {};
-    area.south = $('#southArea').is(':checked');
     area.center = $('#centerArea').is(':checked');
     area.north = $('#northArea').is(':checked');
+    area.centerNorth = $('#centerNorth').is(':checked');
 
+
+    area.centerJeruz = $('#centerJeruz').is(':checked');
+    area.northJeruz = $('#northJeruz').is(':checked');
+
+    area.erezJeruz = $('#erezJeruz').is(':checked');
+    area.erezNorth = $('#erezNorth').is(':checked');
+    area.erezTarkumia = $('#erezTarkumia').is(':checked');
+    area.erezCenter = $('#erezCenter').is(':checked');
+
+    area.tarkumiaCenter = $('#tarkumiaCenter').is(':checked');
+    area.tarkumiaNorth = $('#tarkumiaNorth').is(':checked');
+    
     routesArr.push(area);
 
-    var actives = $('#starts .ui-checkbox-on , #ends  .ui-checkbox-on');
+    //var actives = $('#starts .ui-checkbox-on , #ends  .ui-checkbox-on');
 
-    for (var i = 0; i < actives.length; i++) {
+    //for (var i = 0; i < actives.length; i++) {
 
-        for (var j = 0; j < actives[i].parentElement.parentElement.classList.length; j++) {
-            var areaId = actives[i].parentElement.parentElement.classList[j];
-            if (area[areaId]) {
-                var a = actives[i].innerHTML;
+    //    for (var j = 0; j < actives[i].parentElement.parentElement.classList.length; j++) {
+    //        var areaId = actives[i].parentElement.parentElement.classList[j];
+    //        if (area[areaId]) {
+    //            var a = actives[i].innerHTML;
 
-                if (!routesArr.includes(a)) {
-                    routesArr.push(a);
-                }
-            }
-        }
+    //            if (!routesArr.includes(a)) {
+    //                routesArr.push(a);
+    //            }
+    //        }
+    //    }
 
-    }
+    //}
 
     //save routesArr to DB
     localStorage.routes = JSON.stringify(routesArr);
@@ -2636,10 +2754,18 @@ function showSavedRoutes(routes) {
 
 function showAreas() {
 
-    $('.north , .center , .south').hide();
+    //$('.north , .center , .south').hide();
 
+    //area.center = $('#centerArea').is(':checked');
+    //area.north = $('#northArea').is(':checked');
+    //area.centerJeruz = $('#centerJeruz').is(':checked');
+    //area.centerNorth = $('#centerNorth').is(':checked');
+    //area.erezJeruz = $('#erezJeruz').is(':checked');
+    //area.erezNorth = $('#erezNorth').is(':checked');
+    //area.tarkumiaCenter = $('#tarkumiaCenter').is(':checked');
+    //area.erezCenter = $('#erezCenter').is(':checked')
 
-    if ($('#southArea').is(':checked')) {
+    if ($('#centerArea').is(':checked')) {
         $('.south').show();
     }
 
@@ -2769,7 +2895,7 @@ function onDeviceReady() {
             }
         });
 
-        
+
     }
     else {
         manualLogin();
@@ -2882,7 +3008,7 @@ function isPrimaryStillCanceledECB() {
 if (window.location.href.toString().indexOf('http') == -1) {
 
     document.addEventListener("deviceready", onDeviceReady, false);
-    
+
 
 }
 else {
@@ -3045,7 +3171,7 @@ function setStatusECB() {
 
 
 $(document).ready(function () {
-    
+
 
     if (domain.indexOf('test') != -1) {
         $('.loginToTestEnv').show();
@@ -3086,7 +3212,13 @@ $(document).ready(function () {
         //$('#doneTAB').addClass('ui-btn-active');
         //printMyRides(myPastRides);
         //alert('hey');
-        navigator.app.exitApp();
+        if (navigator.app) {
+            navigator.app.exitApp();
+        } else if (navigator.device) {
+            navigator.device.exitApp();
+        } else {
+            window.close();
+        }
     });
     $(document).on('click', '#doneTAB,#planTAB', function () {
 
@@ -3300,10 +3432,10 @@ $(document).ready(function () {
             return;
         }
 
-        if (activesRoutes.length == 0) {
-            popupDialog('הודעה', "אנא בחר נקודות מוצא ויעד בקווי הסעה", null, false, null);
-            return;
-        }
+        //if (activesRoutes.length == 0) {
+        //    popupDialog('הודעה', "אנא בחר נקודות מוצא ויעד בקווי הסעה", null, false, null);
+        //    return;
+        //}
 
         //local
         saveRoutes();
@@ -3324,14 +3456,20 @@ $(document).ready(function () {
         //$('#doneTAB').addClass('ui-btn-active');
         //printMyRides(myPastRides);
         //alert('hey');
-        navigator.app.exitApp();
+        if (navigator.app) {
+            navigator.app.exitApp();
+        } else if (navigator.device) {
+            navigator.device.exitApp();
+        } else {
+            window.close();
+        }
     });
     $('a#menuBTN').on('click', function () {
         if (localStorage.userType == 'רכז' || localStorage.userType == 'מנהל') {
-            $('li #loginAgainTab,li #auctionTab,li #trackRidesTab').parent().show()
+            $('li #loginAgainTab,li #auctionTab,li #trackRidesTab').parent().show();
         }
         else {
-            $('li #loginAgainTab,li #auctionTab,li #trackRidesTab').parent().hide()
+            $('li #loginAgainTab,li #auctionTab,li #trackRidesTab').parent().hide();
         }
     });
 
@@ -3592,7 +3730,13 @@ function otherDialogFunction(reaction_) {
                 if (reaction_ == 'Cancel') {
                     break;
                 }
-                navigator.app.exitApp();
+                if (navigator.app) {
+                    navigator.app.exitApp();
+                } else if (navigator.device) {
+                    navigator.device.exitApp();
+                } else {
+                    window.close();
+                }
                 break;
             case 'sendBackupReaction':
                 if (reaction_ == 'Confirm') {
@@ -3715,13 +3859,13 @@ function locationsClasses(locations) {
             case 'דרום':
                 locations[i].Area = 'south';
                 break;
-            case 'צפון-מרכז':
+            case 'צפון - מרכז':
                 locations[i].Area = 'north center';
                 break;
-            case 'מרכז-דרום':
+            case 'מרכז - דרום':
                 locations[i].Area = 'south center';
                 break;
-            case 'מרכז - ירושליים':
+            case 'מרכז - ירושלים':
                 locations[i].Area = 'jerusalem center';
                 break;
             default:
@@ -3736,16 +3880,16 @@ function locationsClasses(locations) {
 function getLocationsSCB(data) {
     var locations = JSON.parse(data.d);
 
-    userInfo.Barriers = locations.filter(function (b) { return b.Type == "מחסום" });
-    userInfo.Hospitals = locations.filter(function (h) { return h.Type == "בית חולים" });
+    //userInfo.Barriers = locations.filter(function (b) { return b.Type == "מחסום" });
+    //userInfo.Hospitals = locations.filter(function (h) { return h.Type == "בית חולים" });
 
 
-    if ($('#locationsPH').html() == "") {
-        $('#locationsPH').append(buildLocationsHtml());
-        $('#locationsPH input').on('click', function () {
-            autoSavePref();
-        });
-    }
+    //if ($('#locationsPH').html() == "") {
+    //    $('#locationsPH').append(buildLocationsHtml());
+    //    $('#locationsPH input').on('click', function () {
+    //        autoSavePref();
+    //    });
+    //}
 }
 
 function getLocationsECB(e) {

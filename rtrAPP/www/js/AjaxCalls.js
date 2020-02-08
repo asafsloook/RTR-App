@@ -75,6 +75,19 @@ function GetCurrentVersion(GetVersionSuccessCB, GetVersionErrorCB) {
         //async: false
     }) // end of ajax call
 }
+function GetVolunteerPrefArea(request, GetVolunteerPrefAreaSuccessCB, GetVolunteerPrefAreaErrorCB) {
+    $.ajax({ // ajax call starts
+        url: domain + '/WebService.asmx/GetVolunteerPrefArea',   // server side web service method
+        data: JSON.stringify({ Id: request}),                          // the parameters sent to the server
+        type: 'POST',                              // can be also GET
+        dataType: 'json',                          // expecting JSON datatype from the server
+        async: false,
+        contentType: 'application/json; charset = utf-8', // sent to the server
+        success: GetVolunteerPrefAreaSuccessCB,                // data.d id the Variable data contains the data we get from serverside
+        error: GetVolunteerPrefAreaErrorCB
+        //async: false
+    }) // end of ajax call
+}
 function signDriver(request, signDriverSuccessCB, signDriverErrorCB) {
     // serialize the object to JSON string
     var dataString = JSON.stringify(request);
@@ -327,7 +340,7 @@ function getServers(getServersSCB, getServersECB) {
 
     // serialize the object to JSON string
     var dataString = "";
-    
+
     $.ajax({ // ajax call starts
         url: domain + '/WebService.asmx/getR2RServers',   // server side web service method
         data: dataString,                          // the parameters sent to the server
