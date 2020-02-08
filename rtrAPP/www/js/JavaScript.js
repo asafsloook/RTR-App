@@ -1584,6 +1584,10 @@ function createSuggestPage(ride) {
     if (suggestedRide.Melave.length != 0) {
         EscortsLENGTH = " +" + suggestedRide.Melave.length;
     }
+    if (suggestedRide.Pat.IsAnonymous) {
+        suggestText = '<p style="margin: 5% 10%;">האם לצרף לנסיעה חולה נוסף?'
+    } else suggestText = '<p style="margin: 5% 10%;">האם לצרף לנסיעה את ' + suggestedRide.Person
+
     str += '<p>ביום ' + day
         + ', ' + myDate.getDate() + "." + (myDate.getMonth() + 1) + "." + myDate.getFullYear()
         + ', בשעה ' + myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1") + '</p>'
@@ -1592,8 +1596,9 @@ function createSuggestPage(ride) {
         //+ "<p> מושבים ברכבך (לא כולל נהג): " + maxSeats
         //+ '<a data-icon="edit" id="updateSeatsBTN" href="#" style="background-color:#202020" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-button-inline ui-widget ui-button-a ui-link ui-btn ui-btn-b ui-icon-edit ui-btn-icon-left ui-btn-inline ui-shadow ui-corner-all" role="button">עדכן</a>'
         //+ '</p>'
+        //XXXXX
 
-        + '<p style="margin: 5% 10%;">האם לצרף לנסיעה את ' + suggestedRide.Person
+        + suggestText
         + EscortsLENGTH
         + "?</p>";
 
