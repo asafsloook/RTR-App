@@ -3,7 +3,7 @@
 //check all when choosing area first login
 //add haifa to south
 //alef-hey checked
-//space before () headers
+//space before () header
 //daf rakaz text (my acc)
 //adding some green
 //get week (if fix)
@@ -243,8 +243,11 @@ function ridesToClientStructure(before) {
         results[i].Person = results[i].Pat.DisplayName;
 
         results[i].Melave = [];
+        
         for (var j = 0; j < results[i].Pat.EscortedList.length; j++) {
+            
             results[i].Melave.push(results[i].Pat.EscortedList[j].DisplayName);
+            
         }
     }
     return results;
@@ -369,9 +372,12 @@ function myRidesToClientStructure(before) {
 
             ridePat.Person = ridePat.Pat.DisplayName;
 
+            ridePat.MelavePhone = [];
+            
             ridePat.Melave = [];
             for (var m = 0; m < ridePat.Pat.EscortedList.length; m++) {
                 ridePat.Melave.push(ridePat.Pat.EscortedList[m].DisplayName);
+                ridePat.MelavePhone.push(ridePat.Pat.EscortedList[m].CellPhone);
             }
 
             after.push(ridePat);
@@ -474,7 +480,7 @@ function printMyRides(myRides) {
     //$("#myRidesCounterPH").html(counterStr);
 }
 
-
+//XXXXX
 //print my ride
 function myRideListItem(myRides, i) {
 
@@ -486,7 +492,7 @@ function myRideListItem(myRides, i) {
         return;
     }
 
-    var str = '<li style="border: 1px solid rgba(200,200,200,0.5);" data-theme="a" ';
+    var str = '<li style="border: 1px solid rgba(200,200,200,0.5);position:relative" data-theme="a" ';
 
     if ($('#doneTAB').prop("class").indexOf("ui-btn-active") != -1) {
         str += ' id="popINFO' + myRides[i].Id + '" class="';
@@ -513,15 +519,16 @@ function myRideListItem(myRides, i) {
         if (hour.startsWith("0")) {
             hour = hour.substring(1, hour.length);
         }
-        str += '<br>' + hour + '</p>';
+        str += '<br>' + hour + '<br>';
     }
     else {
-        str += '<br> אחה"צ </p>';
+        str += '<br> אחה"צ <br>';
     }
+    str += 'טלפונים:</p>'
 
 
     str = RideEquipment(str, myRides, i);
-    str += '<p style="float:right;margin-right:5%;width: 40%;">';
+    str += '<p style="float:right;margin-right:5%;width: 60%;">';
 
 
 
@@ -538,13 +545,24 @@ function myRideListItem(myRides, i) {
         + (myRides[i].Pat.IsAnonymous ? 'חולה' : myRides[i].Person);
 
     if (myRides[i].Melave.length > 0) {
-        str += " +" + (myRides[i].Melave.length)
+        str += " +" + (myRides[i].Melave.length);
     }
-
+    //XXXXX add phones here
+    if (myRides[i].Pat.CellPhone) {
+        str +='<br>' + myRides[i].Pat.CellPhone
+    }
+    if (myRides[i].MelavePhone != undefined) {
+        if (myRides[i].MelavePhone[0] != null) {
+            str += ', ' + myRides[i].MelavePhone[0];
+        }
+        
+    }
+    
+    
     str += '</p>';
 
     if ($('#doneTAB').prop("class").indexOf("ui-btn-active") == -1) {
-        str += '<a style="background-color: #ff8c8c;float:left;border:none;margin:0;border-radius:25px" href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all deleteokBTN"></a>';
+        str += '<a style="background-color: #ff8c8c;float:left;border:none;margin:0;border-radius:25px;position:absolute" href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all deleteokBTN"></a>';
     }
 
     str += "</li> ";
@@ -1001,7 +1019,7 @@ function RideEquipment(str, results, i) {
     var margin = 10;
 
     if (window.location.href.toString().indexOf('signMe') != -1) {
-        str += '<p style="width:20%;float:right;text-align:center;';
+        str += '<p style="width:10%;float:right;text-align:center;';
 
         if (EquipmentLength >= 3) {
             margin = 1;
@@ -1014,7 +1032,7 @@ function RideEquipment(str, results, i) {
         }
     }
     else if (window.location.href.toString().indexOf('myRides') != -1) {
-        str += '<p style="width:20%;float:right;text-align:center;';
+        str += '<p style="width:10%;float:right;text-align:center;';
 
         if (EquipmentLength >= 3) {
             margin = 0;
@@ -1585,6 +1603,10 @@ function createSuggestPage(ride) {
     if (suggestedRide.Melave.length != 0) {
         EscortsLENGTH = " +" + suggestedRide.Melave.length;
     }
+    if (suggestedRide.Pat.IsAnonymous) {
+        suggestText = '<p style="margin: 5% 10%;">האם לצרף לנסיעה חולה נוסף'
+    } else suggestText = '<p style="margin: 5% 10%;">האם לצרף לנסיעה את ' + suggestedRide.Person
+
     str += '<p>ביום ' + day
         + ', ' + myDate.getDate() + "." + (myDate.getMonth() + 1) + "." + myDate.getFullYear()
         + ', בשעה ' + myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1") + '</p>'
@@ -1593,14 +1615,16 @@ function createSuggestPage(ride) {
         //+ "<p> מושבים ברכבך (לא כולל נהג): " + maxSeats
         //+ '<a data-icon="edit" id="updateSeatsBTN" href="#" style="background-color:#202020" data-role="button" data-inline="true" data-theme="b" class="ui-button ui-button-inline ui-widget ui-button-a ui-link ui-btn ui-btn-b ui-icon-edit ui-btn-icon-left ui-btn-inline ui-shadow ui-corner-all" role="button">עדכן</a>'
         //+ '</p>'
+        //XXXXX
 
-        + '<p style="margin: 5% 10%;">האם לצרף לנסיעה את ' + suggestedRide.Person
+        + suggestText
         + EscortsLENGTH
         + "?</p>";
 
 
     return str;
 }
+
 
 //create suggest page
 function createConfirmationPage(ride) {
@@ -3795,6 +3819,7 @@ function backupToPrimaryECB(e) {
 
 
 function popupDialog(title, content, redirectUrl, isConfirm, dialogFunction_) {
+    
     redirectUrlFromDialog = redirectUrl;
     dialogFunction = dialogFunction_;
     if (isConfirm) $('#cancelDialogBTN').show();
