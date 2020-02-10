@@ -86,7 +86,7 @@
 
 
 Settings = {};
-Settings.version = '1.8.6';
+Settings.version = '1.8.7';
 Settings.releaseNotes = 'https://docs.google.com/spreadsheets/d/1jzv_lLnXRvRS_dNuhyWTuGT7cebsXX-kjflsbZim3O8';
 domain = '';
 currentPatientName = '';
@@ -709,6 +709,7 @@ function filterRides(rides) {
         else if ($('#shiftDDL').val() != "משמרת" && $('#shiftDDL').val() != rides[i].Shift) {
 
         }
+            //not showing backups:  rides[i].Status == 'שובץ נהג' 
         else if (rides[i].Status == 'שובץ גיבוי' || rides[i].Status == 'שובץ נהג' || rides[i].Status == "שובץ נהג וגיבוי" || userInfo.Statusim.filter(function (status) { return status.Name == rides[i].Status && status.Id >= 100 }).length > 0) {
 
         }
@@ -1149,7 +1150,7 @@ function printRides(results) {
             var checkDate = new Date(lastDate);
 
 
-            //if (checkDate.toLocaleDateString() != myDate.toLocaleDateString() || i == 0) {
+            if (checkDate.toLocaleDateString() != myDate.toLocaleDateString() || i == 0) {
                 if (i != 0) {
                     str += "</li>";
 
@@ -1161,7 +1162,7 @@ function printRides(results) {
                 //create the begining of the list item control
                 str += ListItemStart(myDate, startPointStr);
 
-            //}
+            }
 
             //create the content of one ride
             str += ListItemRide(results, i);
