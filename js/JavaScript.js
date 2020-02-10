@@ -86,7 +86,7 @@
 
 
 Settings = {};
-Settings.version = '1.8.7';
+Settings.version = '1.8.8';
 Settings.releaseNotes = 'https://docs.google.com/spreadsheets/d/1jzv_lLnXRvRS_dNuhyWTuGT7cebsXX-kjflsbZim3O8';
 domain = '';
 currentPatientName = '';
@@ -492,7 +492,7 @@ function myRideListItem(myRides, i) {
         return;
     }
 
-    var str = '<li style="border: 1px solid rgba(200,200,200,0.5);position:relative" data-theme="a" ';
+    var str = '<li style="border: 2px solid rgba(200,200,200,0.5);position:relative" data-theme="a" ';
 
     if ($('#doneTAB').prop("class").indexOf("ui-btn-active") != -1) {
         str += ' id="popINFO' + myRides[i].Id + '" class="';
@@ -521,10 +521,17 @@ function myRideListItem(myRides, i) {
         }
         str += '<br>' + hour + '<br>';
     }
-    else {
+    else if (hour=="22:14") {
         str += '<br> אחה"צ <br>';
+    } else {
+        str += '<br>' + hour + '<br>';
     }
-    str += 'טלפונים:</p>'
+    if (!myRides[i].Pat.IsAnonymous) {
+        str += 'טלפונים:</p>';
+    } else {
+        str += '</p>';
+    }
+    
 
 
     str = RideEquipment(str, myRides, i);
@@ -547,15 +554,17 @@ function myRideListItem(myRides, i) {
     if (myRides[i].Melave.length > 0) {
         str += " +" + (myRides[i].Melave.length);
     }
-    //XXXXX add phones here
-    if (myRides[i].Pat.CellPhone) {
-        str +='<br>' + myRides[i].Pat.CellPhone
-    }
-    if (myRides[i].MelavePhone != undefined) {
-        if (myRides[i].MelavePhone[0] != null) {
-            str += ', ' + myRides[i].MelavePhone[0];
+    if (!myRides[i].Pat.IsAnonymous) {
+
+        if (myRides[i].Pat.CellPhone) {
+            str += '<br>' + myRides[i].Pat.CellPhone
         }
-        
+        if (myRides[i].MelavePhone != undefined) {
+            if (myRides[i].MelavePhone[0] != null) {
+                str += ', ' + myRides[i].MelavePhone[0];
+            }
+
+        }
     }
     
     
@@ -1191,6 +1200,7 @@ function printRides(results) {
 }
 
 //generate myRide string for listview item
+//XXX
 function getRideStr(rideOBJ) {
 
     var myDate = new Date(rideOBJ.DateTime);
@@ -1256,7 +1266,26 @@ function getRideStr(rideOBJ) {
             }
         }
     }
+    if (!rideOBJ.Pat.IsAnonymous) {
 
+    
+    var phoneExist = false;
+    if (rideOBJ.Pat.CellPhone) {
+        str += '<p>טלפונים: ';
+        str += '<br>' + rideOBJ.Pat.CellPhone
+        phoneExist = true;
+    }
+    if (rideOBJ.MelavePhone != undefined) {
+        if (rideOBJ.MelavePhone[0] != null) {
+            str += ', ' + rideOBJ.MelavePhone[0];
+        }
+        phoneExist = true;
+
+    }
+    if (phoneExist) {
+        str += '</p>';
+        }
+    }
     return str;
 }
 
