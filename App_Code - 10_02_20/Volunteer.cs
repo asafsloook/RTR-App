@@ -14,8 +14,6 @@ using System.Web.Script.Serialization;
 public class Volunteer
 {
     string device;
-    bool isAssistant;//האם עוזר?
-    string englishName;//שם באנגלית
     string displayName; //מזהה ייחודי
     string firstNameH;//שם פרטי בעברית
     string firstNameA;//שם פרטי בערבית
@@ -43,7 +41,6 @@ public class Volunteer
     string status;//סטטוס
     int id;
     string regId;
-    string lastModified;
 
     public List<RideStatus> Statusim { get; set; }
 
@@ -473,7 +470,21 @@ public class Volunteer
         res += db.ExecuteQuery(query);
         return res;
     }
+    public List<string> getPrefArea(int id)
+    {
+        List<string> areas = new List<string>();
+        DbService db = new DbService();
+        //Get Preferred Area for Volunteer
+        string query = "select PreferredArea from PreferredArea_Volunteer where VolunteerId=" + id;
+        DataSet ds = db.GetDataSetByQuery(query);
+        foreach (DataRow dr in ds.Tables[0].Rows)
+        {
+            string area = dr["PreferredArea"].ToString();
+            areas.Add(area);
+        }
+        return areas;
 
+    }
     public Volunteer getVolunteerPrefs(int id)
     {
         PrefTime = new List<string[]>();
@@ -546,24 +557,7 @@ public class Volunteer
             vl.Add(v);
         }
         return vl;
-    }
-    public  List<Volunteer> getCoordinatorsList()
-    {
-        string query = "select * from VolunteerTypeView where VolunTypeType=N'רכז' and IsActive='true'";
-        DbService db = new DbService();
-        DataSet ds = db.GetDataSetByQuery(query);
-        List<Volunteer> vl = new List<Volunteer>();
-        foreach (DataRow dr in ds.Tables[0].Rows)
-        {
-            Volunteer v = new Volunteer();
-            v.DisplayName = dr["DisplayName"].ToString();
-            v.CellPhone = dr["CellPhone"].ToString();
-            v.TypeVol = dr["VolunTypeType"].ToString();
-            v.UserName = dr["UserName"].ToString();
-            v.EnglishName = dr["EnglishName"].ToString();
-            vl.Add(v);
-        }
-        return vl;
+
     }
 
     public List<string> getVolunteerTypes()
@@ -597,83 +591,6 @@ public class Volunteer
         }
 
         return v;
-    }
-    public Volunteer getVolunteerByCellphone(string cell)
-    {
-        DbService db = new DbService();
-        cell = cell.Replace("-", "");
-        string query = "select * from VolunteerTypeView where CellPhone = '" + cell + "'";
-        DataSet ds = db.GetDataSetByQuery(query);
-        Volunteer v = new Volunteer();
-        foreach (DataRow dr in ds.Tables[0].Rows)
-        {
-
-            v.Id = int.Parse(dr["Id"].ToString());
-            v.DisplayName = dr["DisplayName"].ToString();
-            v.FirstNameA = dr["FirstNameA"].ToString();
-            v.FirstNameH = dr["FirstNameH"].ToString();
-            v.LastNameH = dr["LastNameH"].ToString();
-            v.LastNameA = dr["LastNameA"].ToString();
-            v.CellPhone = dr["CellPhone"].ToString();
-            //v.CellPhone = v.CellPhone.Replace("-", "");
-            v.CellPhone2 = dr["CellPhone2"].ToString();
-            v.HomePhone = dr["HomePhone"].ToString();
-            v.City = dr["CityCityName"].ToString();
-            v.Address = dr["Address"].ToString();
-            v.Email = dr["Email"].ToString();
-            v.RegId = dr["pnRegId"].ToString();
-            //if (dr["BirthDate"].ToString() != "")
-            //{
-            //    v.BirthDate = Convert.ToDateTime(dr["BirthDate"].ToString());
-            //}
-            // v.BirthDate = Convert.ToDateTime(dr["BirthDate"].ToString());
-            string date = dr["JoinDate"].ToString();
-            if (date == "")
-            {
-
-            }
-            else v.JoinDate = Convert.ToDateTime(dr["JoinDate"].ToString());
-            bool ac = false;
-            if (dr["IsActive"].ToString().ToLower() == "true")
-            {
-                ac = true;
-            }
-            v.IsActive = ac;
-            bool arabic = false;
-            if (dr["KnowsArabic"].ToString().ToLower() == "true")
-            {
-                arabic = true;
-            }
-            v.KnowsArabic = arabic;
-            try
-            {
-                v.AvailableSeats = int.Parse(dr["AvailableSeats"].ToString());
-            }
-            catch (Exception)
-            {
-
-            }
-            v.TypeVol = dr["VolunTypeType"].ToString();
-            Volunteer v2 = new Volunteer();
-            v2 = v2.getVolunteerPrefs(v.Id);
-            v.PrefArea = v2.PrefArea;
-            v.PrefTime = v2.PrefTime;
-            v.PrefLocation = v2.PrefLocation;
-
-            DbService db2 = new DbService();
-            string query2 = "select * from status where StatusId > 99 and StatusId < 1000";
-            DataSet ds2 = db2.GetDataSetByQuery(query2);
-            v.Statusim = new List<RideStatus>();
-            foreach (DataRow dr2 in ds2.Tables[0].Rows)
-            {
-                var stat = new RideStatus();
-                stat.Id = int.Parse(dr2.ItemArray[1].ToString());
-                stat.Name = dr2.ItemArray[0].ToString();
-                v.Statusim.Add(stat);
-            }
-        }
-        return v;
-
     }
 
 
@@ -826,45 +743,6 @@ public class Volunteer
         }
     }
 
-    public string EnglishName
-    {
-        get
-        {
-            return englishName;
-        }
-
-        set
-        {
-            englishName = value;
-        }
-    }
-
-    public bool IsAssistant
-    {
-        get
-        {
-            return isAssistant;
-        }
-
-        set
-        {
-            isAssistant = value;
-        }
-    }
-
-    public string LastModified
-    {
-        get
-        {
-            return lastModified;
-        }
-
-        set
-        {
-            lastModified = value;
-        }
-    }
-
     //public string KnowsArabic
     //{
     //    get
@@ -1013,7 +891,6 @@ public class Volunteer
             //v.preferRoute2 = dr["preferRoute2"].ToString();
             //v.PreferRoute3 = dr["preferRoute3"].ToString();
             string date = dr["JoinDate"].ToString();
-            bool isAssistant = Convert.ToBoolean(dr["isAssistant"].ToString());
             if ( date== "")
             {
 
@@ -1033,9 +910,6 @@ public class Volunteer
             v.KnowsArabic = arabic;
             v.Gender = dr["Gender"].ToString();
             v.RegId = dr["pnRegId"].ToString();
-            
-            v.EnglishName = dr["englishName"].ToString();
-            v.LastModified = dr["lastModified"].ToString();
 
             list.Add(v);
         }
@@ -1070,9 +944,7 @@ public class Volunteer
         v.City = dr["CityCityName"].ToString();
         v.Address = dr["Address"].ToString();
         v.Email = dr["Email"].ToString();
-        v.EnglishName = dr["EnglishName"].ToString();
         string date = dr["JoinDate"].ToString();
-        bool isAssistant = Convert.ToBoolean(dr["isAssistant"].ToString());
         if (date == "")
         {
 
@@ -1139,8 +1011,6 @@ public class Volunteer
         v.RegId = dr["pnRegId"].ToString();
         v.Address = dr["Address"].ToString();
         v.Email = dr["Email"].ToString();
-        //v.IsAssistant= Convert.ToBoolean(dr["isAssistant"].ToString());
-
         if (dr["device"] != null)
         {
             v.Device = dr["device"].ToString();
@@ -1185,21 +1055,6 @@ public class Volunteer
 
         return v;
     }
-    public List<string> getPrefArea(int id)
-    {
-        List<string> areas = new List<string>();
-        DbService db = new DbService();
-        //Get Preferred Area for Volunteer
-        string query = "select PreferredArea from PreferredArea_Volunteer where VolunteerId=" + id;
-        DataSet ds = db.GetDataSetByQuery(query);
-        foreach (DataRow dr in ds.Tables[0].Rows)
-        {
-            string area = dr["PreferredArea"].ToString();
-            areas.Add(area);
-        }
-        return areas;
-
-    }
     public Volunteer getVolunteerByID(int id)
     {
         #region DB functions
@@ -1226,7 +1081,6 @@ public class Volunteer
         v.City = dr["CityCityName"].ToString();
         v.Address = dr["Address"].ToString();
         v.Email = dr["Email"].ToString();
-        v.IsAssistant = Convert.ToBoolean(dr["isAssistant"].ToString());
         string date = dr["JoinDate"].ToString();
         if (date == "")
         {
@@ -1288,7 +1142,7 @@ public class Volunteer
         DbService db = new DbService();
         SqlCommand cmd = new SqlCommand();
         cmd.CommandType = CommandType.Text;
-        SqlParameter[] cmdParams = new SqlParameter[19];
+        SqlParameter[] cmdParams = new SqlParameter[17];
         cmdParams[0] = cmd.Parameters.AddWithValue("@address", v.Address);
         cmdParams[1] = cmd.Parameters.AddWithValue("@cell", v.CellPhone);
         cmdParams[2] = cmd.Parameters.AddWithValue("@cell2", v.CellPhone2);
@@ -1307,31 +1161,17 @@ public class Volunteer
         cmdParams[14] = cmd.Parameters.AddWithValue("@remarks", v.Remarks);
         cmdParams[15] = cmd.Parameters.AddWithValue("@displayName", v.DisplayName);
         cmdParams[16] = cmd.Parameters.AddWithValue("@UserName", v.CellPhone);
-        cmdParams[17] = cmd.Parameters.AddWithValue("@englishName", v.EnglishName);
-        cmdParams[18] = cmd.Parameters.AddWithValue("@isAssistant", v.IsAssistant);
         string newName = v.FirstNameH + " " + v.LastNameH;
-        newName = newName.Replace("'", "''");
         //cmdParams[1] = cmd.Parameters.AddWithValue("@bDay", v.BirthDate);
         //, HomePhone=@phone
         string query = "";
         if (func == "edit")
         {
-            string password = ConfigurationManager.AppSettings["password"];
-            if (v.TypeVol == "רכז" || v.TypeVol == "מנהל" || v.IsAssistant)
-            {
-                query = "update Volunteer set Address=@address, CellPhone=@cell,";
-                query += "CellPhone2=@cell2, CityCityName=@city, Email=@email, FirstNameA=@firstNameA, FirstNameH=@firstNameH, ";
-                query += "Gender=@gender, IsActive=@IsActive, JoinDate=@jDate, KnowsArabic=@knowsArabic, LastNameA=@lastNameA, ";
-                query += "LastNameH=@lastNameH,UserName=@UserName,Password='" + password + "', Remarks=@remarks,EnglishName=@englishName,isAssistant=@isAssistant,lastModified=DATEADD(hour, 2, SYSDATETIME()) where DisplayName=@displayName"; //, BirthDate=@bDay
+            query = "update Volunteer set Address=@address, CellPhone=@cell,";
+            query += "CellPhone2=@cell2, CityCityName=@city, Email=@email, FirstNameA=@firstNameA, FirstNameH=@firstNameH, ";
+            query += "Gender=@gender, IsActive=@IsActive, JoinDate=@jDate, KnowsArabic=@knowsArabic, LastNameA=@lastNameA, ";
+            query += "LastNameH=@lastNameH, Remarks=@remarks where DisplayName=@displayName"; //, BirthDate=@bDay
 
-            }
-            else
-            {
-                query = "update Volunteer set Address=@address, CellPhone=@cell,";
-                query += "CellPhone2=@cell2, CityCityName=@city, Email=@email, FirstNameA=@firstNameA, FirstNameH=@firstNameH, ";
-                query += "Gender=@gender, IsActive=@IsActive, JoinDate=@jDate, KnowsArabic=@knowsArabic, LastNameA=@lastNameA, ";
-                query += "LastNameH=@lastNameH, Remarks=@remarks,EnglishName=@englishName,isAssistant=@isAssistant,lastModified=DATEADD(hour, 2, SYSDATETIME()) where DisplayName=@displayName"; //, BirthDate=@bDay
-            }
             res = db.ExecuteQuery(query, cmd.CommandType, cmdParams);
 
             if (res == 0)
@@ -1344,7 +1184,7 @@ public class Volunteer
 
             db = new DbService();
             query = "update VolunType_Volunteer set VolunTypeType=@volType where VolunteerId=" + Id;
-            res = db.ExecuteQuery(query, cmd.CommandType, cmdParams);
+            res += db.ExecuteQuery(query, cmd.CommandType, cmdParams);
             if (res == 0)
             {
                 throw new Exception();
@@ -1355,17 +1195,17 @@ public class Volunteer
 
             try
             {
-                if (v.TypeVol == "רכז" || v.TypeVol =="מנהל" || v.IsAssistant)
+                if (v.TypeVol == "רכז" || v.TypeVol =="מנהל")
                 {
                     string password = ConfigurationManager.AppSettings["password"];
-                    query = "insert into Volunteer (Address, CellPhone, CellPhone2, CityCityName, Email, FirstNameA, FirstNameH, Gender, IsActive, JoinDate, KnowsArabic, LastNameA, LastNameH, Remarks,EnglishName,isAssistant,UserName,Password,lastModified)";
-                    query += " values (@address,@cell,@cell2,@city,@email,@firstNameA,@firstNameH,@gender,@IsActive,@jDate,@knowsArabic,@lastNameA,@lastNameH,@remarks,@englishName,@isAssistant,@UserName,'" + password+ "',DATEADD(hour, 2, SYSDATETIME()));SELECT SCOPE_IDENTITY();";
+                    query = "insert into Volunteer (Address, CellPhone, CellPhone2, CityCityName, Email, FirstNameA, FirstNameH, Gender, IsActive, JoinDate, KnowsArabic, LastNameA, LastNameH, Remarks,UserName,Password)";
+                    query += " values (@address,@cell,@cell2,@city,@email,@firstNameA,@firstNameH,@gender,@IsActive,@jDate,@knowsArabic,@lastNameA,@lastNameH,@remarks,@UserName,'"+password+"');SELECT SCOPE_IDENTITY();";
 
                 }
                 else
                 {
-                    query = "insert into Volunteer (Address, CellPhone, CellPhone2, CityCityName, Email, FirstNameA, FirstNameH, Gender, IsActive, JoinDate, KnowsArabic, LastNameA, LastNameH, Remarks,EnglishName,isAssistant,lastModified)";
-                    query += " values (@address,@cell,@cell2,@city,@email,@firstNameA,@firstNameH,@gender,@IsActive,@jDate,@knowsArabic,@lastNameA,@lastNameH,@remarks,@englishName,@isAssistant,DATEADD(hour, 2, SYSDATETIME()));SELECT SCOPE_IDENTITY();";
+                    query = "insert into Volunteer (Address, CellPhone, CellPhone2, CityCityName, Email, FirstNameA, FirstNameH, Gender, IsActive, JoinDate, KnowsArabic, LastNameA, LastNameH, Remarks)";
+                    query += " values (@address,@cell,@cell2,@city,@email,@firstNameA,@firstNameH,@gender,@IsActive,@jDate,@knowsArabic,@lastNameA,@lastNameH,@remarks);SELECT SCOPE_IDENTITY();";
                 }
                 db = new DbService();
                 Id = int.Parse(db.GetObjectScalarByQuery(query, cmd.CommandType, cmdParams).ToString());
@@ -1390,7 +1230,7 @@ public class Volunteer
     public void deactivateCustomer(string active)
     {
         DbService db = new DbService();
-        db.ExecuteQuery("UPDATE Volunteer SET IsActive='" + active + "', lastModified=DATEADD(hour, 2, SYSDATETIME()) WHERE displayName=N'" + DisplayName + "'");
+        db.ExecuteQuery("UPDATE Volunteer SET IsActive='" + active + "' WHERE displayName=N'" + DisplayName + "'");
        
     }
 

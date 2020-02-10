@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -210,122 +209,14 @@ public class RidePat
         // TODO: Add constructor logic here
         //
     }
-    private string NEWCheckLocationForRidepatArea(string origin, string destination)
-    {
-//ארז – ירושלים
-//ארז - מרכז
-//ארז - צפון
-//תרקומיא – מרכז
-//אזור המרכז
-//מרכז - ירושלים
-//מרכז - צפון
-//אזור הצפון
-        Location l = new Location();
-        string originArea = l.GetAreaForPoint(origin);
-        string destinationArea = l.GetAreaForPoint(destination);
-        List<string> allAreas = l.getAreas();
-        string rideArea = originArea + " - " + destinationArea;
-        if (originArea==destinationArea)
-        {
-            rideArea = originArea;
-        }
-        else if(!allAreas.Contains(rideArea))
-        {
-            rideArea = destinationArea + " - " + originArea;
-            if (!allAreas.Contains(rideArea))
-            {
-                throw new ArgumentException("area not undefined");
-            }
-        }
-        return rideArea;
-    }
-    //need to change....
-    private string CheckLocationForRidepatArea(string origin,string destination)
-    {
-        //ארז – ירושלים
-        //ארז - מרכז
-        //ארז - צפון
-        //תרקומיא – מרכז
-        //אזור המרכז
-        //מרכז - ירושליים
-        //צפון - מרכז
-        //אזור הצפון
-
-
-//        דרום
-//מרכז
-//מרכז - ירושליים
-//מרכז - דרום
-//צפון
-//צפון - מרכז
-
-        //get locations area
-        Location l = new Location();
-        string originArea = l.GetAreaForPoint(origin);
-        string destinationArea = l.GetAreaForPoint(destination);
-
-        string areaForRidepat = originArea;
-        if (origin == "ארז")
-        {
-            switch (destinationArea)
-            {
-                case "מרכז":
-                case "מרכז-דרום":
-                    areaForRidepat = "ארז - מרכז";
-                    break;
-                case "מרכז - ירושליים":
-                case "דרום":
-                    areaForRidepat = "ארז – ירושלים";
-                    break;
-                case "צפון":
-                case "צפון-מרכז":
-                    areaForRidepat = "ארז - צפון";
-                    break;
-                default:
-                    areaForRidepat = originArea;;
-                    break;
-            }
-        }
-        else if(destination == "ארז")
-        {
-            switch (originArea)
-            {
-                case "מרכז":
-                case "מרכז-דרום":
-                case "צפון-מרכז":
-                    areaForRidepat = "ארז - מרכז";
-                    break;
-                case "מרכז - ירושליים":
-                case "דרום":
-                    areaForRidepat = "ארז – ירושלים";
-                    break;
-                case "צפון":
-                    areaForRidepat = "ארז - צפון";
-                    break;
-                default:
-                    areaForRidepat = originArea; ;
-                    break;
-            }
-        }
-        else if(origin== "תרקומיא" || destination=="תרקומיא")
-        {
-            areaForRidepat = "תרקומיא – מרכז";
-        }
-        else if ((originArea=="מרכז" && destinationArea=="צפון") || (destinationArea == "מרכז" && originArea == "צפון"))
-        {
-            areaForRidepat = "צפון-מרכז";
-        }
-        return areaForRidepat;
-    }
     //לשנות את  isAnonymous
-
     public int setRidePat(RidePat ridePat, string func,bool isAnonymous, int numberOfRides, string repeatRideEvery)
     {
         
         DbService db = new DbService();
         SqlCommand cmd = new SqlCommand();
         cmd.CommandType = CommandType.Text;
-        SqlParameter[] cmdParams = new SqlParameter[8];
+        SqlParameter[] cmdParams = new SqlParameter[7];
         try
         {
             Pat = ridePat.Pat;
@@ -333,7 +224,6 @@ public class RidePat
             origin.Name = ridePat.Origin.Name;
             Location destination = new Location();
             destination.Name = ridePat.Destination.Name;
-            Area = NEWCheckLocationForRidepatArea(origin.Name, destination.Name);
             Date = ridePat.Date;
             Coordinator = new Volunteer();
             Coordinator.DisplayName = ridePat.Coordinator.DisplayName;
@@ -347,9 +237,8 @@ public class RidePat
             cmdParams[3] = cmd.Parameters.AddWithValue("@date", Date);
             cmdParams[4] = cmd.Parameters.AddWithValue("@remark", Remark);
             cmdParams[5] = cmd.Parameters.AddWithValue("@onlyEscort", OnlyEscort);
-            cmdParams[7] = cmd.Parameters.AddWithValue("@Area", Area);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
 
         }
@@ -361,11 +250,11 @@ public class RidePat
             {
                 if (CheckRidePat(ridePat, isAnonymous))
                 {
-                   return 1;
+                   return int.Parse(ridePat.Date.ToString("ddMMyy"));
                 }
                 cmdParams[6] = cmd.Parameters.AddWithValue("@coordinator", Coordinator.DisplayName);
 
-                string query = "insert into RidePat (Patient,Origin,Destination,PickupTime,Coordinator,Remark,OnlyEscort,Area) values (@pat,@origin,@destination,@date,@coordinator,@remark,@onlyEscort,@Area);SELECT SCOPE_IDENTITY();";
+                string query = "insert into RidePat (Patient,Origin,Destination,PickupTime,Coordinator,Remark,OnlyEscort) values (@pat,@origin,@destination,@date,@coordinator,@remark,@onlyEscort);SELECT SCOPE_IDENTITY();";
                 RidePatNum = int.Parse(db.GetObjectScalarByQuery(query, cmd.CommandType, cmdParams).ToString());
 
                 if (Escorts.Count > 0 && RidePatNum != 0)
@@ -420,17 +309,11 @@ public class RidePat
         else if (func == "edit") //Edit existing RidePat in DB
         {
             RidePatNum = ridePat.RidePatNum;
-
-            //string query = "select Status from RidePat where RidePatNum=" + RidePatNum;
-            //Status = db.GetObjectScalarByQuery(query).ToString();
-            //if (Status != "ממתינה לשיבוץ" && !isAnonymous) throw new Exception("נסיעה זו כבר הוקצתה לנהג ואין אפשרות לערוך אותה");
-
-            //string query = "select Status from RidePat where RidePatNum=" + RidePatNum;
-            //Status = db.GetObjectScalarByQuery(query).ToString();
-            //if (Status == "הגענו ליעד") throw new Exception("נסיעה זו כבר הגיעה ליעד ואין אפשרות לערוך אותה");
-
+            string query = "select Status from RidePat where RidePatNum=" + RidePatNum;
+            Status = db.GetObjectScalarByQuery(query).ToString();
+            if (Status != "ממתינה לשיבוץ" && !isAnonymous) throw new Exception("נסיעה זו כבר הוקצתה לנהג ואין אפשרות לערוך אותה");
             cmdParams[6] = cmd.Parameters.AddWithValue("@ridePatNum", RidePatNum);
-            var query = "update RidePat set Patient=@pat,Origin=@origin,Destination=@destination,PickupTime=@date,Remark=@remark,OnlyEscort=@onlyEscort,Area=@Area where RidePatNum=@ridePatNum";
+            query = "update RidePat set Patient=@pat,Origin=@origin,Destination=@destination,PickupTime=@date,Remark=@remark,OnlyEscort=@onlyEscort where RidePatNum=@ridePatNum";
             int res = db.ExecuteQuery(query, cmd.CommandType, cmdParams);
 
             if (res > 0)
@@ -467,25 +350,17 @@ public class RidePat
                 }
 
             }
-            RidePatNum = ridePat.RidePatNum;
-            Ride r = new Ride();
-            RidePat rp = GetRidePat(RidePatNum);
-            if (isAnonymous && Pat.DisplayName.IndexOf("אנונימי")==-1)
+            if (isAnonymous)
             {
-                
+                RidePatNum = ridePat.RidePatNum;
+                Ride r = new Ride();
+                RidePat rp = GetRidePat(RidePatNum);
                 foreach (Volunteer driver in rp.Drivers)
                 {
                     Message m = new Message();
                     m.changeAnonymousPatient(RidePatNum,driver);
                 }
                 
-            } else if (rp.Drivers != null)
-            {
-                foreach (Volunteer driver in rp.Drivers)
-                {
-                    Message m = new Message();                    
-                        m.changeInRide(RidePatNum, driver);
-                }
             }
 
             return res;
@@ -516,15 +391,6 @@ public class RidePat
                     }
 
                 }
-            }
-            if (!isAnonymous)
-            {
-                Message m = new Message();
-                if (rp.Drivers.Count>=1)
-                {
-                    m.coordinatorCanceledRide(RidePatNum, rp.Drivers[0]);
-                }
-                else m.coordinatorCanceledRide(RidePatNum, null);
             }
 
             //need to change this --> new status is cancelled
@@ -563,7 +429,7 @@ public class RidePat
         }
         
 
-        string query = "select * from rpview where Origin=N'" + rp.Origin.Name.Replace("'","''")+"' and Destination=N'"+rp.Destination.Name.Replace("'", "''") + "' and pickuptime='"+ date + " " +time + "' and (MainDriver="+v.Id+" or SecondaryDriver="+v.Id+")";
+        string query = "select * from rpview where Origin=N'" + rp.Origin.Name+"' and Destination=N'"+rp.Destination.Name+"' and pickuptime='"+ date + " " +time + "' and (MainDriver="+v.Id+" or SecondaryDriver="+v.Id+")";
         DbService db = new DbService();
         DataSet ds = db.GetDataSetByQuery(query);
         if (ds.Tables[0].Rows.Count == 1)
@@ -636,8 +502,6 @@ public class RidePat
 
     public RidePat GetRidePat(int ridePatNum)
     {
-        Location tmp = new Location();
-        Hashtable locations = tmp.getLocationsEnglishName();
         string query = "select * from RPView where RidePatNum=" + ridePatNum;
         DbService db = new DbService();
         DataSet ds = db.GetDataSetByQuery(query);
@@ -679,19 +543,9 @@ public class RidePat
         rp.Escorts = new List<Escorted>();
         Location origin = new Location();
         origin.Name = dr["Origin"].ToString();
-        if (locations[origin.Name]==null)
-        {
-            origin.EnglishName = "";
-        }
-        else origin.EnglishName = locations[origin.Name].ToString();
         rp.Origin = origin;
         Location dest = new Location();
         dest.Name = dr["Destination"].ToString();
-        if (locations[dest.Name] == null)
-        {
-            dest.EnglishName = "";
-        }
-        else dest.EnglishName = locations[dest.Name].ToString();
         rp.Destination = dest;
         rp.Area = dr["Area"].ToString();
         rp.Shift = dr["Shift"].ToString();
@@ -794,9 +648,6 @@ public class RidePat
     //This method is used for שבץ אותי
     public List<RidePat> GetRidePatView(int volunteerId,int maxDays) //VolunteerId - 1 means get ALL FUTURE ridePats // VolunteerId -2 means get ALL ridePats
     {
-
-        Location tmp = new Location();
-        Hashtable locations = tmp.getLocationsEnglishName();
         DataTable driverTable = getDriver();
         DataTable equipmentTable = getEquipment();
         DataTable rideTable = getRides();
@@ -808,48 +659,20 @@ public class RidePat
         {
             if (maxDays == -1)
             {
-                
-                //query = "select * from RPView where Convert(date,pickuptime)>=CONVERT(date, getdate()) and Status!=N'הגענו ליעד';"; // Get ALL FUTURE RidePats, even if cancelled
-                query = "select * from RPView where Convert(date,pickuptime)>=CONVERT(date, getdate());"; // Get ALL FUTURE RidePats, even if cancelled
-
+                query = "select * from RPView where Convert(date,pickuptime)>=CONVERT(date, getdate()) and Status!=N'הגענו ליעד';"; // Get ALL FUTURE RidePats, even if cancelled
             }
-
-            //else query = "select * from RPView where DATEDIFF(day,getdate(),pickuptime)<=" + maxDays + " and Convert(date,pickuptime)>=CONVERT(date, getdate()) and Status!=N'הגענו ליעד';";
-            else query = "select * from RPView where DATEDIFF(day,getdate(),pickuptime)<=" + maxDays + " and Convert(date,pickuptime)>=CONVERT(date, getdate());";
+            else query = "select * from RPView where DATEDIFF(day,getdate(),pickuptime)<=" + maxDays + " and Convert(date,pickuptime)>=CONVERT(date, getdate()) and Status!=N'הגענו ליעד';";
         }
         else if (volunteerId == -2)
         {
-            if (maxDays == -2) // get this week
-            {
-                var thisSunday = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek);
-               
-                var endDate = thisSunday.AddDays(7).Date;
-
-                string thisSundayString = thisSunday.ToString("yyyy-MM-dd");
-                string endDateString = endDate.ToString("yyyy-MM-dd");
-
-                query = "select * from RPView where pickuptime >= Convert(datetime,'" + thisSundayString + "') AND pickuptime < Convert(datetime,'" + endDateString + "');";
-            } else if (maxDays == -3) // get next week
-            {
-                var thisSunday = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek);
-
-                var nextSunday = thisSunday.AddDays(7).Date;
-
-                var endDate = nextSunday.AddDays(7).Date;
-
-                string nextSundayString = nextSunday.ToString("yyyy-MM-dd");
-                string endDateString = endDate.ToString("yyyy-MM-dd");
-
-                query = "select * from RPView where pickuptime >= Convert(datetime,'" + nextSundayString + "') AND pickuptime < Convert(datetime,'" + endDateString + "');";
-            }
-            else query = "select * from RPView"; //get ALL ridePats
+            query = "select * from RPView"; //get ALL ridePats
         }
         else
         {
             //query = "select * from RPView where (Status<>N'הסתיימה' or Status<>N'בוטלה') and PickupTime>= getdate()"; //Get ALL ACTIVE RidePats (used by mobile app)
             if (maxDays!=-1)
             {
-                query = "select * from RPView where (Status=N'שובץ נהג' or Status=N'ממתינה לשיבוץ' or Status=N'שובץ גיבוי') and DATEDIFF(day,getdate(),pickuptime)<=" + maxDays+" and pickuptime>=getdate()"; //Get ALL ACTIVE RidePats (used by mobile app) where max days=30
+                query = "select * from RPView where (Status=N'שובץ נהג' or Status=N'ממתינה לשיבוץ' or Status=N'שובץ גיבוי') and DATEDIFF(day,getdate(),pickuptime)<=" + maxDays+ " and pickuptime>= getdate()"; //Get ALL ACTIVE RidePats (used by mobile app) where max days=30
             }
             else query = "select * from RPView where (Status=N'שובץ נהג' or Status=N'ממתינה לשיבוץ' or Status=N'שובץ גיבוי') and PickupTime>= getdate()"; //Get ALL ACTIVE RidePats (used by mobile app)
         }
@@ -865,135 +688,115 @@ public class RidePat
         {
             foreach (DataRow dr in ds.Tables[0].Rows)
             {
+                counter++;
+                // if voluneer is assigned to this ridePat, don't return it (for mobile app)
+                if ((dr["MainDriver"].ToString() != "" && int.Parse(dr["MainDriver"].ToString()) == volunteerId) || (dr["secondaryDriver"].ToString() != "" && int.Parse(dr["secondaryDriver"].ToString()) == volunteerId))
+                    continue;
+
+                RidePat rp = new RidePat();
+                rp.Coordinator = new Volunteer();
+                rp.Coordinator.DisplayName = dr["Coordinator"].ToString();
+                rp.Drivers = new List<Volunteer>();
+                // if (numOfDrivers != 0)
+                //  {
+
+                if (dr["MainDriver"].ToString() != "")
+                {
+
+                    Volunteer primary = new Volunteer();
+                    primary.DriverType = "Primary";
+
+                    primary.Id = int.Parse(dr["MainDriver"].ToString());
+                    string searchExpression = "Id = " + primary.Id;
+                    DataRow[] driverRow = driverTable.Select(searchExpression);
+                    primary.DisplayName = driverRow[0]["DisplayName"].ToString();
+                    primary.CellPhone = driverRow[0]["CellPhone"].ToString();
+                    rp.Drivers.Add(primary);
+                }
+
+
+                // if (numOfDrivers > 1)
+                // {
+                if (dr["secondaryDriver"].ToString() != "")
+                {
+                    Volunteer secondary = new Volunteer();
+                    secondary.DriverType = "secondary";
+                    secondary.Id = int.Parse(dr["secondaryDriver"].ToString());
+                    string searchExpression = "Id = " + secondary.Id;
+                    DataRow[] driverRow = driverTable.Select(searchExpression);
+                    secondary.DisplayName = driverRow[0]["DisplayName"].ToString();
+                    secondary.CellPhone = driverRow[0]["CellPhone"].ToString();
+                    rp.Drivers.Add(secondary);
+                }
+
+                rp.RidePatNum = int.Parse(dr["RidePatNum"].ToString());
                 try
                 {
-                    counter++;
-                    // if voluneer is assigned to this ridePat, don't return it (for mobile app)
-                    if ((dr["MainDriver"].ToString() != "" && int.Parse(dr["MainDriver"].ToString()) == volunteerId) || (dr["secondaryDriver"].ToString() != "" && int.Parse(dr["secondaryDriver"].ToString()) == volunteerId))
-                        continue;
-
-                    RidePat rp = new RidePat();
-                    rp.Coordinator = new Volunteer();
-                    rp.Coordinator.DisplayName = dr["Coordinator"].ToString();
-                    rp.Drivers = new List<Volunteer>();
-                    // if (numOfDrivers != 0)
-                    //  {
-
-                    if (dr["MainDriver"].ToString() != "")
-                    {
-
-                        Volunteer primary = new Volunteer();
-                        primary.DriverType = "Primary";
-
-                        primary.Id = int.Parse(dr["MainDriver"].ToString());
-                        string searchExpression = "Id = " + primary.Id;
-                        DataRow[] driverRow = driverTable.Select(searchExpression);
-                        primary.DisplayName = driverRow[0]["DisplayName"].ToString();
-                        primary.CellPhone = driverRow[0]["CellPhone"].ToString();
-                        rp.Drivers.Add(primary);
-                    }
-
-
-                    // if (numOfDrivers > 1)
-                    // {
-                    if (dr["secondaryDriver"].ToString() != "")
-                    {
-                        Volunteer secondary = new Volunteer();
-                        secondary.DriverType = "secondary";
-                        secondary.Id = int.Parse(dr["secondaryDriver"].ToString());
-                        string searchExpression = "Id = " + secondary.Id;
-                        DataRow[] driverRow = driverTable.Select(searchExpression);
-                        secondary.DisplayName = driverRow[0]["DisplayName"].ToString();
-                        secondary.CellPhone = driverRow[0]["CellPhone"].ToString();
-                        rp.Drivers.Add(secondary);
-                    }
-
-                    rp.RidePatNum = int.Parse(dr["RidePatNum"].ToString());
-                    try
-                    {
-                        rp.RideNum = int.Parse(dr["RideNum"].ToString());
-                    }
-                    catch (Exception)
-                    {
-
-                    }
-
-                    rp.pat = new Patient();
-                    rp.pat.DisplayName = dr["DisplayName"].ToString();
-                    rp.pat.EnglishName = dr["EnglishName"].ToString();
-                    rp.pat.CellPhone = dr["CellPhone"].ToString();
-                    rp.pat.IsAnonymous = dr["IsAnonymous"].ToString();
-
-                    rp.pat.Id = int.Parse(dr["Id"].ToString());
-                    rp.pat.Equipment = new List<string>();
-                    string equipmentSearchExpression = "Id = " + rp.Pat.Id;
-                    DataRow[] equipmentRow = equipmentTable.Select(equipmentSearchExpression);
-                    foreach (DataRow row in equipmentRow)
-                    {
-                        rp.pat.Equipment.Add(row.ItemArray[0].ToString());
-                    }
-                    rp.pat.EscortedList = new List<Escorted>();
-                    string escortSearchExpression = "RidePatNum = " + rp.ridePatNum;
-                    DataRow[] escortRow = escortTable.Select(escortSearchExpression);
-                    foreach (DataRow row in escortRow)
-                    {
-                        Escorted e = new Escorted();
-                        e.Id = int.Parse(row[0].ToString());
-                        e.DisplayName = row[1].ToString();
-                        rp.pat.EscortedList.Add(e);
-                    }
-
-                    Location origin = new Location();
-                    origin.Name = dr["Origin"].ToString();
-                    if (locations[origin.Name] == null)
-                    {
-                        origin.EnglishName = "";
-                    }
-                    else origin.EnglishName = locations[origin.Name].ToString();
-                    rp.Origin = origin;
-                    Location dest = new Location();
-                    dest.Name = dr["Destination"].ToString();
-                    if (locations[dest.Name] == null)
-                    {
-                        dest.EnglishName = "";
-                    }
-                    else dest.EnglishName = locations[dest.Name].ToString();
-                    rp.Destination = dest;
-                    rp.Area = dr["Area"].ToString();
-                    rp.Shift = dr["Shift"].ToString();
-                    rp.Date = Convert.ToDateTime(dr["PickupTime"].ToString());
-                    rp.Status = dr["Status"].ToString();
-                    if (rp.RideNum > 0) // if RidePat is assigned to a Ride - Take the Ride's status
-                    {
-                        string searchExpression = "RideRideNum = " + rp.RideNum;
-                        DataRow[] rideRow = rideTable.Select(searchExpression);
-                        //rideRow = rideRow.OrderBy(x => x.TimeOfDay).ToList();
-                        rp.Statuses = new List<string>();
-                        foreach (DataRow status in rideRow)
-                        {
-                            rp.Statuses.Add(status.ItemArray[0].ToString());
-                        }
-                        try
-                        {
-                            rp.Status = rp.Statuses[rp.Statuses.Count - 1];
-                        }
-                        catch (Exception err)
-                        {
-
-                            throw err;
-                        }
-
-
-                    }
-
-                    rpl.Add(rp);
+                    rp.RideNum = int.Parse(dr["RideNum"].ToString());
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
 
-                    throw ex;
                 }
-                
+
+                rp.pat = new Patient();
+                rp.pat.DisplayName = dr["DisplayName"].ToString();
+                rp.pat.CellPhone = dr["CellPhone"].ToString();
+                rp.pat.IsAnonymous = dr["IsAnonymous"].ToString();
+            
+                rp.pat.Id = int.Parse(dr["Id"].ToString());
+                rp.pat.Equipment = new List<string>();
+                string equipmentSearchExpression = "Id = " + rp.Pat.Id;
+                DataRow[] equipmentRow = equipmentTable.Select(equipmentSearchExpression);
+                foreach (DataRow row in equipmentRow)
+                {
+                    rp.pat.Equipment.Add(row.ItemArray[0].ToString());
+                }
+                rp.pat.EscortedList = new List<Escorted>();
+                string escortSearchExpression = "RidePatNum = " + rp.ridePatNum;
+                DataRow[] escortRow = escortTable.Select(escortSearchExpression);
+                foreach (DataRow row in escortRow)
+                {
+                    Escorted e = new Escorted();
+                    e.Id = int.Parse(row[0].ToString());
+                    e.DisplayName = row[1].ToString();
+                    rp.pat.EscortedList.Add(e);
+                }
+
+                Location origin = new Location();
+                origin.Name = dr["Origin"].ToString();
+                rp.Origin = origin;
+                Location dest = new Location();
+                dest.Name = dr["Destination"].ToString();
+                rp.Destination = dest;
+                rp.Area = dr["Area"].ToString();
+                rp.Shift = dr["Shift"].ToString();
+                rp.Date = Convert.ToDateTime(dr["PickupTime"].ToString());
+                rp.Status = dr["Status"].ToString();
+                if (rp.RideNum > 0) // if RidePat is assigned to a Ride - Take the Ride's status
+                {
+                    string searchExpression = "RideRideNum = " + rp.RideNum;
+                    DataRow[] rideRow = rideTable.Select(searchExpression);
+                    //rideRow = rideRow.OrderBy(x => x.TimeOfDay).ToList();
+                    rp.Statuses = new List<string>();
+                    foreach (DataRow status in rideRow)
+                    {
+                        rp.Statuses.Add(status.ItemArray[0].ToString());
+                    }
+                    try
+                    {
+                        rp.Status = rp.Statuses[rp.Statuses.Count-1];
+                    }
+                    catch (Exception err)
+                    {
+
+                        throw err;
+                    }
+
+
+                }
+
+                rpl.Add(rp);
 
             }
 
@@ -1103,46 +906,8 @@ public class RidePat
         #endregion
     }
 
-    public List<RidePat> getRidepats()
-    {
-        string query = "select * from ridepat where pickuptime>=getdate() and area<>N'מרכז'"; // Get ALL FUTURE RidePats, even if cancelled
-        List<RidePat> ridePats = new List<RidePat>();
-        DbService db = new DbService();
-        DataSet ds = db.GetDataSetByQuery(query);
-        foreach (DataRow dr in ds.Tables[0].Rows)
-        {
-            RidePat rp = new RidePat();
-            rp.RidePatNum = (int)dr["RidePatNum"];
-            Location origin = new Location();
-            origin.Name = dr["Origin"].ToString();
-            Location destination = new Location();
-            destination.Name = dr["Destination"].ToString();
-            rp.Origin = origin;
-            rp.Destination = destination;
-            ridePats.Add(rp);
-        }
-        return ridePats;
-    }
-    public void setRidepatsArea()
-    {
-        List<RidePat> ridePats = getRidepats();
-        DbService db = new DbService();
-        foreach (RidePat rp in ridePats)
-        {
-            try
-            {
-                string area = NEWCheckLocationForRidepatArea(rp.Origin.Name, rp.Destination.Name);
-                string query = "update ridepat set Area=" + "N'" + area + "'" + " WHERE ridepatnum=" + rp.RidePatNum;
-                int res = db.ExecuteQuery(query);
-            }
-            catch (Exception ex)
-            {
+    
 
-                throw;
-            }
-            
-        }
-    }
 
     public int CombineRideRidePat(int rideId, int ridePatId)
     {

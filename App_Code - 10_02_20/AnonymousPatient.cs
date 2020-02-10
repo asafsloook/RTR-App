@@ -394,7 +394,7 @@ public class AnonymousPatient
         DbService db;
         SqlCommand cmd = new SqlCommand();
         cmd.CommandType = CommandType.Text;
-        SqlParameter[] cmdParams = new SqlParameter[20];
+        SqlParameter[] cmdParams = new SqlParameter[19];
         cmdParams[0] = cmd.Parameters.AddWithValue("@firstNameH", FirstNameH);
         cmdParams[1] = cmd.Parameters.AddWithValue("@lastNameH", LastNameH);
         cmdParams[2] = cmd.Parameters.AddWithValue("@firstNameA", FirstNameA);
@@ -413,16 +413,13 @@ public class AnonymousPatient
         cmdParams[15] = cmd.Parameters.AddWithValue("@remarks", Remarks);
         cmdParams[16] = cmd.Parameters.AddWithValue("@isAnonymous", IsAnonymous);
         cmdParams[17] = cmd.Parameters.AddWithValue("@numberOfEscort", NumberOfEscort);
-        cmdParams[18] = cmd.Parameters.AddWithValue("@englishName", EnglishName);        
-        string displayName = FirstNameH + " " + LastNameH;
-        cmdParams[19] = cmd.Parameters.AddWithValue("@displayName", displayName.Trim());
-        
+        cmdParams[18] = cmd.Parameters.AddWithValue("@englishName", EnglishName);
         string query = "";
         if (func == "edit")
         {
             query = "UPDATE Patient SET FirstNameH=@firstNameH,FirstNameA=@firstNameA,LastNameH=@lastNameH,";
             query += "IsActive=@IsActive,";
-            query += "Barrier=@barrier,Hospital=@hospital,IsAnonymous=@isAnonymous,NumberOfEscort=@numberOfEscort,EnglishName=@englishName,DisplayName=@displayName Where Id=" + Id;
+            query += "Barrier=@barrier,Hospital=@hospital,IsAnonymous=@isAnonymous,NumberOfEscort=@numberOfEscort,EnglishName=@englishName Where Id=" + Id;
             db = new DbService();
             res = db.ExecuteQuery(query, cmd.CommandType, cmdParams);
             if (res > 0)
@@ -449,7 +446,7 @@ public class AnonymousPatient
         {
             query = "insert into Patient (FirstNameH,FirstNameA,LastNameH,LastNameA,CellPhone,CellPhone2,";
             query += "HomePhone,CityCityName,IsActive,BirthDate,History,Department,Barrier,Hospital,Gender,Remarks,IsAnonymous,NumberOfEscort,EnglishName)";
-            query += " values (@firstNameH,@firstNameA,@lastNameH,@lastNameA,";
+            query += " values (@firstNameH,@firstNameA,@lastNameH,@lastNameA";
             query += "@cellPhone,@cellPhone2,@homePhone,@city,@IsActive,@birthDate,";
             query += "@history,@department,@barrier,@hospital,@gender,@remarks,@isAnonymous,@numberOfEscort,@englishName); select SCOPE_IDENTITY()";
             db = new DbService();

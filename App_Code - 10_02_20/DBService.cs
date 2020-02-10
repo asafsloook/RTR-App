@@ -82,6 +82,7 @@ public class DbService
             {
                 con.Close();
             }
+            
         }
 
 
@@ -90,14 +91,10 @@ public class DbService
     public int ExecuteQuery(string sqlQuery, CommandType cmdType = CommandType.Text, params SqlParameter[] parametersArray)
     {
         int row_affected = 0;
-
-        try
+        using (con)
         {
-            if (con.State == ConnectionState.Closed)
-            {
-                con.Open();
-            }
 
+            con.Open();
             tran = con.BeginTransaction();
 
             cmd = new SqlCommand(sqlQuery, con, tran);
@@ -118,12 +115,9 @@ public class DbService
                 tran.Rollback();
                 throw ex;
             }
-            return row_affected;
         }
-        finally
-        {
-            con.Close();
-        }
+
+        return row_affected;
     }
 
 
@@ -140,10 +134,7 @@ public class DbService
 
         try
         {
-            if (con.State == ConnectionState.Closed)
-            {
-                con.Open();
-            }
+            con.Open();
             res = cmd.ExecuteScalar();
         }
         catch (Exception e)
