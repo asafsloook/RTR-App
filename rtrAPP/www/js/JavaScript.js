@@ -86,7 +86,7 @@
 
 
 Settings = {};
-Settings.version = '1.8.8';
+Settings.version = '1.8.9';
 Settings.releaseNotes = 'https://docs.google.com/spreadsheets/d/1jzv_lLnXRvRS_dNuhyWTuGT7cebsXX-kjflsbZim3O8';
 domain = '';
 currentPatientName = '';
@@ -1445,12 +1445,13 @@ function checkRides() {
             if (ride.Area != results[i].Area) {
                 continue;
             }
-            //if (ride.StartPoint != results[i].StartPoint) {
-            //    continue;
-            //}
-            //if (ride.EndPoint != results[i].EndPoint) {
-            //    continue;
-            //}
+            //XXX
+            if (ride.StartPoint != results[i].StartPoint) {
+                continue;
+            }
+            if (ride.EndPoint != results[i].EndPoint) {
+                continue;
+            }
             if (availableSeats < (results[i].Melave.length + 1)) {
                 continue;
             }
@@ -2196,7 +2197,7 @@ function GetVersionSuccessCB(results) {
         if (Settings.version < results[0].VersionName) {
             var userAgentPhone = getMobileOperatingSystem();
             var redirect = results[0].GoogleStoreURL;
-            if (userAgentPhone == 'IOS') {
+            if (userAgentPhone == 'iOS') {
                 redirect = results[0].AppStoreURL;
             }
             popupDialog('עידכון גרסה', 'המערכת זיהתה שקיים עידכון גרסה חדש.\nלחץ אישור על מנת לעדכן את האפליקציה.', redirect, false, null);
