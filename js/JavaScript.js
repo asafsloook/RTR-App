@@ -2287,7 +2287,7 @@ function getPrefs() {
     if (userInfo.PrefArea.includes("ארז - צפון")) {
         area.erezNorth = true;
     }
-    if (userInfo.PrefArea.includes("ארז – ירושלים")) {
+    if (userInfo.PrefArea.includes("ארז - ירושלים")) {
         area.erezJeruz = true;
     }
     if (userInfo.PrefArea.includes("ארז - מרכז")) {
@@ -2296,10 +2296,10 @@ function getPrefs() {
     if (userInfo.PrefArea.includes("ארז - תרקומיא")) {
         area.erezTarkumia = true;
     }
-    if (userInfo.PrefArea.includes("תרקומיא – מרכז")) {
+    if (userInfo.PrefArea.includes("תרקומיא - מרכז")) {
         area.tarkumiaCenter = true;
     }
-    if (userInfo.PrefArea.includes("תרקומיא – צפון")) {
+    if (userInfo.PrefArea.includes("תרקומיא - צפון")) {
         area.tarkumiaNorth = true;
     }
     if (userInfo.PrefArea.includes('מרכז')) {
