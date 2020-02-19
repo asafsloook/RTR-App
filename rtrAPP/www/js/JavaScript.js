@@ -86,7 +86,7 @@
 
 
 Settings = {};
-Settings.version = '1.8.9';
+Settings.version = '1.9.1';
 Settings.releaseNotes = 'https://docs.google.com/spreadsheets/d/1jzv_lLnXRvRS_dNuhyWTuGT7cebsXX-kjflsbZim3O8';
 domain = '';
 currentPatientName = '';
@@ -172,11 +172,28 @@ function getRidesList() {
 function ridesPerDayFunc(results) {
     var arr = [];
     for (var i = 0; i < results.length; i++) {
-        var rideDate = '_' + (new Date(results[i].DateTime)).toLocaleDateString() + '_';
-        if (!arr[rideDate]) {
-            arr[rideDate] = [];
+        if (results[i].Status ==="ממתינה לשיבוץ") {//not showing backups
+            var rideDate = '_' + (new Date(results[i].DateTime)).toLocaleDateString() + '_';
+            if (!arr[rideDate]) {
+                arr[rideDate] = [];
+            }
+            arr[rideDate].push(results[i]);
         }
-        arr[rideDate].push(results[i]);
+        
+    }
+    return arr;
+}
+function ridesPerDayFuncOnSearch(results) {
+    var arr = [];
+    for (var i = 0; i < results.length; i++) {
+        if (results[i].Status === "ממתינה לשיבוץ") {//not showing backups
+            var rideDate = '_' + (new Date(results[i].DateTime)).toLocaleDateString() + '_';
+            if (!arr[rideDate]) {
+                arr[rideDate] = [];
+            }
+            arr[rideDate].push(results[i]);
+        }
+
     }
     return arr;
 }
@@ -475,6 +492,9 @@ function printMyRides(myRides) {
 
     if ($('#myRidesPH li').length == 0) {
         $("#myRidesPH").html('<p style="text-align:center;padding:10%">אין נסיעות מתוכננות עבורך</p>');
+        if ($('#doneTAB').prop("class").indexOf("ui-btn-active") !== -1) {
+            $("#myRidesPH").html('<p style="text-align:center;padding:10%">אין נסיעות עבר</p>');
+        }
         $("#myRidesPH").listview("refresh");
     }
     //$("#myRidesCounterPH").html(counterStr);
@@ -874,7 +894,7 @@ function doRideHeader(results, i) {
 
     for (var s = 0; s < ridesPerDay[rideDate].length; s++) {
         //if (results[i].Status !== "ממתינה לשיבוץ"){
-            var currentStartPoint = ridesPerDay[rideDate][s].StartPoint;
+            var currentStartPoint = ridesPerDay[rideDate][s].Area;
             if (startPointStr.indexOf(currentStartPoint) == -1) {
                 startPointStr += currentStartPoint + ' (1) , ';
                 counter++;
@@ -1135,6 +1155,7 @@ function printRides(results) {
         //filter by input
         if ($('#signMe .ui-filterable input').val() != "") {
             results = filterByTextInput(results);
+            ridesPerDay = ridesPerDayFuncOnSearch(results);
         }
     }
 
@@ -1160,7 +1181,7 @@ function printRides(results) {
 
 
             if (checkDate.toLocaleDateString() != myDate.toLocaleDateString() || i == 0) {
-                if (i != 0) {
+                if (i !== 0) {
                     str += "</li>";
 
                     //space between rides in different weeks  <hr>
@@ -2275,10 +2296,10 @@ function getPrefs() {
 
     //get areas
     var area = {};
-    if (userInfo.PrefArea.includes("ירושלים - צפון")) {
+    if (userInfo.PrefArea.includes("צפון - ירושלים")) {
         area.northJeruz = true;
     }
-    if (userInfo.PrefArea.includes("ירושלים - מרכז")) {
+    if (userInfo.PrefArea.includes("מרכז - ירושלים")) {
         area.centerJeruz = true;
     }
     if (userInfo.PrefArea.includes("צפון - מרכז")) {
@@ -2287,7 +2308,7 @@ function getPrefs() {
     if (userInfo.PrefArea.includes("ארז - צפון")) {
         area.erezNorth = true;
     }
-    if (userInfo.PrefArea.includes("ארז – ירושלים")) {
+    if (userInfo.PrefArea.includes("ארז - ירושלים")) {
         area.erezJeruz = true;
     }
     if (userInfo.PrefArea.includes("ארז - מרכז")) {
@@ -2296,10 +2317,10 @@ function getPrefs() {
     if (userInfo.PrefArea.includes("ארז - תרקומיא")) {
         area.erezTarkumia = true;
     }
-    if (userInfo.PrefArea.includes("תרקומיא – מרכז")) {
+    if (userInfo.PrefArea.includes("תרקומיא - מרכז")) {
         area.tarkumiaCenter = true;
     }
-    if (userInfo.PrefArea.includes("תרקומיא – צפון")) {
+    if (userInfo.PrefArea.includes("תרקומיא - צפון")) {
         area.tarkumiaNorth = true;
     }
     if (userInfo.PrefArea.includes('מרכז')) {
