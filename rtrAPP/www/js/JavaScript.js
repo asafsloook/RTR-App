@@ -912,7 +912,7 @@ function doRideHeader(results, i) {
     //if(startPointStr.length>40)
     if (counter > 2) {
         //  startPointStr = startPointStr.substring(0, 35) + '...';
-        startPointStr = "  קיימות " + counter + " הסעות ";
+        startPointStr = " &nbsp;&nbsp;" + counter + " הסעות ";
     }
 
     return startPointStr;
@@ -2206,7 +2206,7 @@ function checkUserSuccessCB(results) {
     getLocations(getLocationsSCB, getLocationsECB);
 }
 function GetVersionErrorCB() {
-    popupDialog('שגיאה', "9אירעה תקלה במערכת.", '#loginFailed', false, null);
+    popupDialog('שגיאה', "הפעלת האפליקציה נכשלה - כנראה עקב בעיית תקשורת.<br> אנא ודאו שקיימת תקשורת לנייד", '#loginFailed', false, null);
 }
 function GetVersionSuccessCB(results) {
     var results = $.parseJSON(results.d);
@@ -2389,7 +2389,7 @@ function checkUserErrorCB(e) {
         popupDialog('שגיאה', e.responseJSON.Message, '#loginFailed', false, null);
     }
     else {
-        popupDialog('שגיאה', "10אירעה תקלה במערכת.", '#loginFailed', false, null);
+        popupDialog('שגיאה', "הפעלת האפליקציה נכשלה - כנראה עקב בעיית תקשורת.<br> אנא ודאו שקיימת תקשורת לנייד", '#loginFailed', false, null);
     }
     defaultServerDomain();
 }

@@ -158,10 +158,14 @@ a, p, span, label, td, #volunteerRequest label, #volunteerProblems label {
 }
 
 #showAllRides label {
-    padding: 3% 6%;
+    padding: 3% 25%;
     width: 78px;
     border-radius: 25px;
     text-align: RIGHT;
+}
+
+.displayAllCheckbox {
+    line-height: 2;
 }
 
 #showAllRides .ui-checkbox {
@@ -316,8 +320,8 @@ h1, h2 {
 
 
 #signMe .ui-filterable {
-    width: 65%;
-    margin-left: 35%;
+    width: 55%;
+    margin-left: 45%;
 }
 
 #starts label, #ends label {
