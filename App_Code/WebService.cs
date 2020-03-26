@@ -869,11 +869,13 @@ public class WebService : System.Web.Services.WebService
         catch (Exception ex)
         {
             Log.Error("Error in AssignRideToRidePat", ex);
-            if (ex.Message == "נסיעה זו בוטלה, תודה על הרצון לעזור")
-            {
-                throw new Exception(ex.Message);
-            }
-            else throw new Exception("שגיאה בצירוף הסעה לנסיעה");
+            throw new Exception(ex.Message);
+            
+            //if (ex.Message == "נסיעה זו בוטלה, תודה על הרצון לעזור")
+            //{
+            //    throw new Exception(ex.Message);
+            //}
+            //else throw new Exception("שגיאה בצירוף הסעה לנסיעה");
         }
 
     }

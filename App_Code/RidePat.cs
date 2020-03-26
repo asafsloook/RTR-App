@@ -1177,7 +1177,8 @@ public class RidePat
         Destination = new Location();
         Destination.Name = dr["Destination"].ToString();
         Date = Convert.ToDateTime(dr["PickupTime"].ToString());
-        if (dr["Status"].ToString() == "שובץ נהג וגיבוי") throw new Exception("הנסיעה אליה נרשמתם כבר מלאה");
+        //if (dr["Status"].ToString() == "שובץ נהג וגיבוי") throw new Exception("הנסיעה אליה נרשמתם כבר מלאה");
+        if (dr["Status"].ToString() == "שובץ נהג") throw new Exception("נהג אחר כבר השתבץ לנסיעה זו. נסה להשתבץ לנסיעה אחרת. תודה");
 
         if (dr["RideNum"].ToString() != "") //Ride aleady exists
         {
