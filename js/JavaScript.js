@@ -86,7 +86,7 @@
 
 
 Settings = {};
-Settings.version = '1.9.2';
+Settings.version = '1.9.4';
 Settings.releaseNotes = 'https://docs.google.com/spreadsheets/d/1jzv_lLnXRvRS_dNuhyWTuGT7cebsXX-kjflsbZim3O8';
 domain = '';
 currentPatientName = '';
@@ -250,25 +250,27 @@ function GetMessagesSuccessCB(results) {
     $("#myMessagesPH").empty();
     var str = "";
     for (var i = 0; i < results.length; i++) {
-
-        str += '<li style="border: 2px solid rgba(200,200,200,0.5);position:relative" data-theme="a" >';
-        str += '<p style="float:right;width:95%;margin-right: 1%;"> ' + results[i].DateTime;
-        str += ' <br><br> <b>' + results[i].Title + '</b>';
-        str += ' <br> ';
-
-        if (results[i].MsgContent.length < 40) {
-            str += results[i].MsgContent;          
-        } else {
-            splittedMsgContent = results[i].MsgContent.split(" ");
-            let counter = 0;
-            for (word of splittedMsgContent) {
-                if (counter % 5 == 0) {
-                    str += "<br>";
-                }
-                str += word + " ";
-                counter++;
-            }
+        if (results[i].Title == "Confirm") {
+            continue;
         }
+        str += '<li style="border: 2px solid rgba(200,200,200,0.5);position:relative;white-space: normal" data-theme="a" >';
+        str += '<p style="float:right;width:95%;margin-right: 1%;word-wrap: break-word;white-space: normal"> ' + results[i].DateTime.slice(0, -3);
+        str += ' <br><br> <b>' + results[i].Title + '</b>';
+        str += ' <br><br> ';
+        str += results[i].MsgContent; 
+        //if (results[i].MsgContent.length < 40) {
+        //    str += results[i].MsgContent;          
+        //} else {
+        //    splittedMsgContent = results[i].MsgContent.split(" ");
+        //    let counter = 0;
+        //    for (word of splittedMsgContent) {
+        //        if (counter % 5 == 0) {
+        //            str += "<br>";
+        //        }
+        //        str += word + " ";
+        //        counter++;
+        //    }
+        //}
 
         if (results[i].Sender != "") {
             str += ' <br><br> נשלח ע"י: ' + results[i].Sender;

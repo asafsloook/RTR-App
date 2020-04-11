@@ -86,7 +86,7 @@
 
 
 Settings = {};
-Settings.version = '1.9.2';
+Settings.version = '1.9.4';
 Settings.releaseNotes = 'https://docs.google.com/spreadsheets/d/1jzv_lLnXRvRS_dNuhyWTuGT7cebsXX-kjflsbZim3O8';
 domain = '';
 currentPatientName = '';
@@ -167,6 +167,14 @@ function getRidesList() {
     }
     GetRides(request, GetRidesSuccessCB, GetRidesErrorCB);
 }
+//HERE
+function getMessagesList() {
+
+    var request = {
+        displayName: localStorage.displayName,
+    }
+    GetMessages(request, GetMessagesSuccessCB, GetMessagesErrorCB);
+}
 
 //array of days with rides
 function ridesPerDayFunc(results) {
@@ -234,6 +242,46 @@ function GetRidesSuccessCB(results) {
         fromSignMe = false;
     }
 }
+//XXXXXXXXXXXX
+function GetMessagesSuccessCB(results) {
+    var results = $.parseJSON(results.d);
+    results.reverse();
+    console.log(results);
+    $("#myMessagesPH").empty();
+    var str = "";
+    for (var i = 0; i < results.length; i++) {
+        if (results[i].Title == "Confirm") {
+            continue;
+        }
+        str += '<li style="border: 2px solid rgba(200,200,200,0.5);position:relative;white-space: normal" data-theme="a" >';
+        str += '<p style="float:right;width:95%;margin-right: 1%;word-wrap: break-word;white-space: normal"> ' + results[i].DateTime.slice(0, -3);
+        str += ' <br><br> <b>' + results[i].Title + '</b>';
+        str += ' <br><br> ';
+        str += results[i].MsgContent; 
+        //if (results[i].MsgContent.length < 40) {
+        //    str += results[i].MsgContent;          
+        //} else {
+        //    splittedMsgContent = results[i].MsgContent.split(" ");
+        //    let counter = 0;
+        //    for (word of splittedMsgContent) {
+        //        if (counter % 5 == 0) {
+        //            str += "<br>";
+        //        }
+        //        str += word + " ";
+        //        counter++;
+        //    }
+        //}
+
+        if (results[i].Sender != "") {
+            str += ' <br><br> נשלח ע"י: ' + results[i].Sender;
+        }
+        str += '</p>';
+        str += "</li> ";
+    }
+
+    $("#myMessagesPH").html(str);
+    $("#myMessagesPH").listview("refresh");
+} 
 
 //from server structure to client structure (fields)
 function ridesToClientStructure(before) {
@@ -277,6 +325,15 @@ function GetRidesErrorCB(e) {
     }
     else {
         popupDialog('שגיאה', "אירעה תקלה במערכת1.", '#loginLogo', false, null);
+    }
+}
+
+function GetMessagesErrorCB(e) {
+    if (typeof e.responseJSON !== 'undefined' && typeof e.responseJSON.Message !== 'undefined') {
+        popupDialog('שגיאה', e.responseJSON.Message, '#loginLogo', false, null);
+    }
+    else {
+        popupDialog('שגיאה', "אירעה תקלה במערכת0.", '#loginLogo', false, null);
     }
 }
 
@@ -500,7 +557,7 @@ function printMyRides(myRides) {
     //$("#myRidesCounterPH").html(counterStr);
 }
 
-//XXXXX
+//XXXXXXX
 //print my ride
 function myRideListItem(myRides, i) {
 
@@ -598,6 +655,107 @@ function myRideListItem(myRides, i) {
 
     return str;
 }
+
+function myMessages() {
+
+    getMessagesList();
+
+//    var myDate = new Date(myRides[i].DateTime);
+//    var day = numToDayHebrew(myDate.getDay());
+
+//    //dont show past rides as backup driver (not a actual ride)
+//    if (myRides[i].DriverType != "Primary" && $('#doneTAB').prop("class").indexOf("ui-btn-active") != -1) {
+//        return;
+//    }
+
+//    var str = '<li style="border: 2px solid rgba(200,200,200,0.5);position:relative" data-theme="a" ';
+
+//    if ($('#doneTAB').prop("class").indexOf("ui-btn-active") != -1) {
+//        str += ' id="popINFO' + myRides[i].Id + '" class="';
+//    }
+//    else {
+//        str += ' id="popDEL' + myRides[i].Id + '" class="';
+//    }
+
+
+//    if (myRides[i].DriverType == "Primary") {
+//        str += 'primary popINFO">';
+//    }
+//    else {
+//        str += 'backup popDEL">';
+//    }
+
+
+//    str += '<p style="float:right;width:20%;margin-right: 1%;">יום ' + day
+//        + ' <br> ' + myDate.getDate() + "." + (myDate.getMonth() + 1);
+
+//    var hour = myDate.toTimeString().replace(/.*?(\d{2}:\d{2}).*/, "$1");
+
+//    if (parseInt(hour.substring(0, 2)) <= 12) {
+//        if (hour.startsWith("0")) {
+//            hour = hour.substring(1, hour.length);
+//        }
+//        str += '<br>' + hour + '<br>';
+//    }
+//    else if (hour == "22:14") {
+//        str += '<br> אחה"צ <br>';
+//    } else {
+//        str += '<br>' + hour + '<br>';
+//    }
+//    if (!myRides[i].Pat.IsAnonymous) {
+//        str += 'טלפונים:</p>';
+//    } else {
+//        str += '</p>';
+//    }
+
+
+
+//    str = RideEquipment(str, myRides, i);
+//    str += '<p style="float:right;margin-right:5%;width: 60%;">';
+
+
+
+//    if (myRides[i].DriverType == "Primary") {
+//        str += '<b>הסעה</b><br>';
+//    }
+//    else {
+//        str += '<b>גיבוי</b><br>';
+//    }
+
+//    str += myRides[i].StartPoint + '  <i class="fa fa-arrow-left"></i>  '
+//        + myRides[i].EndPoint
+//        + '<br>'
+//        + (myRides[i].Pat.IsAnonymous ? 'חולה' : myRides[i].Person);
+
+//    if (myRides[i].Melave.length > 0) {
+//        str += " +" + (myRides[i].Melave.length);
+//    }
+//    if (!myRides[i].Pat.IsAnonymous) {
+
+//        if (myRides[i].Pat.CellPhone) {
+//            str += '<br>' + myRides[i].Pat.CellPhone
+//        }
+//        if (myRides[i].MelavePhone != undefined) {
+//            if (myRides[i].MelavePhone[0] != null) {
+//                str += ', ' + myRides[i].MelavePhone[0];
+//            }
+
+//        }
+//    }
+
+
+//    str += '</p>';
+
+//    if ($('#doneTAB').prop("class").indexOf("ui-btn-active") == -1) {
+//        str += '<a style="background-color: #ff8c8c;float:left;border:none;margin:0;border-radius:25px;position:absolute" href="#" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all deleteokBTN"></a>';
+//    }
+
+//    str += "</li> ";
+
+//    return str;
+
+}
+
 
 //filter past/plan rides from myRides list
 function filterMyRides(myRide) {
@@ -1800,6 +1958,16 @@ $(document).on('pagebeforeshow', '#myRides', function () {
 
 
 });
+//XXXXXXXXX
+$(document).on('pagebeforeshow', '#messages', function () {
+
+
+
+
+    myMessages();
+
+
+});
 
 
 $(document).on('pagebeforeshow', '#volunteerRequest', function () {
@@ -1877,6 +2045,7 @@ $(document).one('pagebeforecreate', function () {
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="preferencesTab" data-theme="a">העדפות</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="loginAgainTab" href="#" data-theme="a">חזור לדף הראשי</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="NotifyTab" data-theme="a">דיווחים</a> </li>'
+        + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="messages" data-theme="a">הודעות</a> </li>'
         + '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="aboutTab" data-theme="a">אודות</a> </li>'
         //+ '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="allPatients" data-theme="a">רשימת חולים</a> </li>'
         //+ '<li style="display:block;" data-icon="false" class="ui-btn-icon-left ui-icon-arrow-l"><a class="ui-btn" id="aboutTab" data-theme="a">רשימת מתנדבים</a> </li>'
@@ -2185,6 +2354,7 @@ function checkUserSuccessCB(results) {
 
     userInfo = results;
     localStorage.userId = userInfo.Id;
+    localStorage.displayName = userInfo.DisplayName;
     checkAreaPrefs();
     //get personal info: name, photo, address etc.
     //get preferences routes and seats
@@ -2585,6 +2755,9 @@ function goMenu(id) {
     }
     else if (id == 'aboutTab') {
         $.mobile.pageContainer.pagecontainer("change", "#about");
+    }
+    else if (id == 'messages') { //XXX
+        $.mobile.pageContainer.pagecontainer("change", "#messages");
     }
     else if (id == 'preferencesTab') {
         $.mobile.pageContainer.pagecontainer("change", "#myPreferences");
@@ -3462,7 +3635,7 @@ $(document).ready(function () {
     });
 
     //remember to add this event to every new page
-    $('#signMeTab , #myRidesTab , #loginAgainTab, #auctionTab, #trackRidesTab, #NotifyTab, #aboutTab, #preferencesTab').on('click', function () {
+    $('#signMeTab , #myRidesTab , #loginAgainTab, #auctionTab, #trackRidesTab, #NotifyTab, #aboutTab, #preferencesTab, #messages').on('click', function () {
 
         //if (!userInfo.IsActive && $(this).attr('id') == 'signMeTab') {
         //    //if user isnt Active abort signing
