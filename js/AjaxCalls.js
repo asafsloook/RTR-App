@@ -351,3 +351,23 @@ function getServers(getServersSCB, getServersECB) {
         error: getServersECB
     }) // end of ajax call
 } 
+
+function GetMessages(request, GetMessagesSuccessCB, GetMessagesErrorCB) {
+
+    //serialize the object to JSON string
+    var dataString = JSON.stringify(request);
+
+    $.ajax({ // ajax call starts
+        url: domain + '/WebService.asmx/getMessages',
+        data: dataString,                          // the parameters sent to the server
+        type: 'POST',                              // can be also GET
+        dataType: 'json',                          // expecting JSON datatype from the server
+        contentType: 'application/json; charset = utf-8', // sent to the server
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("Content-Encoding", "gzip");
+        },
+        success: GetMessagesSuccessCB,                // data.d id the Variable data contains the data we get from serverside
+        error: GetMessagesErrorCB
+        //async: false
+    }) // end of ajax call
+}
