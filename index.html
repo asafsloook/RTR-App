@@ -64,7 +64,10 @@
             <a id="checkNeedForReport">דיווחים</a>
             <img src="img/mihraz.png" />
         </div>
-
+        <div class="menuItem">
+            <a id="messages">הודעות</a>
+            <img src="img/sms3.png" />
+        </div>
 
         <div id="rakazBTNS">
             <div class="menuItem">
@@ -126,8 +129,8 @@
         <a onclick="window.open('http://www.roadtorecovery.org.il/?lang=he', '_system');">לתרומה</a>-->
         <!-- Paypal donate btn -->
         <!--<form target="_blank" action="https://www.paypal.com/cgi-bin/webscr" method="post" class="paypalForm">
-        <div class="paypal-donations"><input type="hidden" name="cmd" value="_donations"><input type="hidden" name="business" value="roadtorecovery10@gmail.com"><input type="hidden" name="item_name" value="Our operation is funded by donations only. Any amount you might be willing to contribute will be greatly appreciated!"><input type="hidden" name="currency_code" value="USD"><input type="image" src="http://www.roadtorecovery.org.il/wp-content/uploads/2017/06/Donate_car.jpg" name="submit" alt="PayPal - The safer, easier way to pay online."><img alt="" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1"></div>
-    </form>-->
+            <div class="paypal-donations"><input type="hidden" name="cmd" value="_donations"><input type="hidden" name="business" value="roadtorecovery10@gmail.com"><input type="hidden" name="item_name" value="Our operation is funded by donations only. Any amount you might be willing to contribute will be greatly appreciated!"><input type="hidden" name="currency_code" value="USD"><input type="image" src="http://www.roadtorecovery.org.il/wp-content/uploads/2017/06/Donate_car.jpg" name="submit" alt="PayPal - The safer, easier way to pay online."><img alt="" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1"></div>
+        </form>-->
     </div>
 
     <div id="volunteerRequest" data-role="page">
@@ -362,7 +365,42 @@
             </a>-->
         </div>
     </div>
+    <!--XXX-->
+    <div data-role="page" id="messages">
 
+        <div data-role="header">
+            <img src="img/spyIcon.png" class="spyIcon">
+
+            <h1>ההודעות שלי</h1>
+            <a id="menuBTN" href="#mypanel" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-bars ui-corner-all" data-theme="b">
+            </a>
+        </div>
+
+        <div data-role="content">
+
+            <!--<div id="myRidesCounterPH" data-role="fieldcontain">    </div>-->
+
+
+            <!--<div data-role="navbar" id="myRidesTABS">
+                <ul>
+                    <li><a id="doneTAB">עבר</a></li>
+                    <li><a id="planTAB" class="ui-btn-active">מתוכננות</a></li>
+                </ul>
+            </div>-->
+
+            <ul id="myMessagesPH" data-role="listview" data-filter-placeholder="" data-filter="true" data-inset="true" data-icon="false" data-theme="a"></ul>
+
+        </div>
+        <!--<div data-role="footer" id="material">
+
+            <a id="plusSignMe" href="#signMe" style="border-radius:50px;background-color: #44AFEE;" class="ui-shadow ui-btn ui-corner-all ui-btn-inline ui-icon-plus ui-btn-icon-notext ui-btn-b ui-mini fab"></a>
+
+            <a href="#signMe" class="ui-link ui-btn" data-role="button" role="button" style="padding: 0;border: none;background: transparent;margin: 20%;">
+
+                <img src="img/add.png">
+            </a>
+        </div>-->
+    </div>
 
     <div data-role="page" id="deleteConfirm">
         <div role="main" class="ui-corner-bottom ui-content">
@@ -959,10 +997,10 @@
                 </div>
             </div>
             <hr>
-            <div  id="accordionMaster" class="ui-screen-hidden">
+            <div id="accordionMaster" class="ui-screen-hidden">
                 <textarea class="accordion" maxlength="150"></textarea>
                 <div style="margin: 0px auto;width: 80%;background-color: yellow;" class="sendButton">
-                    <span  style="font-size: x-large;">דיווח</span>
+                    <span style="font-size: x-large;">דיווח</span>
                 </div>
             </div>
         </div>
@@ -973,7 +1011,7 @@
         <div data-role="header" data-theme="a">
             <h1 id="popupTitle"></h1>
         </div>
-        <div  style="padding: 0;margin: 0;" role="main" class="ui-content">
+        <div style="padding: 0;margin: 0;" role="main" class="ui-content">
             <div id="popupContentDiv"><p id="popupContent"></p></div>
         </div>
         <div style="bottom: 0px;position: sticky;z-index: 20;background: #fff;" role="contentinfo" class="ui-footer">

@@ -32,6 +32,7 @@ public class RidePat
     string status;
     string area;
     string shift;
+    string lastModified;
 
 
     public bool OnlyEscort { get; set; }
@@ -204,6 +205,19 @@ public class RidePat
 
     public string Area { get; set; }
 
+    public string LastModified
+    {
+        get
+        {
+            return lastModified;
+        }
+
+        set
+        {
+            lastModified = value;
+        }
+    }
+
     public RidePat()
     {
         //
@@ -322,6 +336,8 @@ public class RidePat
     public int setRidePat(RidePat ridePat, string func,bool isAnonymous, int numberOfRides, string repeatRideEvery)
     {
         
+
+        DateTime timeRightNow = DateTime.Now;
         DbService db = new DbService();
         SqlCommand cmd = new SqlCommand();
         cmd.CommandType = CommandType.Text;
@@ -336,6 +352,10 @@ public class RidePat
             Area = NEWCheckLocationForRidepatArea(origin.Name, destination.Name);
             Date = ridePat.Date;
             Coordinator = new Volunteer();
+            
+
+
+
             Coordinator.DisplayName = ridePat.Coordinator.DisplayName;
             Remark = ridePat.Remark;
             Escorts = ridePat.Escorts;
@@ -365,7 +385,7 @@ public class RidePat
                 }
                 cmdParams[6] = cmd.Parameters.AddWithValue("@coordinator", Coordinator.DisplayName);
 
-                string query = "insert into RidePat (Patient,Origin,Destination,PickupTime,Coordinator,Remark,OnlyEscort,Area) values (@pat,@origin,@destination,@date,@coordinator,@remark,@onlyEscort,@Area);SELECT SCOPE_IDENTITY();";
+                string query = "insert into RidePat (Patient,Origin,Destination,PickupTime,Coordinator,Remark,OnlyEscort,Area,lastModified) values (@pat,@origin,@destination,@date,@coordinator,@remark,@onlyEscort,@Area,DATEADD(hour, 2, SYSDATETIME()));SELECT SCOPE_IDENTITY();";
                 RidePatNum = int.Parse(db.GetObjectScalarByQuery(query, cmd.CommandType, cmdParams).ToString());
 
                 if (Escorts.Count > 0 && RidePatNum != 0)
@@ -430,7 +450,7 @@ public class RidePat
             //if (Status == "הגענו ליעד") throw new Exception("נסיעה זו כבר הגיעה ליעד ואין אפשרות לערוך אותה");
 
             cmdParams[6] = cmd.Parameters.AddWithValue("@ridePatNum", RidePatNum);
-            var query = "update RidePat set Patient=@pat,Origin=@origin,Destination=@destination,PickupTime=@date,Remark=@remark,OnlyEscort=@onlyEscort,Area=@Area where RidePatNum=@ridePatNum";
+            var query = "update RidePat set Patient=@pat,Origin=@origin,Destination=@destination,PickupTime=@date,Remark=@remark,OnlyEscort=@onlyEscort,Area=@Area,lastModified=DATEADD(hour, 2, SYSDATETIME()) where RidePatNum=@ridePatNum";
             int res = db.ExecuteQuery(query, cmd.CommandType, cmdParams);
 
             if (res > 0)
@@ -470,7 +490,14 @@ public class RidePat
             RidePatNum = ridePat.RidePatNum;
             Ride r = new Ride();
             RidePat rp = GetRidePat(RidePatNum);
-            if (isAnonymous && Pat.DisplayName.IndexOf("אנונימי")==-1)
+
+            //DateTime timeRightNow = DateTime.Now;
+            //if (Date > timeRightNow)
+            //{
+            //    //paam
+            //}
+
+            if (isAnonymous && Pat.DisplayName.IndexOf("אנונימי")==-1 && (Date > timeRightNow))
             {
                 
                 foreach (Volunteer driver in rp.Drivers)
@@ -479,7 +506,7 @@ public class RidePat
                     m.changeAnonymousPatient(RidePatNum,driver);
                 }
                 
-            } else if (rp.Drivers != null)
+            } else if (rp.Drivers != null && (Date > timeRightNow))
             {
                 foreach (Volunteer driver in rp.Drivers)
                 {
@@ -487,11 +514,12 @@ public class RidePat
                         m.changeInRide(RidePatNum, driver);
                 }
             }
-
-            return res;
+            return RidePatNum;
+            //return res;
         }
         else if (func == "delete")
         {
+            
             RidePatNum = ridePat.RidePatNum;
             Ride r = new Ride();
             RidePat rp = GetRidePat(ridePatNum);
@@ -501,7 +529,7 @@ public class RidePat
                 anotherRide = false;
             }
             else anotherRide = IsThereAnotherRidePat(rp);
-            if (rp.Drivers != null)
+            if (rp.Drivers != null && (Date > timeRightNow))
             {
                 foreach (Volunteer driver in rp.Drivers)
                 {
@@ -517,8 +545,8 @@ public class RidePat
 
                 }
             }
-            if (!isAnonymous)
-            {
+            if (!isAnonymous && (Date > timeRightNow))
+            {//HERE!
                 Message m = new Message();
                 if (rp.Drivers.Count>=1)
                 {
@@ -700,6 +728,8 @@ public class RidePat
         rp.Coordinator = new Volunteer();
         rp.Coordinator.DisplayName = dr["Coordinator"].ToString();
         rp.Remark = dr["Remark"].ToString();
+        rp.LastModified = dr["lastModified"].ToString();
+
         string query2 = "select DisplayName from RidePatEscortView where RidePatNum=" + ridePatNum;
         DbService db2 = new DbService();
         DataSet ds2 = db2.GetDataSetByQuery(query2);
@@ -963,6 +993,7 @@ public class RidePat
                     rp.Shift = dr["Shift"].ToString();
                     rp.Date = Convert.ToDateTime(dr["PickupTime"].ToString());
                     rp.Status = dr["Status"].ToString();
+                    rp.LastModified = dr["lastModified"].ToString();
                     if (rp.RideNum > 0) // if RidePat is assigned to a Ride - Take the Ride's status
                     {
                         string searchExpression = "RideRideNum = " + rp.RideNum;
@@ -1162,6 +1193,7 @@ public class RidePat
     {
         int RideId = -1;
 
+        DateTime timeRightNow = DateTime.Now;
         string query = "select RideNum,Origin,Destination,PickupTime,Status,MainDriver,secondaryDriver from RPView where RidePatNum=" + ridePatId;
         DbService db = new DbService();
         DataSet ds = db.GetDataSetByQuery(query);
@@ -1178,7 +1210,7 @@ public class RidePat
         Destination.Name = dr["Destination"].ToString();
         Date = Convert.ToDateTime(dr["PickupTime"].ToString());
         if (dr["Status"].ToString() == "שובץ נהג וגיבוי") throw new Exception("הנסיעה אליה נרשמתם כבר מלאה");
-
+        //XXX DOESNT GO HERE WITH MY LOGIC (always ELSE):
         if (dr["RideNum"].ToString() != "") //Ride aleady exists
         {
             RideId = int.Parse(dr["RideNum"].ToString());
@@ -1225,7 +1257,7 @@ public class RidePat
         Volunteer v = new Volunteer();
         TimeSpan hourDiff = Date - DateTime.Now;
 
-        if (hourDiff.Hours <= 12)
+        if (hourDiff.Hours <= 12 && (Date > timeRightNow))
         {
             bool primary = false;
             if (driverType== "primary")
@@ -1235,6 +1267,17 @@ public class RidePat
             m.driverSignUpToCloseRide(ridePatId, v.getVolunteerByID(userId), primary);
         }
 
+        //HERE!
+        
+        RidePat rp = GetRidePat(ridePatId);
+        RidePatNum = rp.RidePatNum;
+        if (Date > timeRightNow)
+        {
+            m.driverAddedToRide(RidePatNum, rp.Drivers[0]);
+        }
+          
+       
+
 
         return RideId;
 
@@ -1243,6 +1286,7 @@ public class RidePat
     public int LeaveRidePat(int ridePatId, int rideId, int driverId)
     {
         int res = -1;
+        DateTime timeRightNow = DateTime.Now;
         string driver = "";
         string query = "select * from RPView where RidePatNum=" + ridePatId;
         DbService db4 = new DbService();
@@ -1267,7 +1311,14 @@ public class RidePat
             driver = "secondaryDriver";
         }
 
+        //HERE!
+        RidePat rp = GetRidePat(ridePatId);
+        RidePatNum = rp.RidePatNum;
+        Message m = new Message();
 
+        if (pickupTime > timeRightNow) { 
+            m.driverRemovedFromRide(RidePatNum, rp.Drivers[0]);
+        }
         if (driver == "secondaryDriver")
         {
             string query1 = "update Ride set secondaryDriver=null where RideNum=" + rideId;
@@ -1281,14 +1332,22 @@ public class RidePat
             DbService db = new DbService();
             res = db.ExecuteQuery(query2);
         }
-        if (hours <= 24)
+        if (hours <= 24 && (Date > timeRightNow))
         {
-            //it's less than 24 to the ride
-            res = 911;
+            
+                //it's less than 24 to the ride
+                res = 911;
         }
-     
-        return res;
 
+       
+        
+        
+        
+        
+        
+
+        return res;
+        
     }
 
     public int DeleteDriver(int ridePatId, int driverId)
