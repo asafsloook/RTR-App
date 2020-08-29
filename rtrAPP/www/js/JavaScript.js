@@ -86,7 +86,7 @@
 
 
 Settings = {};
-Settings.version = '1.9.4';
+Settings.version = '1.9.5';
 Settings.releaseNotes = 'https://docs.google.com/spreadsheets/d/1jzv_lLnXRvRS_dNuhyWTuGT7cebsXX-kjflsbZim3O8';
 domain = '';
 currentPatientName = '';

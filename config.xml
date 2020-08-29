@@ -59,7 +59,7 @@
 
   <platform name="android">
     <resource-file src="google-services.json" target="app/google-services.json" />
-    <preference name="android-targetSdkVersion" value="28" />
+    <preference name="android-targetSdkVersion" value="29" />
   </platform>
 
   <preference value="none" name="permissions"/>
